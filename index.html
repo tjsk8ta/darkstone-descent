@@ -75,18 +75,28 @@ function cellAt(x,y){if(x<0||y<0||x>=N*W||y>=N*H)return false;let r=roomAt(x,y);
  if(r.doors.includes('S')&&lx>=4&&lx<=5&&ly>=5)return true;
  return false}
 function generateRooms(){
- // North-facing entrance joined to the south-facing stem of a T-junction.
- // Further tiles connect at matching two-space-wide doorways; no overlapping occupied cells.
- const rooms={}, cx=2,cy=3;
+ // Randomized finite map-card prototype: the entrance and first junction are fixed,
+ // while the two branches draw shuffled passages/chambers and randomized clue positions.
+ const rooms={},cx=2,cy=3;
  const add=(x,y,shape,name,kind,doors,clue=false)=>{let r={x,y,shape,name,kind,doors,seen:kind==='entry',explored:kind==='entry',searched:false,clue};rooms[id(x,y)]=r;return r};
+ const shuffle=a=>{for(let i=a.length-1;i>0;i--){let j=rnd(i+1),t=a[i];a[i]=a[j];a[j]=t}return a};
  add(cx,cy,'entrance','Mine Entrance','entry',['N']);
  add(cx,cy-1,'tee','T-Junction','normal',['S','E','W']);
- add(cx+1,cy-1,'chamber','Old Mine Chamber','normal',['W','N'],true);
- add(cx-1,cy-1,'chamber','Forsaken Gallery','normal',['E','N'],false);
- add(cx+1,cy-2,'corridor','North Passage','normal',['S','N']);
- add(cx-1,cy-2,'corridor','Narrow Passage','normal',['S','N']);
- add(cx+1,cy-3,'chamber','Rift Sanctum','boss',['S'],true).finalEnemies=['boss','thrall'];
- add(cx-1,cy-3,'chamber','Crystal Vault','normal',['S'],true);
+ let cards=shuffle([{name:'Old Mine Chamber',shape:'chamber'},{name:'Forsaken Gallery',shape:'chamber'},{name:'North Passage',shape:'corridor'},{name:'Narrow Passage',shape:'corridor'},{name:'Crystal Vault',shape:'chamber'},{name:'Collapsed Excavation',shape:'chamber'}]);
+ let cluePositions=shuffle([0,1,2,3,4,5]).slice(0,2);
+ for(let branch of [-1,1]){
+  let x=cx+branch,side=branch===1?'W':'E';
+  for(let depth=0;depth<3;depth++){
+   let card=cards.pop(),y=cy-1-depth,doors=depth===0?[side,'N']:depth===2?['S']:['S','N'];
+   add(x,y,card.shape,card.name,'normal',doors,cluePositions.includes((branch===-1?0:3)+depth))
+  }
+ }
+ // One branch culminates in the objective; other branch remains a possible clue route.
+ let bossBranch=rnd(2)?1:-1,bossRoom=rooms[id(cx+bossBranch,cy-4)];
+ if(!bossRoom){bossRoom=add(cx+bossBranch,cy-4,'chamber','Rift Sanctum','boss',['S'],true)}
+ else{bossRoom.kind='boss';bossRoom.name='Rift Sanctum';bossRoom.clue=true}
+ let parent=rooms[id(cx+bossBranch,cy-3)];parent.doors.push('N');
+ bossRoom.finalEnemies=['boss','thrall'];
  return rooms;
 }
 function createProfile(hero){return{hero,level:1,exp:0,coins:0,stone:0,upgrades:{health:0,armour:0,power:0},missions:0}}

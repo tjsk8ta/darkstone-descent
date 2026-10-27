@@ -92,10 +92,12 @@ function generateRooms(){
   }
  }
  // One branch culminates in the objective; other branch remains a possible clue route.
- let bossBranch=rnd(2)?1:-1,bossRoom=rooms[id(cx+bossBranch,cy-4)];
- if(!bossRoom){bossRoom=add(cx+bossBranch,cy-4,'chamber','Rift Sanctum','boss',['S'],true)}
- else{bossRoom.kind='boss';bossRoom.name='Rift Sanctum';bossRoom.clue=true}
- let parent=rooms[id(cx+bossBranch,cy-3)];parent.doors.push('N');
+ let bossBranch=rnd(2)?1:-1,bossRoom=rooms[id(cx+bossBranch,cy-3)];
+ bossRoom.kind='boss';bossRoom.name='Rift Sanctum';bossRoom.shape='chamber';bossRoom.clue=true;
+ // Preserve exactly three seal locations, including the boss room.
+ let otherClues=Object.values(rooms).filter(r=>r.clue&&r!==bossRoom);
+ if(otherClues.length<2){let candidates=Object.values(rooms).filter(r=>r.kind==='normal'&&!r.clue);if(candidates.length)candidates[rnd(candidates.length)].clue=true}
+ if(otherClues.length>=2&&Object.values(rooms).filter(r=>r.clue).length>3)otherClues[0].clue=false;
  bossRoom.finalEnemies=['boss','thrall'];
  return rooms;
 }

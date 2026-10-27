@@ -36,3 +36,13 @@ Read and preserve relevant user instructions, prior decisions, and their rationa
 
 ## Definition of done
 No claim of 'fixed' unless the implemented workflow matches the requirements, relevant regression scenarios pass, and any untested platform behavior is clearly disclosed.
+
+
+## Exploration and Town fidelity status (2026-10-27)
+- Exploration now draws a map tile on demand and uses a shuffled *prototype* token pool. The room names, shapes, token distribution and encounter outcomes are NOT authenticated transcriptions of the published game components. Do not describe this as a faithful Map Card / Exploration Token implementation.
+- Current scenario objective uses two clues; validate against the exact published mission before making further claims of fidelity.
+- Town Stay uses named core locations but provisional prices, purchases and travel consequences. Do not represent these as published tables. The published Adventure Book and relevant expansion source material must be checked before implementing official results.
+- Do not invent missing rule entries or extrapolate tables from memory. Record missing source data and leave effects explicitly provisional until verified.
+- The map currently uses a finite 5×5 coordinate grid, which can cause dead ends; acceptance testing must cover reachability, exhaustion, and a fallback for an unreachable objective.
+- JS syntax checks and isolated randomized map-draw tests are not a substitute for browser/mobile and full expedition tests.
+- The attack UI should preserve no pre-roll targeting, individual hit selection, per-hit Defense, rerolls, and contextual movement-control replacement.

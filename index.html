@@ -50,6 +50,19 @@ const $=id=>document.getElementById(id), canvas=$('map'),ctx=canvas.getContext('
 const KEY='darkstone_descent_tiles_v3', W=9,H=7,N=9,D={N:[0,-1],S:[0,1],E:[1,0],W:[-1,0]},OP={N:'S',S:'N',E:'W',W:'E'};
 const CLASSES={marshal:{initiative:5,willpower:5,name:'Frontier Marshal',symbol:'✦',desc:'Resilient sharpshooter · accurate sidearm · Deadeye adds an attack die.',hp:19,sanity:12,dice:2,hit:4,damage:3,range:6,defense:5,move:0,skill:'Deadeye · next attack +1 die'},scout:{initiative:6,willpower:5,name:'Trail Scout',symbol:'➶',desc:'Fast explorer · better accuracy · Trailblaze grants extra movement.',hp:15,sanity:14,dice:2,hit:3,damage:2,range:6,defense:5,move:1,skill:'Trailblaze · gain +3 movement'},occultist:{initiative:4,willpower:3,name:'Wandering Mystic',symbol:'✧',desc:'High sanity and occult resilience · Soul Ward restores vitality.',hp:14,sanity:19,dice:2,hit:4,damage:3,range:5,defense:6,move:0,skill:'Soul Ward · heal 2 wounds & 4 sanity'}};
 const TYPES={thrall:{initiative:4,escape:3,name:'Hollow Miner',glyph:'♟',hp:5,def:0,damage:2,hit:4,steps:2,exp:10,color:'#ba7b6d',sane:0},spider:{initiative:6,escape:4,name:'Cinder Crawler',glyph:'✣',hp:4,def:0,damage:2,hit:5,steps:3,exp:8,color:'#b66e5a',sane:0},wraith:{initiative:5,escape:4,name:'Veil Whisperer',glyph:'☾',hp:6,def:1,damage:2,hit:4,steps:2,exp:13,color:'#ae88c4',sane:2},brute:{initiative:3,escape:5,name:'Ashbound Brute',glyph:'♜',hp:11,def:1,damage:3,hit:4,steps:1,exp:20,color:'#dc745d',sane:0},boss:{initiative:4,escape:5,name:'The Rift Warden',glyph:'✺',hp:34,def:1,damage:3,hit:4,steps:2,exp:95,color:'#cf8cc9',sane:2}};
+// Distinct 2014 core-set enemy identities, with explicitly provisional solo stats.
+// These are NOT transcriptions of official Enemy Record Sheets or Elite charts.
+const CORE_ENEMY_PROTOTYPES={
+ 'Night Terror':{initiative:4,escape:4,hp:12,def:1,damage:3,hit:4,steps:2,exp:24,sane:1,glyph:'♜',color:'#a17dba'},
+ 'Strangler':{initiative:5,escape:4,hp:5,def:0,damage:2,hit:4,steps:2,exp:12,sane:0,glyph:'♟',color:'#a88d70'},
+ 'Void Spider':{initiative:6,escape:4,hp:4,def:0,damage:2,hit:5,steps:3,exp:10,sane:0,glyph:'✣',color:'#b77a99'},
+ 'Tentacle':{initiative:3,escape:5,hp:6,def:1,damage:2,hit:4,steps:1,exp:13,sane:0,glyph:'☷',color:'#9b88bc'},
+ 'Hellbat':{initiative:6,escape:4,hp:3,def:0,damage:1,hit:5,steps:3,exp:8,sane:0,glyph:'✦',color:'#c47d65'},
+ 'Hungry Dead':{initiative:2,escape:3,hp:5,def:0,damage:2,hit:4,steps:1,exp:10,sane:0,glyph:'♟',color:'#8ca37e'},
+ 'Corpse Pile':{initiative:1,escape:5,hp:9,def:1,damage:2,hit:5,steps:0,exp:16,sane:1,glyph:'▣',color:'#a1a08a'},
+ 'Slasher':{initiative:4,escape:4,hp:11,def:1,damage:3,hit:4,steps:2,exp:23,sane:0,glyph:'⚔',color:'#c07565'}
+};
+for(const [name,stats] of Object.entries(CORE_ENEMY_PROTOTYPES))TYPES[name]={name,...stats};
 const ROOM_NAMES=['Forsaken Shaft','Miner’s Rest','Bone Gallery','Sulphur Fissure','The Old Tunnels','Black Lantern Hall','Fallen Gallery','The Crystal Vein','Abandoned Depot','Screaming Passage','The Red Chamber','Sunken Shrine','Ironwork Ruin','The Echo Vault','Buried Hall'];
 const rnd=n=>{if(!Number.isInteger(n)||n<=0)throw Error('Invalid random range');if(globalThis.crypto?.getRandomValues){const buf=new Uint32Array(1),limit=Math.floor(4294967296/n)*n;do{crypto.getRandomValues(buf)}while(buf[0]>=limit);return buf[0]%n}return Math.floor(Math.random()*n)},die=()=>1+rnd(6),roll=n=>Array.from({length:n},()=>die()),sum=a=>a.reduce((x,y)=>x+y,0),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),id=(x,y)=>x+','+y,man=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y)), numRoman=n=>['','I','II','III','IV','V','VI','VII','VIII','IX','X'][n]||n;
 let selectedEnemyId=null,pendingAttack=null,gritDiceSelection=new Set(),mapPanX=0,mapPanY=0,mapDrag=null,mapPinch=null,mapZoom=1,mapSuppressTapUntil=0,mapFitExplored=true,dynamiteAim=false,selectedMapCell=null;let S=null,selected='marshal',difficulty='standard',hover=null,view=null,modalMode='setup';
@@ -193,34 +206,44 @@ const ORIGINAL_LOW_THREAT_REFERENCE={
   {copies:2,card:'P Tentacles'}
  ]
 };
-// Temporary archetype translation for the solo prototype. P = Posse Size (1).
-// Distinct official enemy rules, abilities, and threat scaling are not yet implemented.
-const LOW_THREAT_POOL=[
- ...ORIGINAL_LOW_THREAT_REFERENCE.city.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:
-   x.card==='1 Night Terror'?[{type:'brute',n:1}]:
-   x.card==='1 Night Terror & P Stranglers'?[{type:'brute',n:1},{type:'thrall',n:1}]:
-   x.card==='1 Night Terror & P Void Spiders'?[{type:'brute',n:1},{type:'spider',n:1}]:
-   x.card==='P Stranglers'?[{type:'thrall',n:1}]:
-   x.card==='P Tentacles'?[{type:'wraith',n:1}]:
-   x.card==='6 Void Spiders'?[{type:'spider',n:6}]:[{type:'spider',n:1},{type:'thrall',n:1}]}))),
- ...ORIGINAL_LOW_THREAT_REFERENCE.swamp.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:
-   x.card==='P Hellbats'?[{type:'spider',n:1}]:
-   x.card==='P Hungry Dead & 1 Corpse Pile'?[{type:'thrall',n:1},{type:'wraith',n:1}]:
-   x.card==='1 Slasher'?[{type:'brute',n:1}]:
-   x.card==='1 Slasher & P Hellbats'?[{type:'brute',n:1},{type:'spider',n:1}]:[{type:'wraith',n:1}]})))
-];
+// Card identities/frequencies follow the prior inventory; stats and Posse Size are
+// provisional. Keep the card and encounter tier separate from enemy implementation.
+function lowThreatGroups(card){
+ const map={'1 Night Terror':[['Night Terror',1]],'1 Night Terror & P Stranglers':[['Night Terror',1],['Strangler',1]],'1 Night Terror & P Void Spiders':[['Night Terror',1],['Void Spider',1]],'P Stranglers':[['Strangler',1]],'P Tentacles':[['Tentacle',1]],'6 Void Spiders':[['Void Spider',6]],'P Void Spiders & P Stranglers':[['Void Spider',1],['Strangler',1]],'P Hellbats':[['Hellbat',1]],'P Hungry Dead & 1 Corpse Pile':[['Hungry Dead',1],['Corpse Pile',1]],'1 Slasher':[['Slasher',1]],'1 Slasher & P Hellbats':[['Slasher',1],['Hellbat',1]]};
+ if(!map[card])throw Error('Unmapped Low Threat: '+card);
+ return map[card].map(([type,n])=>({type,n}));
+}
+const LOW_THREAT_POOL=Object.values(ORIGINAL_LOW_THREAT_REFERENCE).flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
+// Medium, High and Epic cards are original PROTOTYPE encounters, not published
+// card transcriptions. Their exact 2014 inventories still require verification.
+const PROTOTYPE_THREAT_TIERS={
+ medium:[[['Night Terror',1],['Strangler',2]],[['Slasher',1],['Hellbat',3]],[['Hungry Dead',3],['Corpse Pile',1]]],
+ high:[[['Night Terror',2],['Void Spider',3]],[['Slasher',2],['Hellbat',4]],[['Hungry Dead',5],['Corpse Pile',2]]],
+ epic:[[['Night Terror',3],['Strangler',4]],[['Slasher',3],['Hellbat',5]],[['Hungry Dead',6],['Corpse Pile',3]]]
+};
+function drawThreat(r,tier='low'){
+ if(tier==='low')return drawLowThreat(r);
+ const choices=PROTOTYPE_THREAT_TIERS[tier];if(!choices)throw Error('Unknown threat tier '+tier);
+ const groups=choices[rnd(choices.length)].map(([type,n])=>({type,n}));
+ const before=S.enemies.length;
+ for(const g of groups)for(let i=0;i<g.n;i++)spawnEnemy(g.type,r);
+ const spawned=S.enemies.length-before;
+ if(spawned){r.fightThreats=(r.fightThreats||0)+1;log(tier.toUpperCase()+' prototype Threat: '+groups.map(g=>g.n+' '+g.type).join(', ')+'. Not a published card.','hit')}
+ else log('No available spaces for '+tier+' Threat; no loot credit.','hit');
+ return spawned;
+}
 function drawLowThreat(r){
  if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(LOW_THREAT_POOL.map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=S.lowThreatDeck.pop(),groups=threat.groups,prior=S.enemies.length;
  for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
  const spawned=S.enemies.length-prior;
- if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Original 2014 Low Threat card: '+threat.card+'; prototype stand-ins: '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
+ if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Original 2014 Low Threat card: '+threat.card+'; prototype statistics: '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
  else log('Threat could not be placed; no Loot credit awarded.','hit');
  return spawned;
 }
 function enterRoom(r){if(r.explored)return;r.seen=true;r.explored=true;S.cleared++;resolveExplorationToken(r);ensureOpenFrontier(r);log(`Uncovered ${r.name}. The air tastes of iron.`,'info');let count=r.kind==='boss'?1:r.firstJunction?0:r.shape==='corridor'?0:['encounter','darkness','depth'].includes(r.token?.event)?0:1+rnd(r.kind==='normal'?3:2);if(r.kind==='boss'){
   beginFinalEncounter(r)
- }else if(count){count=drawLowThreat(r)}
+ }else if(count){count=drawThreat(r,S.depth>=8?'high':S.depth>=5?'medium':'low')}
  if(S.enemies.some(e=>roomAt(e.x,e.y)===r))log(`${count+(r.kind==='boss'?1:0)} hostile shapes stir in the chamber.`,'hit');
  if(r.kind!=='boss'&&r.token?.event==='encounter'){let events=[{title:'The Singing Vein',text:'A deep-blue crystal hums from a fracture in the rock. Its light draws the eye — and something deeper.',options:[{title:'Extract the crystal',detail:'Gain darkstone; risk sanity.',effect:'vein'},{title:'Seal the crack',detail:'Recover sanity; no treasure.',effect:'seal'}]},{title:'Abandoned Supply Cart',text:'A rusted cart stands upright in the dark. A bloodstained canvas covers its contents.',options:[{title:'Search the cargo',detail:'Claim supplies, with a chance of an ambush.',effect:'cart'},{title:'Leave it undisturbed',detail:'Gain grit and move on.',effect:'ignore'}]},{title:'The Collapsed Gallery',text:'Loose stones cover the only intact survey marker. A faint voice asks you to follow it.',options:[{title:'Dig out the survey marker',detail:'Chance for coins or injury.',effect:'dig'},{title:'Follow the voice',detail:'Test your nerve.',effect:'voice'}]}];let event=events[rnd(events.length)];S.pendingEvent={...event};eventModal(event)}
  checkCleared(r);save()}

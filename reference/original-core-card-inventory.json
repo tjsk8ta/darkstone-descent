@@ -1,0 +1,86 @@
+{
+  "source": "https://www.scribd.com/document/351897359/SoB-Game-Contents-v2",
+  "edition": "Original core sets; not verified against Revised Edition",
+  "note": "Inventory only. P denotes per-hero count and PP denotes twice per-hero count. Card effects are not established by this source.",
+  "cityOfAncients": {
+    "lowThreats": {
+      "1 Night Terror": 1,
+      "1 Night Terror & P Stranglers": 1,
+      "1 Night Terror & P Void Spiders": 1,
+      "P Stranglers": 2,
+      "P Tentacles": 2,
+      "6 Void Spiders": 2,
+      "P Void Spiders & P Stranglers": 1
+    },
+    "loot": {
+      "Blood Money (D6 x $25)": 1,
+      "Cash ($50)": 1,
+      "Coins ($25)": 1,
+      "Dark Stone Rock (D3)": 1,
+      "Dark Stone Shard": 2,
+      "Gold Bars ($250)": 1,
+      "Gold Nuggets (D6 x $50)": 1,
+      "Sack Of Gold Dust ($100)": 1,
+      "This Should Come In Handy": 2,
+      "What's This?!": 1
+    },
+    "scavenge": {
+      "Chilling Dread": 1,
+      "Emerging Darkness": 1,
+      "Hideous Discovery": 2,
+      "Nothing Here": 4,
+      "Small Find": 2,
+      "Something Shiny": 1,
+      "Useful Discovery": 1
+    },
+    "darkness": {
+      "Demonic Force": 2,
+      "Demonic Speed": 1,
+      "Encroaching Shadows": 1,
+      "Flood Of Bats": 1,
+      "It's A Trap!": 1,
+      "Overwhelming Dread": 1,
+      "Power Of The Void": 2,
+      "Strength Of The Void": 1,
+      "Suffocating Mist": 1,
+      "Tentacles From The Void": 1,
+      "Terror From Beyond": 2,
+      "Whispering Voices": 1
+    },
+    "growingDread": {
+      "A Fool's Errand": 1,
+      "Cosmic Insignificance": 1,
+      "Dread": 2,
+      "Powerful Dread": 1,
+      "Stench Beyond Reason": 1,
+      "Void Surge": 1
+    }
+  },
+  "swampsOfDeath": {
+    "lowThreats": {
+      "P Hellbats": 2,
+      "P Hungry Dead & 1 Corpse Pile": 3,
+      "1 Slasher": 2,
+      "1 Slasher & P Hellbats": 1,
+      "P Tentacles": 2
+    },
+    "scavenge": {
+      "Chilling Dread": 1,
+      "Emerging Darkness": 1,
+      "Hideous Discovery": 2,
+      "Nothing Here": 4,
+      "Small Find": 2,
+      "Something Shiny": 1,
+      "Useful Discovery": 1
+    },
+    "loot": "Same 12-card names and quantities as City of the Ancients",
+    "growingDread": {
+      "Chittering In The Dark": 1,
+      "Dread": 2,
+      "Dripping Gore": 1,
+      "Humanity's End": 1,
+      "Powerful Dread": 1,
+      "Wave Of Heat": 1
+    }
+  }
+}

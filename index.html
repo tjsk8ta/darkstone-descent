@@ -140,7 +140,7 @@ function setup(){let saved=safeRead();let profile=saved?.profile||null;let choic
  document.querySelectorAll('.herochoice').forEach(b=>b.onclick=()=>{selected=b.dataset.hero;document.querySelectorAll('.herochoice').forEach(x=>x.classList.toggle('selected',x===b))});$('difficulty').onchange=e=>difficulty=e.target.value;$('startGame').onclick=()=>makeRun(createProfile(selected),difficulty);if($('resumeGame'))$('resumeGame').onclick=()=>{S=saved;pendingAttack=S.savedPendingAttack||null;closeModal();render()};}
 function startRound(){if(!S||S.ended||S.mutationReviewPending)return;
  S.turn++;S.enemyActed=[];S.escapedValue=1;
- let stage=S.cleared<5?7:S.cleared<10?8:9, darkRoll=roll(2),total=sum(darkRoll);
+ let stage=(S.depth||0)<5?7:(S.depth||0)<10?8:9, darkRoll=roll(2),total=sum(darkRoll);
  if(darkRoll[0]===darkRoll[1]){
    S.depthEvents=(S.depthEvents||0)+1;
    log(`Hold Back the Darkness <span class="dice">[${darkRoll.join(' ')}]</span> — DOUBLES! Depth Event; Darkness does not advance.`,'info');
@@ -329,7 +329,7 @@ function resolveFightRewards(r){
  const cards=Math.min(3,r.fightThreats);
  const breath=1+Math.floor((die()-1)/2);
  const heal=Math.min(breath,S.maxHp-S.hp);S.hp+=heal;const sanityHeal=Math.min(breath-heal,S.maxS-S.sanity);S.sanity+=sanityHeal;
- log('Fight ends: Catch Your Breath D3 ['+breath+']; '+heal+' Wounds healed.','good');
+ log('Fight ends: Catch Your Breath D3 ['+breath+']; '+heal+' Wounds and '+sanityHeal+' Sanity healed.','good');
  for(let i=0;i<cards;i++)drawReward('loot');
  log('Fight loot: '+cards+' draw(s) from '+r.fightThreats+' Threat instance(s), maximum 3.','info');
 }
@@ -391,7 +391,7 @@ function scavenge(){if(!S||S.ended)return;
  if(hits){r.searched=true;r.scavengedTokens=(r.scavengedTokens||0)+1;log('Scavenged marker placed on '+r.name+'.','info');for(let i=0;i<hits;i++)drawReward('scavenge');} else log('No sixes; no cards drawn. This tile can be searched again next turn.','info');
  checkSurvival();save();render()}
 function rest(){if(!S||S.ended)return;if(S.actionUsed||S.enemies.length){log('You need an unused action and a safe chamber.');render();return}S.actionUsed=true;let a=Math.min(S.maxHp-S.hp,2),b=Math.min(S.maxS-S.sanity,2);S.hp+=a;S.sanity+=b;log(`Catch your breath: +${a} Wounds recovered, +${b} Sanity.`,'good');save();render()}
-function special(){if(!S||S.ended)return;if(S.grit<=0){log('No Grit available.');render();return}let k=S.profile.hero;if(k==='marshal'){log('Laying Down the Law is available free during your To Hit roll.','info');render();return;if(S.powered||S.actionUsed){log('Deadeye must be readied before your attack.');render();return}S.powered=true;S.grit--;log('Legacy Deadeye disabled: Lawman uses free Laying Down the Law reroll during attacks.','info')}else if(k==='scout'){S.grit--;S.move+=3;S.moveMax+=3;log('Trailblaze: +3 movement points.','good')}else{S.grit--;S.hp=Math.min(S.maxHp,S.hp+2);S.sanity=Math.min(S.maxS,S.sanity+4);log('Soul Ward: heal 2 Wounds and 4 Sanity.','good')}save();render()}
+function special(){if(!S||S.ended)return;if(S.grit<=0){log('No Grit available.');render();return}let k=S.profile.hero;if(k==='marshal'){log('Laying Down the Law is available free during your To Hit roll.','info');render();return}else if(k==='scout'){S.grit--;S.move+=3;S.moveMax+=3;log('Trailblaze: +3 movement points.','good')}else{S.grit--;S.hp=Math.min(S.maxHp,S.hp+2);S.sanity=Math.min(S.maxS,S.sanity+4);log('Soul Ward: heal 2 Wounds and 4 Sanity.','good')}save();render()}
 function dynamiteRange(){return (CLASSES[S.profile.hero].strength||3)+3}
 function validDynamiteTarget(x,y){return !!(S&&cellAt(x,y)&&visibleAt(x,y)&&man(S,{x,y})<=dynamiteRange()&&lineOfSight(S,{x,y}))}
 function selectMapCell(x,y){if(!S||!visibleAt(x,y))return;selectedMapCell={x,y};if(dynamiteAim)log('Dynamite target selected ('+x+','+y+'). Confirm throw on map.','info');render()}

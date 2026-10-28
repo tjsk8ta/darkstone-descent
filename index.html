@@ -65,15 +65,40 @@ const SHAPES={
  corridor:['.........','....XX...','....XX...','....XX...','....XX...','....XX...','....XX...'],
  chamber:['.........','..XXXXX..','..XXXXX..','..XXXXX..','..XXXXX..','..XXXXX..','.........']};
 function visibleAt(x,y){const r=roomAt(x,y);return !!(r&&(r.seen||r.explored||r.rewarded)&&cellAt(x,y))}
-function floorLocal(r,lx,ly){return !!SHAPES[r.shape]?.[ly]?.[lx]?.match(/X/)}
-function cellAt(x,y){if(x<0||y<0||x>=N*W||y>=N*H)return false;let r=roomAt(x,y);if(!r)return false;let lx=x%W,ly=y%H;
- if(floorLocal(r,lx,ly))return true;
- // Door connector strips join neighbouring tile masks; two lanes wide.
- if(r.doors.includes('E')&&ly>=1&&ly<=2&&lx>=7)return true;
- if(r.doors.includes('W')&&ly>=1&&ly<=2&&lx<=2)return true;
- if(r.doors.includes('N')&&lx>=4&&lx<=5&&ly<=1)return true;
- if(r.doors.includes('S')&&lx>=4&&lx<=5&&ly>=5)return true;
- return false}
+// All tile exits connect to the same central walkable network. This applies to
+// previously saved rooms too, so older saves cannot retain disconnected pockets.
+function floorLocal(r,lx,ly){
+ if(!r||lx<0||ly<0||lx>=W||ly>=H)return false;
+ if(SHAPES[r.shape]?.[ly]?.[lx]==='X')return true;
+ const doors=r.doors||[];
+ // Central hub and cardinal spurs: every advertised exit joins the tile interior.
+ if(lx===4&&ly===3)return true;
+ if(doors.includes('N')&&lx>=4&&lx<=5&&ly<=3)return true;
+ if(doors.includes('S')&&lx>=4&&lx<=5&&ly>=3)return true;
+ if(doors.includes('E')&&ly>=1&&ly<=3&&lx>=4)return true;
+ if(doors.includes('W')&&ly>=1&&ly<=3&&lx<=4)return true;
+ return false;
+}
+function cellAt(x,y){
+ if(x<0||y<0||x>=N*W||y>=N*H)return false;
+ let r=roomAt(x,y);if(!r)return false;
+ return floorLocal(r,x%W,y%H);
+}
+function tileConnected(r){
+ if(!r)return false;
+ let cells=[],seen=new Set(),queue=[];
+ for(let ly=0;ly<H;ly++)for(let lx=0;lx<W;lx++)if(floorLocal(r,lx,ly))cells.push([lx,ly]);
+ if(!cells.length)return false;
+ queue.push(cells[0]);seen.add(cells[0].join(','));
+ for(let i=0;i<queue.length;i++){let [x,y]=queue[i];for(let [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){let nx=x+dx,ny=y+dy,k=nx+','+ny;if(floorLocal(r,nx,ny)&&!seen.has(k)){seen.add(k);queue.push([nx,ny])}}}
+ return seen.size===cells.length;
+}
+function adjoiningDoorConnected(from,dir,to){
+ const opposite={N:'S',S:'N',E:'W',W:'E'}[dir];
+ if(!from?.doors.includes(dir)||!to?.doors.includes(opposite))return false;
+ const pairs=dir==='N'?[[4,0,4,H-1],[5,0,5,H-1]]:dir==='S'?[[4,H-1,4,0],[5,H-1,5,0]]:dir==='E'?[[W-1,1,0,1],[W-1,2,0,2]]:[[0,1,W-1,1],[0,2,W-1,2]];
+ return pairs.some(([ax,ay,bx,by])=>floorLocal(from,ax,ay)&&floorLocal(to,bx,by));
+}
 const MAP_CARD_POOL=[
  {name:'Old Mine Chamber',shape:'chamber'},{name:'Forsaken Gallery',shape:'chamber'},
  {name:'North Passage',shape:'corridor'},{name:'Narrow Passage',shape:'corridor'},
@@ -84,7 +109,7 @@ const MAP_CARD_POOL=[
 function shuffleDeck(a){for(let i=a.length-1;i>0;i--){let j=rnd(i+1),t=a[i];a[i]=a[j];a[j]=t}return a}
 function generateRooms(){let rooms={},x=4,y=5;rooms[id(x,y)]={x,y,shape:'entrance',name:'Mine Entrance',kind:'entry',doors:['N'],seen:true,explored:true,searched:false};return rooms}
 function ensureMineDeck(){if(!S.mapDeck)S.mapDeck=shuffleDeck(MAP_CARD_POOL.map(c=>({...c})));if(!S.explorationDeck)S.explorationDeck=shuffleDeck(Array.from({length:12},(_,i)=>({clue:i<4,exits:i%4===0?0:i%3===0?2:1,event:i%3===1?'encounter':'attack',dread:i===11})))}
-function drawNextMap(from,dir){ensureMineDeck();let delta=D[dir],x=from.x+delta[0],y=from.y+delta[1];if(x<0||y<0||x>=N||y>=N||S.rooms[id(x,y)])return null;let firstJunction=Object.keys(S.rooms).length===1&&from.kind==='entry';let card=firstJunction?{name:'T-Junction',shape:'tee'}:S.mapDeck.pop();if(!card){S.mapDeck=shuffleDeck(MAP_CARD_POOL.map(c=>({...c})));card=S.mapDeck.pop()}let opposite={N:'S',S:'N',E:'W',W:'E'}[dir],r={x,y,shape:card.shape,name:card.name,kind:'normal',doors:firstJunction?['S','E','W']:[opposite],seen:false,explored:false,searched:false,clue:false,token:null,firstJunction};S.rooms[id(x,y)]=r;log('Map card drawn: '+card.name+'.','info');return r}
+function drawNextMap(from,dir){ensureMineDeck();let delta=D[dir],x=from.x+delta[0],y=from.y+delta[1];if(x<0||y<0||x>=N||y>=N||S.rooms[id(x,y)])return null;let firstJunction=Object.keys(S.rooms).length===1&&from.kind==='entry';let card=firstJunction?{name:'T-Junction',shape:'tee'}:S.mapDeck.pop();if(!card){S.mapDeck=shuffleDeck(MAP_CARD_POOL.map(c=>({...c})));card=S.mapDeck.pop()}let opposite={N:'S',S:'N',E:'W',W:'E'}[dir],r={x,y,shape:card.shape,name:card.name,kind:'normal',doors:firstJunction?['S','E','W']:[opposite],seen:false,explored:false,searched:false,clue:false,token:null,firstJunction};S.rooms[id(x,y)]=r;if(!tileConnected(r)||!adjoiningDoorConnected(from,dir,r)){delete S.rooms[id(x,y)];throw Error('Map tile connectivity invariant failed: '+card.name+' from '+dir)}log('Map card drawn: '+card.name+'.','info');return r}
 function resolveExplorationToken(r){if(r.kind==='entry')return;ensureMineDeck();if(r.firstJunction){log('Initial T-Junction: starting tile; no Exploration Token.','info');return}if(r.shape==='corridor'){let options=['N','E','W','S'].filter(d=>!r.doors.includes(d)&&r.x+D[d][0]>=0&&r.y+D[d][1]>=0&&r.x+D[d][0]<N&&r.y+D[d][1]<N&&!S.rooms[id(r.x+D[d][0],r.y+D[d][1])]);if(options.length)r.doors.push(options[rnd(options.length)]);else ensureOpenFrontier(r);log('Passage: no Exploration Token.','info');return}
  let token=S.explorationDeck.pop();if(!token){S.explorationDeck=shuffleDeck(Array.from({length:12},(_,i)=>({clue:i<4,exits:i%4===0?0:i%3===0?2:1,event:i%3===1?'encounter':'attack',dread:i===11})));token=S.explorationDeck.pop()}r.token=token;r.clue=!!token.clue;
  if(token.clue&&S.clues>=1){r.kind='boss';r.name='Dark Stone Deposit';r.finalEnemies=['boss','thrall'];r.doors=r.doors.slice(0,1);log('Second Clue: Dark Stone deposit discovered; ignore the token’s normal doors and encounter.','hit');return}

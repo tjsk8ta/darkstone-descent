@@ -202,7 +202,7 @@ const ORIGINAL_LOW_THREAT_REFERENCE={
   {copies:2,card:'P Hellbats'},
   {copies:3,card:'P Hungry Dead & 1 Corpse Pile'},
   {copies:2,card:'1 Slasher'},
-  {copies:2,card:'1 Slasher & P Hellbats'},
+  {copies:1,card:'1 Slasher & P Hellbats'},
   {copies:2,card:'P Tentacles'}
  ]
 };
@@ -249,7 +249,7 @@ function threatGroupsFromCard(card,tier,depth=0){
  for(const part of nested){const m=part.match(/(\d+) (Low|Medium|Elite|Threat)/i);let n=+m[1],kind=m[2].toLowerCase();if(kind==='elite'||kind==='threat')throw Error('Unresolved original '+kind+' threat subdraw: '+card);for(let i=0;i<n;i++)groups.push(...drawOriginalThreatGroups(kind,depth+1));}
  const single=card.match(/1 (Low|Medium) Threat Card/gi)||[];
  for(const part of single)groups.push(...drawOriginalThreatGroups(part.includes('Low')?'low':'medium',depth+1));
- if(/Elite Threat Cards|(?<!Low |Medium )Threat Card/.test(card)&&!/Low Threat Card|Medium Threat Card/.test(card))throw Error('Unresolved Elite/Threat draw');
+ if(/Elite Threat Cards|(?:^|[^a-z])Threat Card/.test(card)&&!/Low Threat Card|Medium Threat Card/.test(card))throw Error('Unresolved Elite/Threat draw');
  const named=[['Night Terrors?','Night Terror'],['Stranglers?','Strangler'],['Void Spiders?','Void Spider'],['Tentacles?','Tentacle'],['Hellbats?','Hellbat'],['Hungry Dead','Hungry Dead'],['Corpse Piles?','Corpse Pile'],['Slashers?','Slasher'],['Goliath','Goliath'],['Harbinger','Harbinger']];
  for(const [pattern,type] of named){const re=new RegExp('(D3|PP|P|\\d+)\\s+'+pattern,'gi');let m;while((m=re.exec(card))!==null){const qty=m[1]==='D3'?1+rnd(3):m[1]==='PP'?2:m[1]==='P'?1:+m[1];add(type,qty)}}
  if(!groups.length)throw Error('Threat card has no resolved enemies: '+card);

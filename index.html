@@ -210,7 +210,7 @@ function doorwayRoom(){
  }
  return null;
 }
-function lookThroughDoor(){if(!S||S.ended)return;if(S.enemies.length){log('Cannot explore while '+S.enemies.length+' enemy/enemies remain active. Defeat them first; use Fit explored map to locate them.','info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(S.actionUsed){log("Your action has already been spent.","info");render();return}if(nr.undrawn){nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}S.actionUsed=true;nr.seen=true;nr.explored=false;S.profile.exp+=5;S.depth=(S.depth||0)+1;log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Remaining movement is preserved; resolve exploration at end of turn.","good");save();render()}
+function lookThroughDoor(){if(!S||S.ended)return;if(S.enemies.length){log('Cannot explore while '+S.enemies.length+' enemy/enemies remain active. Defeat them first; use Fit explored map to locate them.','info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(S.actionUsed){log("Your action has already been spent.","info");render();return}if(!roomCurrent()?.explored){log('Resolve this tile’s Exploration Token before Searching.','info');render();return}if(nr.undrawn){nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}S.actionUsed=true;nr.seen=true;nr.explored=false;S.profile.exp+=5;S.depth=Math.min(16,(S.depth||0)+1);log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Remaining movement is preserved; resolve exploration at end of turn.","good");save();render()}
 function moveStep(dx,dy){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack)return;if(!S||S.ended||modalMode==='event'&&!$('overlay').classList.contains('hidden'))return;if(S.move<=0){log('No movement remains. End your turn.','info');render();return}let x=S.x+dx,y=S.y+dy;if(!cellAt(x,y)||dx&&dy&&(!cellAt(S.x+dx,S.y)||!cellAt(S.x,S.y+dy))){log('A wall blocks your path.');render();return}if(S.enemies.length){let neighbors=S.enemies.filter(e=>man(S,e)<=1&&TYPES[e.type].escape>S.escapedValue);
  if(neighbors.length){let difficulty=Math.max(...neighbors.map(e=>TYPES[e.type].escape)),test=die();
  if(test<difficulty){log(`Escape test <span class="dice">[${test}]</span> vs ${difficulty}+ failed; unable to move.`, 'hit');render();return}
@@ -238,10 +238,10 @@ function rerollMovement(){if(!S||S.ended||S.grit<1||pendingAttack)return;let v=d
 function attackNearest(){if(!S||S.ended)return;if(pendingAttack)return;attack()}
 function scavenge(){if(!S||S.ended)return;
  let r=roomCurrent();if(S.enemies.length){log('Searching is not permitted during a Fight.');render();return}
- if(!r?.explored||S.actionUsed||r.searched){log('Scavenge requires an explored tile, an unused Search action and a tile not previously scavenged successfully.');render();return}
+ if(!r?.explored||S.actionUsed||(r.scavengedTokens||0)>=1||r.searched){log('Scavenge requires a resolved Exploration Token, an unused Search action and a tile not already successfully scavenged (solo limit: one).');render();return}
  S.actionUsed=true;let rs=roll(3),hits=rs.filter(x=>x===6).length;
  log(`Scavenge <span class="dice">[${rs.join(' ')}]</span>: ${hits} sixes.`,hits?'good':'');
- if(hits){r.searched=true;r.scavengedTokens=(r.scavengedTokens||0)+1;log('Scavenged marker placed on '+r.name+'.','info');for(let i=0;i<hits;i++){let treasure=rnd(9);
+ if(hits){r.searched=true;r.scavengedTokens=(r.scavengedTokens||0)+1;log('Scavenged marker placed on '+r.name+' (solo tile limit reached).','info');for(let i=0;i<hits;i++){let treasure=rnd(9);
  if(treasure===0){S.bandages++;log('Found bandages.','good')}
  else if(treasure===1){S.whiskey++;log('Found a flask.','good')}
  else if(treasure===2){S.bombs++;log('Found dynamite.','good')}

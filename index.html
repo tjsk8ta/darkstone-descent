@@ -189,13 +189,27 @@ function spawnEnemy(type,r){let locs=[];for(let ly=1;ly<=5;ly++)for(let lx=1;lx<
 function checkCleared(r){if(!r?.seen)return;let foes=S.enemies.filter(e=>e.home===id(r.x,r.y));if(foes.length)return;if(!r.rewarded&&r.kind!=='entry'){r.rewarded=true;let coins=5+rnd(9);S.coins+=coins;S.profile.exp+=6;log(`${r.name} secured: +${coins} coins, +6 XP.`,'good');if(Math.random()<.24){S.stone++;log('A glint of darkstone lies beneath the rubble.','good')}}if(r.clue&&!r.clueFound){r.clueFound=true;S.clues++;S.profile.exp+=20;log(`Clue discovered! <b>${S.clues}/2</b> found. (+20 prototype XP)`,'good');if(r.kind==='boss'&&S.clues===2)log('Both seals resonate. The Rift Warden must fall.','info')}if(r.kind==='boss'&&!S.bossDefeated&&r.rewarded){S.bossDefeated=true;if(S.clues<2)log('The guardian has fallen, but more clues are missing.','info')}if(S.clues>=2&&S.bossDefeated)finish(true,'The Dark Stone deposit is secured.')}
 function occupied(x,y){return S.enemies.find(e=>e.x===x&&e.y===y)}
 function path(from,to,allowUnknown=false,avoidEnemies=true){const start=id(from.x,from.y),dest=id(to.x,to.y),queue=[from],came={[start]:null};let dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];while(queue.length){let p=queue.shift(),key=id(p.x,p.y);if(key===dest)break;for(let [dx,dy] of dirs){let x=p.x+dx,y=p.y+dy,k=id(x,y);if(k in came||!cellAt(x,y))continue;if(dx&&dy&&(!cellAt(p.x+dx,p.y)||!cellAt(p.x,p.y+dy)))continue;if(!visibleAt(x,y)){let r=roomAt(x,y);if(!allowUnknown||!r||!Object.values(D).some(([a,b])=>S.rooms[id(r.x+a,r.y+b)]?.seen))continue}if(avoidEnemies&&occupied(x,y)&&k!==dest)continue;came[k]=key;queue.push({x,y})}}if(!(dest in came))return null;let result=[],curr=dest;while(curr!==start){let [x,y]=curr.split(',').map(Number);result.unshift({x,y});curr=came[curr]}return result}
-function doorwayRoom(){if(!S)return null;let r=roomCurrent();if(!r?.explored)return null;let lx=S.x%W,ly=S.y%H;
- for(let dir of r.doors){let delta=D[dir],nx=r.x+delta[0],ny=r.y+delta[1],nr=S.rooms[id(nx,ny)];if(nr?.seen||nx<0||ny<0||nx>=N||ny>=N)continue;
- // Match the actual two-lane connector squares, including the last floor square
- // immediately before a blue doorway; do not require a non-walkable edge cell.
- let atDoor=(dir==='N'&&ly<=2&&lx>=4&&lx<=5)||(dir==='S'&&ly>=4&&lx>=4&&lx<=5)||(dir==='E'&&lx>=5&&ly>=1&&ly<=4)||(dir==='W'&&lx<=3&&ly>=1&&ly<=4);
- if(atDoor)return nr||{undrawn:true,from:r,dir};
- }return null}
+function doorwayRoom(){
+ if(!S)return null;
+ const r=roomCurrent();if(!r?.explored)return null;
+ const lx=S.x%W,ly=S.y%H;
+ // Door activation is restricted to the actual threshold squares. A hero
+ // in the centre of a chamber cannot open a distant west/east door.
+ const thresholds={
+  N:[[4,0],[5,0],[4,1],[5,1]],
+  S:[[4,H-1],[5,H-1],[4,H-2],[5,H-2]],
+  E:[[W-1,1],[W-1,2],[W-2,1],[W-2,2]],
+  W:[[0,1],[0,2],[1,1],[1,2]]
+ };
+ for(const dir of r.doors){
+  const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
+  if(nx<0||ny<0||nx>=N||ny>=N)continue;
+  const nr=S.rooms[id(nx,ny)];if(nr?.seen)continue;
+  if(!thresholds[dir].some(([x,y])=>x===lx&&y===ly&&cellAt(S.x,S.y)))continue;
+  return nr||{undrawn:true,from:r,dir};
+ }
+ return null;
+}
 function lookThroughDoor(){if(!S||S.ended)return;if(S.enemies.length){log('Cannot explore while '+S.enemies.length+' enemy/enemies remain active. Defeat them first; use Fit explored map to locate them.','info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(S.actionUsed){log("Your action has already been spent.","info");render();return}if(nr.undrawn){nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}S.actionUsed=true;S.move=0;nr.seen=true;nr.explored=false;S.profile.exp+=5;log("Look Through Door: "+nr.name+" revealed (+5 XP). Resolve its encounter when ending the turn.","good");save();render()}
 function moveStep(dx,dy){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack)return;if(!S||S.ended||modalMode==='event'&&!$('overlay').classList.contains('hidden'))return;if(S.move<=0){log('No movement remains. End your turn.','info');render();return}let x=S.x+dx,y=S.y+dy;if(!cellAt(x,y)||dx&&dy&&(!cellAt(S.x+dx,S.y)||!cellAt(S.x,S.y+dy))){log('A wall blocks your path.');render();return}if(S.enemies.length){let neighbors=S.enemies.filter(e=>man(S,e)<=1&&TYPES[e.type].escape>S.escapedValue);
  if(neighbors.length){let difficulty=Math.max(...neighbors.map(e=>TYPES[e.type].escape)),test=die();

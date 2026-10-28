@@ -172,18 +172,49 @@ function finishFinalEncounter(){let f=S.finalEncounter;if(!f||f.started||f.remai
 function showGrowingDread(){let f=S?.finalEncounter;if(!f||f.started)return;if(f.remaining<=0&&f.drawn===null){finishFinalEncounter();return}let effect=f.drawn===null?null:DREAD_EFFECTS[f.drawn];openModal('<div class="kicker">Final encounter setup</div><h2>Growing Dread</h2><p>Resolve accumulated Dread before the final encounter enemies appear. '+f.remaining+' card(s) remain.</p><p style="color:#e8c990">Documented Growing Dread effects; the available deck is incomplete. Darkness and mutation subsystems have identified prototype limitations.</p>'+(effect?'<h3>'+effect.name+'</h3><p>'+effect.description+'</p>':'<p>The next card is face down.</p>')+'<div class="modalbuttons">'+(effect?'<button class="btn gold" id="dreadResolve">Resolve effect</button>':'<button class="btn gold" id="dreadReveal">Reveal next card</button>')+'<button class="btn" id="dreadCancel" '+(S.grit<1?'disabled':'')+'>Cancel this card (1 Grit)</button></div>','dread');let reveal=$('dreadReveal');if(reveal)reveal.onclick=()=>{f.drawn=rnd(DREAD_EFFECTS.length);log('Growing Dread revealed: '+DREAD_EFFECTS[f.drawn].name+'.','hit');save();showGrowingDread()};$('dreadCancel').onclick=()=>{if(S.grit<1)return;S.grit--;f.remaining--;f.resolved++;f.drawn=null;log('Spend 1 Grit: cancel a Growing Dread card before its effect. '+f.remaining+' remaining.','good');save();showGrowingDread()};let resolve=$('dreadResolve');if(resolve)resolve.onclick=()=>{let e=DREAD_EFFECTS[f.drawn];e.apply();log('Growing Dread resolved: '+e.name+' — '+e.description,'hit');f.remaining--;f.resolved++;f.drawn=null;save();if(S.ended)return;if(S.mutationReviewPending){mutationReviewModal();return}if(S.hp<=0||S.sanity<=0){checkSurvival();if(S.ended)return}showGrowingDread()}}
 // Solo adventures use Low Threats. These are original prototype enemy compositions,
 // not transcriptions of the published Low Threat cards.
+// Original 2014 City of the Ancients and Swamps of Death Low Threat card
+// composition reference (SoB Game Contents v2). The prototype's enemy archetypes
+// are deliberately NOT represented as the official enemies or their statistics.
+const ORIGINAL_LOW_THREAT_REFERENCE={
+ city:[
+  {copies:1,card:'1 Night Terror'},
+  {copies:1,card:'1 Night Terror & P Stranglers'},
+  {copies:1,card:'1 Night Terror & P Void Spiders'},
+  {copies:2,card:'P Stranglers'},
+  {copies:2,card:'P Tentacles'},
+  {copies:2,card:'6 Void Spiders'},
+  {copies:1,card:'P Void Spiders & P Stranglers'}
+ ],
+ swamp:[
+  {copies:2,card:'P Hellbats'},
+  {copies:3,card:'P Hungry Dead & 1 Corpse Pile'},
+  {copies:2,card:'1 Slasher'},
+  {copies:2,card:'1 Slasher & P Hellbats'},
+  {copies:2,card:'P Tentacles'}
+ ]
+};
+// Temporary archetype translation for the solo prototype. P = Posse Size (1).
+// Distinct official enemy rules, abilities, and threat scaling are not yet implemented.
 const LOW_THREAT_POOL=[
- [{type:'thrall',n:3}],[{type:'spider',n:3}],[{type:'thrall',n:2},{type:'spider',n:1}],
- [{type:'wraith',n:1}],[{type:'brute',n:1}],[{type:'spider',n:4}],
- [{type:'thrall',n:4}],[{type:'wraith',n:1},{type:'thrall',n:1}],
- [{type:'spider',n:2},{type:'thrall',n:2}],[{type:'brute',n:1},{type:'spider',n:1}]
+ ...ORIGINAL_LOW_THREAT_REFERENCE.city.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:
+   x.card==='1 Night Terror'?[{type:'brute',n:1}]:
+   x.card==='1 Night Terror & P Stranglers'?[{type:'brute',n:1},{type:'thrall',n:1}]:
+   x.card==='1 Night Terror & P Void Spiders'?[{type:'brute',n:1},{type:'spider',n:1}]:
+   x.card==='P Stranglers'?[{type:'thrall',n:1}]:
+   x.card==='P Tentacles'?[{type:'wraith',n:1}]:
+   x.card==='6 Void Spiders'?[{type:'spider',n:6}]:[{type:'spider',n:1},{type:'thrall',n:1}]}))),
+ ...ORIGINAL_LOW_THREAT_REFERENCE.swamp.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:
+   x.card==='P Hellbats'?[{type:'spider',n:1}]:
+   x.card==='P Hungry Dead & 1 Corpse Pile'?[{type:'thrall',n:1},{type:'wraith',n:1}]:
+   x.card==='1 Slasher'?[{type:'brute',n:1}]:
+   x.card==='1 Slasher & P Hellbats'?[{type:'brute',n:1},{type:'spider',n:1}]:[{type:'wraith',n:1}]})))
 ];
 function drawLowThreat(r){
- if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(LOW_THREAT_POOL.map(groups=>groups.map(g=>({...g}))));
- const groups=S.lowThreatDeck.pop(),prior=S.enemies.length;
+ if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(LOW_THREAT_POOL.map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
+ const threat=S.lowThreatDeck.pop(),groups=threat.groups,prior=S.enemies.length;
  for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
  const spawned=S.enemies.length-prior;
- if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Low Threat (solo): '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
+ if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Original 2014 Low Threat card: '+threat.card+'; prototype stand-ins: '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
  else log('Threat could not be placed; no Loot credit awarded.','hit');
  return spawned;
 }

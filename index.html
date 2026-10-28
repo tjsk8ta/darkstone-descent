@@ -132,7 +132,7 @@ function resolveExplorationToken(r){if(r.kind==='entry')return;ensureMineDeck();
 function ensureOpenFrontier(r){if(!S||S.bossDefeated)return;let open=Object.values(S.rooms).some(q=>q.doors.some(d=>{let x=q.x+D[d][0],y=q.y+D[d][1];return x>=0&&y>=0&&x<N&&y<N&&!S.rooms[id(x,y)]}));if(open)return;let candidates=Object.values(S.rooms).filter(q=>q.explored);for(let q of candidates){let dirs=shuffleDeck(['N','E','S','W'].filter(d=>{let x=q.x+D[d][0],y=q.y+D[d][1];return x>=0&&y>=0&&x<N&&y<N&&!S.rooms[id(x,y)]}));if(dirs.length){q.doors.push(dirs[0]);log('An unexplored tunnel opens from '+q.name+' (dead-end recovery).','info');return}}log('No unexplored route remains. The mine generator has reached its boundary.','hit')}
 function createProfile(hero){return{hero,level:1,exp:0,coins:0,stone:0,upgrades:{health:0,armour:0,power:0},missions:0}}
 function makeRun(profile,mode){let C=CLASSES[profile.hero],maxHp=C.hp+profile.upgrades.health*3,maxS=C.sanity;
- selectedEnemyId=null;S={profile,mode,rooms:generateRooms(),x:4*W+4,y:5*H+5,hp:maxHp,sanity:maxS,maxHp,maxS,coins:0,stone:0,bandages:2,whiskey:1,bombs:1,revives:mode==='story'?3:mode==='hard'?1:2,grit:1,darkness:0,depth:0,turn:0,move:0,moveMax:0,actionUsed:false,powered:false,enemies:[],nextEnemy:1,clues:0,cleared:0,bossDefeated:false,ended:false,log:[],pendingEvent:null,modeScreen:null,bossRitual:false,depthEvents:0,growingDread:0,enemyActed:[],escapedValue:1};
+ selectedEnemyId=null;S={profile,mode,rooms:generateRooms(),x:4*W+4,y:5*H+5,hp:maxHp,sanity:maxS,maxHp,maxS,coins:0,stone:0,bandages:2,whiskey:1,bombs:1,revives:mode==='story'?3:mode==='hard'?1:2,grit:1,darkness:0,depth:0,turn:0,move:0,moveMax:0,actionUsed:false,powered:false,enemies:[],nextEnemy:1,clues:0,cleared:0,bossDefeated:false,ended:false,log:[],pendingEvent:null,modeScreen:null,bossRitual:false,depthEvents:0,growingDread:0,enemyActed:[],escapedValue:1,coreThreatSet:'combined',threatDeckVersion:2};
  log('Lantern lit. Revised mechanics; reference-based entrance and T-junction, original additional tiles and encounters.','good');startRound();save();render();closeModal()}
 function openModal(html,mode){modalMode=mode;$('modal').innerHTML=html;$('overlay').classList.remove('hidden')}
 function closeModal(){$('overlay').classList.add('hidden')}
@@ -213,7 +213,11 @@ function lowThreatGroups(card){
  if(!map[card])throw Error('Unmapped Low Threat: '+card);
  return map[card].map(([type,n])=>({type,n}));
 }
-const LOW_THREAT_POOL=Object.values(ORIGINAL_LOW_THREAT_REFERENCE).flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
+function originalLowThreatPool(set){
+ const decks=set==='city'?[ORIGINAL_LOW_THREAT_REFERENCE.city]:set==='swamp'?[ORIGINAL_LOW_THREAT_REFERENCE.swamp]:[ORIGINAL_LOW_THREAT_REFERENCE.city,ORIGINAL_LOW_THREAT_REFERENCE.swamp];
+ return decks.flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
+}
+const LOW_THREAT_POOL=originalLowThreatPool('combined');
 // Medium, High and Epic cards are original PROTOTYPE encounters, not published
 // card transcriptions. Their exact 2014 inventories still require verification.
 const PROTOTYPE_THREAT_TIERS={
@@ -233,7 +237,7 @@ function drawThreat(r,tier='low'){
  return spawned;
 }
 function drawLowThreat(r){
- if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(LOW_THREAT_POOL.map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
+ if(S.threatDeckVersion!==2){S.lowThreatDeck=[];S.threatDeckVersion=2}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(originalLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=S.lowThreatDeck.pop(),groups=threat.groups,prior=S.enemies.length;
  for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
  const spawned=S.enemies.length-prior;
@@ -243,7 +247,7 @@ function drawLowThreat(r){
 }
 function enterRoom(r){if(r.explored)return;r.seen=true;r.explored=true;S.cleared++;resolveExplorationToken(r);ensureOpenFrontier(r);log(`Uncovered ${r.name}. The air tastes of iron.`,'info');let count=r.kind==='boss'?1:r.firstJunction?0:r.shape==='corridor'?0:['encounter','darkness','depth'].includes(r.token?.event)?0:1+rnd(r.kind==='normal'?3:2);if(r.kind==='boss'){
   beginFinalEncounter(r)
- }else if(count){count=drawThreat(r,S.depth>=8?'high':S.depth>=5?'medium':'low')}
+ }else if(count){count=drawThreat(r,S.depth>=12?'epic':S.depth>=8?'high':S.depth>=5?'medium':'low')}
  if(S.enemies.some(e=>roomAt(e.x,e.y)===r))log(`${count+(r.kind==='boss'?1:0)} hostile shapes stir in the chamber.`,'hit');
  if(r.kind!=='boss'&&r.token?.event==='encounter'){let events=[{title:'The Singing Vein',text:'A deep-blue crystal hums from a fracture in the rock. Its light draws the eye — and something deeper.',options:[{title:'Extract the crystal',detail:'Gain darkstone; risk sanity.',effect:'vein'},{title:'Seal the crack',detail:'Recover sanity; no treasure.',effect:'seal'}]},{title:'Abandoned Supply Cart',text:'A rusted cart stands upright in the dark. A bloodstained canvas covers its contents.',options:[{title:'Search the cargo',detail:'Claim supplies, with a chance of an ambush.',effect:'cart'},{title:'Leave it undisturbed',detail:'Gain grit and move on.',effect:'ignore'}]},{title:'The Collapsed Gallery',text:'Loose stones cover the only intact survey marker. A faint voice asks you to follow it.',options:[{title:'Dig out the survey marker',detail:'Chance for coins or injury.',effect:'dig'},{title:'Follow the voice',detail:'Test your nerve.',effect:'voice'}]}];let event=events[rnd(events.length)];S.pendingEvent={...event};eventModal(event)}
  checkCleared(r);save()}
@@ -257,7 +261,7 @@ else if(e==='dig'){let test=rollEvent();if(test>=3){S.coins+=14;detail='Dig mark
 else if(e==='voice'){let test=rollEvent();if(test>=4){S.stone++;S.sanity=Math.min(S.maxS,S.sanity+2);detail='Follow voice: D6 ['+test+'] succeeds on 4–6; gained 1 Darkstone and recovered up to 2 Sanity.'}else{S.sanity-=3;detail='Follow voice: D6 ['+test+'] fails on 1–3; lost 3 Sanity.'}}
 else detail='Unrecognized event effect: '+e+'; no changes applied.';
 let changes=[['Health',S.hp-before.hp],['Sanity',S.sanity-before.sanity],['Darkstone',S.stone-before.stone],['Bandages',S.bandages-before.bandages],['Coins',S.coins-before.coins],['Grit',S.grit-before.grit],['Enemies',S.enemies.length-before.enemies.length]].filter(x=>x[1]!==0).map(x=>x[0]+' '+(x[1]>0?'+':'')+x[1]).join('; ');log('EVENT RESULT: '+detail+' Actual changes: '+(changes||'none (at current limits)')+'.', 'info');checkSurvival();save()}
-function spawnEnemy(type,r){let locs=[];for(let ly=1;ly<=5;ly++)for(let lx=1;lx<=7;lx++){let x=r.x*W+lx,y=r.y*H+ly;if(cellAt(x,y)&&man({x,y},S)>=3&&!S.enemies.some(e=>e.x===x&&e.y===y))locs.push({x,y})}if(!locs.length)return;let p=locs[rnd(locs.length)],t=TYPES[type],boost=S.mode==='hard'?1:0;S.enemies.push({id:S.nextEnemy++,type,x:p.x,y:p.y,hp:t.hp+boost,maxHp:t.hp+boost,home:id(r.x,r.y),spawnTurn:S.turn})}
+function spawnEnemy(type,r){let locs=[];for(let ly=1;ly<=5;ly++)for(let lx=1;lx<=7;lx++){let x=r.x*W+lx,y=r.y*H+ly;if(cellAt(x,y)&&man({x,y},S)>=3&&!S.enemies.some(e=>e.x===x&&e.y===y))locs.push({x,y})}if(!locs.length){log('No valid space for '+type+'; enemy placement deferred.','hit');return false}let p=locs[rnd(locs.length)],t=TYPES[type],boost=S.mode==='hard'?1:0;S.enemies.push({id:S.nextEnemy++,type,x:p.x,y:p.y,hp:t.hp+boost,maxHp:t.hp+boost,home:id(r.x,r.y),spawnTurn:S.turn});return true}
 // Separate shuffled prototype rewards from official physical card identities.
 // The FAQ confirms a 12-card core Loot/Scavenge deck and a 3-card Fight loot cap.
 const LOOT_REWARDS=[
@@ -431,7 +435,7 @@ document.addEventListener('keydown',e=>{if(!S||S.ended||!$('overlay').classList.
 let journalOpen=false;const journalTab=$('journalTab'),journalDrawer=$('journalDrawer'),journalBackdrop=$('journalBackdrop');function setJournalOpen(open){journalOpen=open;journalDrawer.classList.toggle('open',open);journalDrawer.setAttribute('aria-hidden',String(!open));journalTab.setAttribute('aria-expanded',String(open));journalTab.hidden=open;journalBackdrop.hidden=!open;if(open)$('journalClose').focus();else journalTab.focus()};journalTab.onclick=()=>setJournalOpen(true);$('journalClose').onclick=()=>setJournalOpen(false);journalBackdrop.onclick=()=>setJournalOpen(false);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&journalOpen){e.preventDefault();setJournalOpen(false)}});let journalTouchX=null;journalDrawer.addEventListener('touchstart',e=>{journalTouchX=e.touches[0]?.clientX??null},{passive:true});journalDrawer.addEventListener('touchend',e=>{if(journalTouchX!==null&&e.changedTouches[0].clientX-journalTouchX>90)setJournalOpen(false);journalTouchX=null},{passive:true});
 window.addEventListener('resize',resizeCanvas);
 window.addEventListener('error',e=>{let el=document.getElementById('startupRecovery');if(el){el.style.display='block';el.textContent='Game error: '+(e.message||'unknown')+' — try Recovery Mode.'}});
-document.documentElement.dataset.build='exploration-town-save-20261027';
+document.documentElement.dataset.build='threat-tiers-20261028';
 let recoveryMode=new URLSearchParams(location.search).has('recovery');
 let old=recoveryMode?null:safeRead();if(recoveryMode){let el=document.getElementById("startupRecovery");el.style.display="block";el.innerHTML="Recovery Mode: existing save is preserved until you start a new expedition. <a style=\"color:#f3c785\" href=\"./\">Return to saved game</a>";}if(old?.profile){selected=old.profile.hero||'marshal';difficulty=old.mode||'standard';if(!old.ended){S=old;pendingAttack=S.savedPendingAttack||null;render();if(S.mutationReviewPending)mutationReviewModal();else if(S.finalEncounter&&!S.finalEncounter.started)showGrowingDread();else if(S.pendingEvent)eventModal(S.pendingEvent);else closeModal()}else{S=old;resultsModal('Your previous expedition has ended. Visit town to continue.')}}else setup();requestAnimationFrame(resizeCanvas);
 })();

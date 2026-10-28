@@ -170,9 +170,26 @@ function finalEncounterEnemies(r){return Array.isArray(r.finalEnemies)&&r.finalE
 function beginFinalEncounter(r){S.finalEncounter={roomId:id(r.x,r.y),enemyTypes:finalEncounterEnemies(r),bonuses:{hp:0,defense:0},remaining:S.growingDread||0,drawn:null,resolved:0,started:false};log('Mission objective discovered: resolve '+S.finalEncounter.remaining+' Growing Dread card(s) before placing the final enemies.','hit');save();showGrowingDread()}
 function finishFinalEncounter(){let f=S.finalEncounter;if(!f||f.started||f.remaining>0||f.drawn!==null)return;let r=S.rooms[f.roomId];if(!r){log('Final encounter room unavailable; cannot spawn enemies.','hit');return}let types=f.enemyTypes||finalEncounterEnemies(r);if(!types.length){log('Final encounter has no configured enemies; setup paused.','hit');return}let bonuses=f.bonuses||{hp:S.bossDreadHp||0,defense:S.bossDreadDefense||0};f.started=true;for(let type of types){if(!TYPES[type]){log('Unknown final encounter enemy type: '+type,'hit');continue}let previous=S.nextEnemy;spawnEnemy(type,r);let e=S.enemies.find(v=>v.id===previous);if(e){e.hp+=bonuses.hp||0;e.maxHp+=bonuses.hp||0;e.dreadDefense=(bonuses.defense||0)+(['wraith','spider','boss'].includes(type)?(S.voidDefenseBonus||0):0)}}log('Growing Dread resolved. Final encounter enemies placed: '+types.map(type=>TYPES[type]?.name||type).join(', ')+'. Fight begins.','hit');save();render();closeModal()}
 function showGrowingDread(){let f=S?.finalEncounter;if(!f||f.started)return;if(f.remaining<=0&&f.drawn===null){finishFinalEncounter();return}let effect=f.drawn===null?null:DREAD_EFFECTS[f.drawn];openModal('<div class="kicker">Final encounter setup</div><h2>Growing Dread</h2><p>Resolve accumulated Dread before the final encounter enemies appear. '+f.remaining+' card(s) remain.</p><p style="color:#e8c990">Documented Growing Dread effects; the available deck is incomplete. Darkness and mutation subsystems have identified prototype limitations.</p>'+(effect?'<h3>'+effect.name+'</h3><p>'+effect.description+'</p>':'<p>The next card is face down.</p>')+'<div class="modalbuttons">'+(effect?'<button class="btn gold" id="dreadResolve">Resolve effect</button>':'<button class="btn gold" id="dreadReveal">Reveal next card</button>')+'<button class="btn" id="dreadCancel" '+(S.grit<1?'disabled':'')+'>Cancel this card (1 Grit)</button></div>','dread');let reveal=$('dreadReveal');if(reveal)reveal.onclick=()=>{f.drawn=rnd(DREAD_EFFECTS.length);log('Growing Dread revealed: '+DREAD_EFFECTS[f.drawn].name+'.','hit');save();showGrowingDread()};$('dreadCancel').onclick=()=>{if(S.grit<1)return;S.grit--;f.remaining--;f.resolved++;f.drawn=null;log('Spend 1 Grit: cancel a Growing Dread card before its effect. '+f.remaining+' remaining.','good');save();showGrowingDread()};let resolve=$('dreadResolve');if(resolve)resolve.onclick=()=>{let e=DREAD_EFFECTS[f.drawn];e.apply();log('Growing Dread resolved: '+e.name+' — '+e.description,'hit');f.remaining--;f.resolved++;f.drawn=null;save();if(S.ended)return;if(S.mutationReviewPending){mutationReviewModal();return}if(S.hp<=0||S.sanity<=0){checkSurvival();if(S.ended)return}showGrowingDread()}}
+// Solo adventures use Low Threats. These are original prototype enemy compositions,
+// not transcriptions of the published Low Threat cards.
+const LOW_THREAT_POOL=[
+ [{type:'thrall',n:3}],[{type:'spider',n:3}],[{type:'thrall',n:2},{type:'spider',n:1}],
+ [{type:'wraith',n:1}],[{type:'brute',n:1}],[{type:'spider',n:4}],
+ [{type:'thrall',n:4}],[{type:'wraith',n:1},{type:'thrall',n:1}],
+ [{type:'spider',n:2},{type:'thrall',n:2}],[{type:'brute',n:1},{type:'spider',n:1}]
+];
+function drawLowThreat(r){
+ if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(LOW_THREAT_POOL.map(groups=>groups.map(g=>({...g}))));
+ const groups=S.lowThreatDeck.pop(),prior=S.enemies.length;
+ for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
+ const spawned=S.enemies.length-prior;
+ if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Low Threat (solo): '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
+ else log('Threat could not be placed; no Loot credit awarded.','hit');
+ return spawned;
+}
 function enterRoom(r){if(r.explored)return;r.seen=true;r.explored=true;S.cleared++;resolveExplorationToken(r);ensureOpenFrontier(r);log(`Uncovered ${r.name}. The air tastes of iron.`,'info');let count=r.kind==='boss'?1:r.firstJunction?0:r.shape==='corridor'?0:['encounter','darkness','depth'].includes(r.token?.event)?0:1+rnd(r.kind==='normal'?3:2);if(r.kind==='boss'){
   beginFinalEncounter(r)
- }else if(count){r.fightThreats=(r.fightThreats||0)+1;let pool=['thrall','spider','spider','wraith','thrall','brute'];for(let i=0;i<count;i++)spawnEnemy(pool[Math.min(pool.length-1,rnd(Math.min(3+Math.floor(S.cleared/4),6)))],r)}
+ }else if(count){count=drawLowThreat(r)}
  if(S.enemies.some(e=>roomAt(e.x,e.y)===r))log(`${count+(r.kind==='boss'?1:0)} hostile shapes stir in the chamber.`,'hit');
  if(r.kind!=='boss'&&r.token?.event==='encounter'){let events=[{title:'The Singing Vein',text:'A deep-blue crystal hums from a fracture in the rock. Its light draws the eye — and something deeper.',options:[{title:'Extract the crystal',detail:'Gain darkstone; risk sanity.',effect:'vein'},{title:'Seal the crack',detail:'Recover sanity; no treasure.',effect:'seal'}]},{title:'Abandoned Supply Cart',text:'A rusted cart stands upright in the dark. A bloodstained canvas covers its contents.',options:[{title:'Search the cargo',detail:'Claim supplies, with a chance of an ambush.',effect:'cart'},{title:'Leave it undisturbed',detail:'Gain grit and move on.',effect:'ignore'}]},{title:'The Collapsed Gallery',text:'Loose stones cover the only intact survey marker. A faint voice asks you to follow it.',options:[{title:'Dig out the survey marker',detail:'Chance for coins or injury.',effect:'dig'},{title:'Follow the voice',detail:'Test your nerve.',effect:'voice'}]}];let event=events[rnd(events.length)];S.pendingEvent={...event};eventModal(event)}
  checkCleared(r);save()}
@@ -207,7 +224,8 @@ const SCAVENGE_REWARDS=[
 ];
 function drawReward(kind){
  const deckKey=kind==='loot'?'lootDeck':'scavengeDeck',pool=kind==='loot'?LOOT_REWARDS:SCAVENGE_REWARDS;
- if(!S[deckKey]?.length)S[deckKey]=shuffleDeck(pool.map(x=>({...x})));
+ // Loot and Scavenge have no persistent discard: reshuffle before each draw.
+ S[deckKey]=shuffleDeck(pool.map(x=>({...x})));
  const reward=S[deckKey].pop();
  if(reward.type==='grit')S.grit=Math.min(4,S.grit+reward.value);
  else if(reward.type!=='none')S[reward.type]=(S[reward.type]||0)+reward.value;
@@ -219,7 +237,7 @@ function resolveFightRewards(r){
  r.fightRewarded=true;
  const cards=Math.min(3,r.fightThreats);
  const breath=1+Math.floor((die()-1)/2);
- const heal=Math.min(breath,S.maxHp-S.hp);S.hp+=heal;
+ const heal=Math.min(breath,S.maxHp-S.hp);S.hp+=heal;const sanityHeal=Math.min(breath-heal,S.maxS-S.sanity);S.sanity+=sanityHeal;
  log('Fight ends: Catch Your Breath D3 ['+breath+']; '+heal+' Wounds healed.','good');
  for(let i=0;i<cards;i++)drawReward('loot');
  log('Fight loot: '+cards+' draw(s) from '+r.fightThreats+' Threat instance(s), maximum 3.','info');

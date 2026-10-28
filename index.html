@@ -218,22 +218,55 @@ function originalLowThreatPool(set){
  return decks.flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
 }
 const LOW_THREAT_POOL=originalLowThreatPool('combined');
-// Medium, High and Epic cards are original PROTOTYPE encounters, not published
-// card transcriptions. Their exact 2014 inventories still require verification.
-const PROTOTYPE_THREAT_TIERS={
- medium:[[['Night Terror',1],['Strangler',2]],[['Slasher',1],['Hellbat',3]],[['Hungry Dead',3],['Corpse Pile',1]]],
- high:[[['Night Terror',2],['Void Spider',3]],[['Slasher',2],['Hellbat',4]],[['Hungry Dead',5],['Corpse Pile',2]]],
- epic:[[['Night Terror',3],['Strangler',4]],[['Slasher',3],['Hellbat',5]],[['Hungry Dead',6],['Corpse Pile',3]]]
+// Published card labels and quantities: SoB Game Contents v2, original cores.
+// Enemy statistics and Posse Size remain provisional; Elite rules unresolved.
+const ORIGINAL_THREAT_DECKS={
+ city:{
+ medium:[[1,'2 Low Threat Cards'],[1,'1 Night Terror & 1 Low Threat Card'],[1,'D3 Night Terrors'],[1,'6 Stranglers'],[1,'6 Tentacles'],[1,'12 Void Spiders'],[2,'PP Void Spiders'],[2,'PP Void Spiders & P Stranglers']],
+ high:[[1,'2 Medium Threat Cards'],[2,'1 Night Terror & 2 Low Threat Cards'],[1,'1 Night Terror & 1 Medium Threat Card'],[1,'3 Night Terrors'],[1,'D3 Night Terrors & 6 Stranglers'],[2,'P Stranglers, P Tentacles & PP Void Spiders'],[2,'6 Stranglers & 12 Void Spiders']],
+ epic:[[1,'2 Elite Threat Cards'],[2,'1 Goliath & 1 Threat Card'],[1,'1 Goliath & 2 Low Threat Cards'],[1,'D3 Night Terrors & 2 Threat Cards']],
+ otherworld:[[1,'Ancient Spiders'],[2,'Snow Terrors'],[1,'Targa Pylons'],[1,'Wandering Enemy']]
+ },
+ swamp:{
+ medium:[[1,'6 Hellbats'],[2,'PP Hungry Dead & 2 Corpse Piles'],[1,'2 Low Threat Cards'],[2,'D3 Slashers'],[1,'1 Slasher & P Hellbats'],[1,'1 Slasher & 1 Low Threat Card'],[1,'6 Tentacles'],[1,'P Tentacles & P Hungry Dead & 2 Corpse Piles']],
+ high:[[2,'6 Hellbats & PP Hungry Dead & 3 Corpse Piles'],[1,'2 Medium Threat Cards'],[1,'3 Slashers'],[1,'1 Slasher & PP Hungry Dead & 3 Corpse Piles'],[1,'1 Slasher & 2 Low Threat Cards'],[2,'D3 Slashers & 1 Low Threat Card'],[1,'1 Slasher & 1 Medium Threat Card'],[1,'6 Tentacles & 6 Hellbats']],
+ epic:[[1,'2 Elite Threat Cards'],[1,'1 Harbinger & 2 Low Threat Cards'],[2,'1 Harbinger & 1 Threat Card'],[1,'D3 Slashers & 2 Threat Cards']],
+ otherworld:[[2,'Bogbats'],[2,'Swamp Slashers'],[1,'Wandering Enemy']]
+ }
 };
+const ORIGINAL_THREAT_NAMES=['Night Terror','Strangler','Void Spider','Tentacle','Hellbat','Hungry Dead','Corpse Pile','Slasher','Goliath','Harbinger'];
+// Named original boss enemies, with provisional numerical stats only.
+TYPES.Goliath={...TYPES.boss,name:'Goliath',hp:38,exp:100};
+TYPES.Harbinger={...TYPES.boss,name:'Harbinger',hp:38,exp:100};
+TYPES['Targa Pylon']={...TYPES.wraith,name:'Targa Pylon',steps:0};
+function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='swamp'?['swamp']:['city','swamp'];return sets.flatMap(k=>ORIGINAL_THREAT_DECKS[k][tier].flatMap(([copies,card])=>Array(copies).fill(null).map(()=>({card,set:k}))));}
+function threatGroupsFromCard(card,tier,depth=0){
+ if(depth>5)throw Error('Threat recursion exceeded');
+ const groups=[];
+ const add=(type,n)=>{if(n>0)groups.push({type,n})};
+ // Card composition parser: first expand nested threats, then parse printed enemies.
+ const nested=card.match(/(\\d+) (Low|Medium|Elite|Threat) Threat Cards?/gi)||[];
+ for(const part of nested){const m=part.match(/(\\d+) (Low|Medium|Elite|Threat)/i);let n=+m[1],kind=m[2].toLowerCase();if(kind==='elite'||kind==='threat')throw Error('Unresolved original '+kind+' threat subdraw: '+card);for(let i=0;i<n;i++)groups.push(...drawOriginalThreatGroups(kind,depth+1));}
+ const single=card.match(/1 (Low|Medium) Threat Card/gi)||[];
+ for(const part of single)groups.push(...drawOriginalThreatGroups(part.includes('Low')?'low':'medium',depth+1));
+ if(/Elite Threat Cards|(?<!Low |Medium )Threat Card/.test(card)&&!/Low Threat Card|Medium Threat Card/.test(card))throw Error('Unresolved Elite/Threat draw');
+ const named=[['Night Terrors?','Night Terror'],['Stranglers?','Strangler'],['Void Spiders?','Void Spider'],['Tentacles?','Tentacle'],['Hellbats?','Hellbat'],['Hungry Dead','Hungry Dead'],['Corpse Piles?','Corpse Pile'],['Slashers?','Slasher'],['Goliath','Goliath'],['Harbinger','Harbinger']];
+ for(const [pattern,type] of named){const re=new RegExp('(D3|PP|P|\\\\d+)\\\\s+'+pattern,'gi');let m;while((m=re.exec(card))!==null){const qty=m[1]==='D3'?1+rnd(3):m[1]==='PP'?2:m[1]==='P'?1:+m[1];add(type,qty)}}
+ if(!groups.length)throw Error('Threat card has no resolved enemies: '+card);
+ return groups;
+}
+function drawOriginalThreatGroups(tier,depth){if(tier==='low'){const pool=originalLowThreatPool(S.coreThreatSet||'combined');return pool[rnd(pool.length)].groups.map(g=>({...g}))}const pool=originalThreatPool(tier,S.coreThreatSet||'combined');const c=pool[rnd(pool.length)];return threatGroupsFromCard(c.card,tier,depth)}
 function drawThreat(r,tier='low'){
  if(tier==='low')return drawLowThreat(r);
- const choices=PROTOTYPE_THREAT_TIERS[tier];if(!choices)throw Error('Unknown threat tier '+tier);
- const groups=choices[rnd(choices.length)].map(([type,n])=>({type,n}));
- const before=S.enemies.length;
+ const key=tier+'ThreatDeck';
+ if(!S[key]?.length)S[key]=shuffleDeck(originalThreatPool(tier,S.coreThreatSet||'combined'));
+ const candidate=S[key][S[key].length-1];let groups;
+ try{groups=threatGroupsFromCard(candidate.card,tier)}catch(e){log('Original '+tier+' Threat '+candidate.card+' requires unsupported rule: '+e.message+'. Draw held; no substitute enemy spawned.','hit');return 0}
+ S[key].pop();const before=S.enemies.length;
  for(const g of groups)for(let i=0;i<g.n;i++)spawnEnemy(g.type,r);
  const spawned=S.enemies.length-before;
- if(spawned){r.fightThreats=(r.fightThreats||0)+1;log(tier.toUpperCase()+' prototype Threat: '+groups.map(g=>g.n+' '+g.type).join(', ')+'. Not a published card.','hit')}
- else log('No available spaces for '+tier+' Threat; no loot credit.','hit');
+ if(spawned){r.fightThreats=(r.fightThreats||0)+1;log(tier.toUpperCase()+' original card: '+candidate.card+' ('+candidate.set+'); '+groups.map(g=>g.n+' '+g.type).join(', ')+'. Stats and Posse Size provisional.','hit')}
+ else log('Threat placement blocked; no loot credit.','hit');
  return spawned;
 }
 function drawLowThreat(r){

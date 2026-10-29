@@ -393,7 +393,7 @@ function applyModelLimits(groups){
    const removed=Math.min(g.n,shortage);g.n-=removed;shortage-=removed;
    if(!shortage)break;
   }
-  result.find(g=>g.type===type).elite+=1;
+  if(S.modelShortageEliteTurns?.[type]!==S.turn){const recipient=result.find(g=>g.type===type);recipient.elite=(recipient.elite||0)+1;recipient.shortageEliteAward=true}
  }
  return result;
 }
@@ -473,6 +473,7 @@ function drawThreat(r,tier='low'){
   }
  }
  S.eliteAbilities=nextElite;
+ for(const g of groups.filter(g=>g.shortageEliteAward)){S.modelShortageEliteTurns=S.modelShortageEliteTurns||{};S.modelShortageEliteTurns[g.type]=S.turn}
  for(const e of S.enemies){const bonus=eliteHas(e.type,'brute')?6:0,delta=bonus-(e.eliteHealthBonus||0);if(delta){e.hp+=delta;e.maxHp+=delta;e.eliteHealthBonus=bonus}}
  if(r.fightRewarded){r.fightRewarded=false;r.fightThreats=0}
  r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatError=null;

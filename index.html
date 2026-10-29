@@ -292,8 +292,9 @@ function drawThreat(r,tier='low'){
  const key=tier+'ThreatDeck';
  if(!S[key]?.length)S[key]=shuffleDeck(originalThreatPool(tier,S.coreThreatSet||'combined'));
  const candidate=S[key][S[key].length-1];let groups;
- try{groups=threatGroupsFromCard(candidate.card,tier)}
+ try{groups=r.pendingThreatGroups&&r.pendingThreatTier===tier?r.pendingThreatGroups:threatGroupsFromCard(candidate.card,tier)}
  catch(e){r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat '+candidate.card+' needs unsupported rule: '+e.message+'. Card held.','hit');return 0}
+ r.pendingThreatGroups=groups.map(g=>({...g}));
  const required=groups.reduce((n,g)=>n+g.n,0);
  const free=spawnSpaces(r).length;
  if(free<required){r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat '+candidate.card+' requires '+required+' spaces; '+free+' available. Card held.','hit');return 0}
@@ -305,7 +306,7 @@ function drawThreat(r,tier='low'){
   }
   placed.push(S.nextEnemy-1);
  }
- S[key].pop();r.pendingThreat=false;r.pendingThreatTier=null;
+ S[key].pop();r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatGroups=null;
  r.fightThreats=(r.fightThreats||0)+1;
  log(tier.toUpperCase()+' original card: '+candidate.card+' ('+candidate.set+'); '+groups.map(g=>g.n+' '+g.type).join(', ')+'. Stats and Posse Size provisional.','hit');
  return placed.length;
@@ -313,7 +314,7 @@ function drawThreat(r,tier='low'){
 // Each card is a complete Fight threat. Do not silently award a Fight
 // for a partial spawn: reserve the card and retry when placement is possible.
 function drawLowThreat(r){
- if(S.threatDeckVersion!==5){S.lowThreatDeck=[];S.threatDeckVersion=5}
+ if(S.threatDeckVersion!==6){S.lowThreatDeck=[];S.threatDeckVersion=6}
  if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=S.lowThreatDeck.pop(),groups=threat.groups;
  const total=groups.reduce((n,g)=>n+g.n,0);

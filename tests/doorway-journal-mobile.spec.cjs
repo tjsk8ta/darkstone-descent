@@ -11,7 +11,7 @@ test('mobile T-junction blue doorway opens immediately and records the result in
   s.x=4*9+7;s.y=4*7+2;s.actionUsed=false;s.enemies=[];s.move=5;s.moveMax=5;
   localStorage.setItem(key,JSON.stringify(s));
  });
- await page.reload();
+ await page.goto('/');
  await expect(page.locator('#exploreBtn')).toBeEnabled();
  await page.locator('#exploreBtn').click();
  const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3')));
@@ -33,7 +33,7 @@ test('mobile Field Journal persists encounter resolution details across reload',
   s.log.unshift({turn:s.turn,kind:'info',text:'Threat card: 3 Hellbats. Resolved: 3 Hellbats.'});
   localStorage.setItem(key,JSON.stringify(s));
  });
- await page.reload();
+ await page.goto('/');
  await page.locator('#journalTab').click();
  await expect(page.locator('#logList')).toContainText('ENCOUNTER RESULT');
  await expect(page.locator('#logList')).toContainText('Threat card: 3 Hellbats');

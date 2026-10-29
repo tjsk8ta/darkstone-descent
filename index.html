@@ -63,6 +63,24 @@ const CORE_ENEMY_PROTOTYPES={
  'Slasher':{initiative:4,escape:4,hp:11,def:1,damage:3,hit:4,steps:2,exp:23,sane:0,glyph:'⚔',color:'#c07565'}
 };
 for(const [name,stats] of Object.entries(CORE_ENEMY_PROTOTYPES))TYPES[name]={name,...stats};
+
+// Both revised core sets: enemy types not represented by ordinary Low Threat cards
+// remain available to the encounter engine. Figures and stats are PROVISIONAL
+// until a readable normal-side 2014/2020 record sheet is verified.
+const ADDITIONAL_CORE_ENEMIES={
+ 'Goliath':{initiative:3,escape:5,hp:32,def:3,damage:5,hit:4,steps:3,combat:3,exp:100,sane:2,glyph:'◆',color:'#bd8a85'},
+ 'Harbinger':{initiative:4,escape:5,hp:32,def:3,damage:5,hit:4,steps:4,combat:3,exp:100,sane:2,glyph:'◆',color:'#a27999'},
+ 'Targa Pylon':{initiative:0,escape:6,hp:12,def:2,damage:0,hit:6,steps:0,combat:0,exp:30,sane:0,glyph:'▥',color:'#91b6bd'},
+ 'Ancient Spider':{initiative:6,escape:4,hp:5,def:1,damage:2,hit:4,steps:3,combat:2,exp:15,sane:0,glyph:'✣',color:'#9cb7bf'},
+ 'Snow Terror':{initiative:3,escape:4,hp:14,def:3,damage:4,hit:4,steps:5,combat:2,exp:30,sane:1,glyph:'♜',color:'#b9cad8'},
+ 'Bogbat':{initiative:6,escape:4,hp:3,def:0,damage:1,hit:5,steps:4,combat:1,exp:10,sane:0,glyph:'✦',color:'#89a876'},
+ 'Swamp Slasher':{initiative:4,escape:4,hp:12,def:1,damage:3,hit:4,steps:2,combat:2,exp:25,sane:0,glyph:'⚔',color:'#82a08b'}
+};
+for(const [name,stats] of Object.entries(ADDITIONAL_CORE_ENEMIES))TYPES[name]={name,...stats};
+const CORE_ENEMY_PROVENANCE={
+ 'Tentacle':{edition:'Revised 2020 normal',verified:true,source:'https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf'},
+ ...Object.fromEntries([...Object.keys(CORE_ENEMY_PROTOTYPES),...Object.keys(ADDITIONAL_CORE_ENEMIES)].filter(n=>n!=='Tentacle').map(n=>[n,{edition:'unverified normal-side statistics',verified:false}]))
+};
 const ROOM_NAMES=['Forsaken Shaft','Miner’s Rest','Bone Gallery','Sulphur Fissure','The Old Tunnels','Black Lantern Hall','Fallen Gallery','The Crystal Vein','Abandoned Depot','Screaming Passage','The Red Chamber','Sunken Shrine','Ironwork Ruin','The Echo Vault','Buried Hall'];
 const rnd=n=>{if(!Number.isInteger(n)||n<=0)throw Error('Invalid random range');if(globalThis.crypto?.getRandomValues){const buf=new Uint32Array(1),limit=Math.floor(4294967296/n)*n;do{crypto.getRandomValues(buf)}while(buf[0]>=limit);return buf[0]%n}return Math.floor(Math.random()*n)},die=()=>1+rnd(6),roll=n=>Array.from({length:n},()=>die()),sum=a=>a.reduce((x,y)=>x+y,0),clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),id=(x,y)=>x+','+y,man=(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y)), numRoman=n=>['','I','II','III','IV','V','VI','VII','VIII','IX','X'][n]||n;
 let selectedEnemyId=null,pendingAttack=null,gritDiceSelection=new Set(),mapPanX=0,mapPanY=0,mapDrag=null,mapPinch=null,mapZoom=1,mapSuppressTapUntil=0,mapFitExplored=true,dynamiteAim=false,selectedMapCell=null;let S=null,selected='marshal',difficulty='standard',hover=null,view=null,modalMode='setup';
@@ -423,7 +441,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
  if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
- if(distance<=1){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
+ if(distance<=1&&t.combat!==0){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
  for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let d=die();defRolls.push(d);if(d<C.defense||(t.smash&&hits[hitIndex]===6)){for(let j=0;j<t.damage;j++){
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}

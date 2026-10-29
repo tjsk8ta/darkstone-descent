@@ -91,3 +91,23 @@ test('multi-chamber expedition preserves reachable frontier and encounters',asyn
  expect(result.opened.length).toBe(8);
  expect(result.opened.some(r=>r.shape==='chamber')).toBe(true);
 });
+
+test('encounter event tokens also resolve enemy Threats, not an empty event-only chamber',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/');
+ const result=await page.evaluate(()=>{
+  makeRun(createProfile(Object.keys(CLASSES)[0]),'story');
+  const r={x:4,y:4,shape:'chamber',name:'Encounter Chamber',kind:'normal',doors:['S'],entryDir:'S',seen:true,explored:false};
+  S.rooms[id(4,4)]=r;S.x=4*W+4;S.y=4*H+3;
+  S.explorationDeck=[{clue:false,exits:1,event:'encounter'}];
+  enterRoom(r);
+  return {enemies:S.enemies.length,pending:r.pendingThreat||false,
+    pendingError:r.pendingThreatError||'',event:!!S.pendingEvent,token:r.token?.event};
+ });
+ expect(errors).toEqual([]);
+ expect(result.token).toBe('encounter');
+ expect(result.pendingError).toBe('');
+ expect(result.pending).toBe(false);
+ expect(result.enemies).toBeGreaterThan(0);
+ expect(result.event).toBe(true);
+});

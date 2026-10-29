@@ -1,0 +1,33 @@
+const {test,expect}=require('@playwright/test');
+test('desktop expedition starts, saves, and reloads without runtime exceptions',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/');
+ await expect(page.locator('#startGame')).toBeVisible();
+ await page.locator('#startGame').click();
+ await expect(page.locator('#overlay')).toHaveClass(/hidden/);
+ await expect(page.locator('#statHero')).toContainText('Frontier Marshal');
+ await expect(page.locator('#attackBtn')).toBeDisabled();
+ await expect(page.locator('#map')).toBeVisible();
+ await expect(page.locator('#turnCount')).toHaveText('1');
+ const saved=await page.evaluate(()=>localStorage.getItem('darkstone_descent_tiles_v3'));
+ expect(saved).toContain('"profile"');
+ await page.reload();
+ await expect(page.locator('#statHero')).toContainText('Frontier Marshal');
+ await expect(page.locator('#overlay')).toHaveClass(/hidden/);
+ expect(errors).toEqual([]);
+});
+test('mobile layout opens journal and supports turn controls',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/?recovery');
+ await expect(page.locator('#startGame')).toBeVisible();
+ await page.locator('#startGame').click();
+ await expect(page.locator('#map')).toBeVisible();
+ await page.locator('#journalTab').click();
+ await expect(page.locator('#journalDrawer')).toHaveClass(/open/);
+ await page.locator('#journalClose').click();
+ await expect(page.locator('#journalDrawer')).not.toHaveClass(/open/);
+ await page.locator('#endBtn').click();
+ await expect(page.locator('#turnCount')).toHaveText('2');
+ expect(errors).toEqual([]);
+});

@@ -376,7 +376,7 @@ function eliteHas(type,ability){
  const chart=TYPES[type]?.eliteChart||[],active=S?.eliteAbilities?.[type]||[];
  return active.some(n=>chart[n-1]?.id===ability);
 }
-function effectiveEnemyInitiative(e){return TYPES[e.type].initiative+(eliteHas(e.type,'swift')?2:0)}
+function effectiveEnemyInitiative(e){return TYPES[e.type].initiative+(eliteHas(e.type,'swift')?2:0)+(e.ambushInitiativeUntilTurn>=S?.turn?2:0)}
 function applyModelLimits(groups){
  const result=groups.map(g=>({...g}));
  const types=[...new Set(result.map(g=>g.type))];
@@ -483,8 +483,20 @@ function drawThreat(r,tier='low'){
  log('ENCOUNTER RESULT · '+r.name+' · '+tier.toUpperCase()+' Threat · '+placed.length+' enemy model(s) · '+threatLoot+' loot-bearing Threat card(s).','hit');
  log('Threat card: '+candidate.card+'. Resolved: '+groups.map(g=>g.n+' '+g.type+(g.elite?' (Elite '+g.elite+')':'')).join('; ')+'.','hit');
  log('Encounter placed at: '+placed.map(enemyId=>{const e=S.enemies.find(v=>v.id===enemyId);return e?e.type+' ('+e.x+','+e.y+')':''}).filter(Boolean).join('; ')+'.','info');
- for(const enemyId of placed){const e=S.enemies.find(v=>v.id===enemyId);if(e&&eliteHas(e.type,'drop-from-above'))e.ambushPending=true}
- if(placed.some(enemyId=>S.enemies.some(e=>e.id===enemyId&&e.ambushPending))){log('Drop From Above: resolving immediate Elite Ambush Attacks.','hit');enemyPhase('ambush')}
+ for(const enemyId of placed){
+  const e=S.enemies.find(v=>v.id===enemyId);
+  if(!e||!eliteHas(e.type,'drop-from-above'))continue;
+  // Official Ambush: place adjacent to the Hero and grant +2 Initiative
+  // on the first turn of the Fight, not an invented extra attack.
+  const options=[[0,-1],[1,0],[0,1],[-1,0],[1,-1],[1,1],[-1,1],[-1,-1]]
+   .map(([dx,dy])=>({x:S.x+dx,y:S.y+dy}))
+   .filter(p=>cellAt(p.x,p.y)&&visibleAt(p.x,p.y)&&!occupied(p.x,p.y)&&lineOfSight(S,p));
+  if(options.length){e.x=options[0].x;e.y=options[0].y}
+  else log('Drop From Above: no free adjacent Hero square; official Ambush placement unresolved.','hit');
+  for(const same of S.enemies.filter(v=>v.type===e.type))same.ambushInitiativeUntilTurn=S.turn+1;
+ }
+ if(placed.some(enemyId=>S.enemies.some(e=>e.id===enemyId&&eliteHas(e.type,'drop-from-above'))))
+  log('Drop From Above: adjacent Ambush placement and +2 Initiative for the first Fight turn.','hit');
  return placed.length;
 }
 function drawLowThreat(r){return drawThreat(r,'low')}

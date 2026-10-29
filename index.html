@@ -890,11 +890,22 @@ const ENEMY_ICON_TYPES={
  Goliath:'brute',brute:'brute',boss:'harbinger',
  Harbinger:'harbinger',wraith:'wraith','Targa Pylon':'pylon'
 };
+/* Visual miniature scale only. Footprint/collision stays one map cell until
+ * an individual base-size rule is verified from the relevant enemy sheet. */
+const ENEMY_VISUAL_SCALE={
+ 'Hellbat':.68,'Bogbat':.68,'Void Spider':.82,'Ancient Spider':.9,
+ 'Tentacle':.92,'Hungry Dead':.83,'Strangler':.9,'Slasher':.98,
+ 'Swamp Slasher':.98,'Corpse Pile':1.12,'Night Terror':1.25,
+ 'Snow Terror':1.26,'Goliath':1.42,'Harbinger':1.38,
+ 'Targa Pylon':1.25,spider:.82,thrall:.84,wraith:1.03,
+ brute:1.22,boss:1.42
+};
+function enemyVisualScale(type){return ENEMY_VISUAL_SCALE[type]||1}
 function drawEnemyIcon(ctx,type,x,y,unit,color){
  const path=ENEMY_ICON_PATHS[ENEMY_ICON_TYPES[type]];
  if(!path)return false;
- ctx.save();ctx.translate(x-unit*.35,y-unit*.35);
- ctx.scale(unit*.007,unit*.007);
+ ctx.save();const size=unit*enemyVisualScale(type);ctx.translate(x-size*.35,y-size*.35);
+ ctx.scale(size*.007,size*.007);
  const shape=new Path2D(path);
  ctx.lineWidth=4;ctx.lineJoin='round';ctx.lineCap='round';
  ctx.strokeStyle='#0e1017';ctx.fillStyle=color;
@@ -905,7 +916,7 @@ function draw(){if(!S||!canvas.width)return;let w=canvas.width,h=canvas.height,r
  else{ctx.fillStyle=noise>.5?'#111a1f':'#121b20';ctx.fillRect(px,py,unit+.4,unit+.4);ctx.fillStyle='#35413a';ctx.fillRect(px,py,unit,Math.max(2,unit*.08));ctx.fillStyle='#0b1116';ctx.fillRect(px,py+unit*.75,unit,unit*.25)}if(floor){let lx=x%W,ly=y%H;if((lx===0||lx===8)&&ly===3||(ly===0||ly===6)&&lx===4){ctx.fillStyle='#bd965555';ctx.fillRect(px+2,py+2,unit-4,unit-4)}}}
  for(let r of Object.values(S.rooms)){if(!r.seen&&!r.explored)continue;let bx=r.x*W+4,by=r.y*H+3,x=cx+(bx-S.x)*unit,y=cy+(by-S.y)*unit;let col='#8d9a9177';if(r.kind==='boss')col='#bda1df';else if(r.clue&&!r.clueFound)col='#b8a1de';else if(r.rewarded)col='#9b927377';ctx.font=`${Math.floor(unit*.52)}px Georgia`;ctx.textAlign='center';ctx.textBaseline='middle';if(r.kind==='boss'&&r.clueFound)continue;if(r.kind==='boss'||r.clue&&!r.clueFound){ctx.fillStyle=col;ctx.fillText('✧',x,y)}
  for(let dir of r.doors){let nr=S.rooms[id(r.x+D[dir][0],r.y+D[dir][1])];if(nr?.seen)continue;let gx=bx+(dir==='E'?4:dir==='W'?-4:0),gy=by+(dir==='S'?3:dir==='N'?-3:0),px=cx+(gx-S.x)*unit,py=cy+(gy-S.y)*unit;ctx.save();ctx.shadowColor='#a9bffb';ctx.shadowBlur=unit*.65;ctx.fillStyle='#8ba4d4';ctx.font=`${Math.floor(unit*.63)}px Georgia`;ctx.fillText('◆',px,py);ctx.restore()}}
- for(let e of S.enemies){let ex=cx+(e.x-S.x)*unit,ey=cy+(e.y-S.y)*unit;if(ex<0||ey<0||ex>w||ey>h)continue;let t=TYPES[e.type],rad=e.type==='boss'?unit*.42:unit*.34;ctx.save();ctx.shadowColor=t.color;ctx.shadowBlur=unit*.28;ctx.fillStyle='#341d26';ctx.beginPath();ctx.arc(ex,ey,rad,0,Math.PI*2);ctx.fill();ctx.strokeStyle=t.color;ctx.lineWidth=Math.max(1,unit*.07);ctx.stroke();ctx.shadowBlur=0;if(!drawEnemyIcon(ctx,e.type,ex,ey,unit,t.color)){ctx.fillStyle=t.color;ctx.font=`bold ${Math.floor(unit*.52)}px Georgia`;ctx.fillText(t.glyph,ex,ey+unit*.015)}ctx.restore();if(selectedEnemyId===e.id){ctx.strokeStyle='#ffe2a0';ctx.lineWidth=Math.max(2,unit*.09);ctx.strokeRect(ex-unit*.48,ey-unit*.48,unit*.96,unit*.96)}ctx.fillStyle='#2a1115';ctx.fillRect(ex-unit*.35,ey-unit*.49,unit*.7,unit*.07);ctx.fillStyle='#e18a75';ctx.fillRect(ex-unit*.35,ey-unit*.49,unit*.7*clamp(e.hp/e.maxHp,0,1),unit*.07)}
+ for(let e of S.enemies){let ex=cx+(e.x-S.x)*unit,ey=cy+(e.y-S.y)*unit;if(ex<0||ey<0||ex>w||ey>h)continue;let t=TYPES[e.type],visualScale=enemyVisualScale(e.type),rad=Math.min(unit*.48,unit*.34*visualScale);ctx.save();ctx.shadowColor=t.color;ctx.shadowBlur=unit*.28;ctx.fillStyle='#341d26';ctx.beginPath();ctx.arc(ex,ey,rad,0,Math.PI*2);ctx.fill();ctx.strokeStyle=t.color;ctx.lineWidth=Math.max(1,unit*.07);ctx.stroke();ctx.shadowBlur=0;if(!drawEnemyIcon(ctx,e.type,ex,ey,unit,t.color)){ctx.fillStyle=t.color;ctx.font=`bold ${Math.floor(unit*.52)}px Georgia`;ctx.fillText(t.glyph,ex,ey+unit*.015)}ctx.restore();if(selectedEnemyId===e.id){ctx.strokeStyle='#ffe2a0';ctx.lineWidth=Math.max(2,unit*.09);ctx.strokeRect(ex-unit*.48,ey-unit*.48,unit*.96,unit*.96)}ctx.fillStyle='#2a1115';ctx.fillRect(ex-unit*.35,ey-unit*(.49+Math.max(0,visualScale-1)*.12),unit*.7,unit*.07);ctx.fillStyle='#e18a75';ctx.fillRect(ex-unit*.35,ey-unit*(.49+Math.max(0,visualScale-1)*.12),unit*.7*clamp(e.hp/e.maxHp,0,1),unit*.07)}
  ctx.save();ctx.shadowColor='#e5b66e';ctx.shadowBlur=unit*.9;ctx.fillStyle='#121d24';ctx.beginPath();ctx.arc(cx,cy,unit*.42,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#edc682';ctx.lineWidth=Math.max(2,unit*.08);ctx.stroke();ctx.shadowBlur=0;ctx.fillStyle='#f2d5a0';ctx.font=`bold ${Math.floor(unit*.55)}px Georgia`;ctx.fillText(CLASSES[S.profile.hero].symbol,cx,cy);ctx.restore();
  /* No hero-centred darkness overlay: all discovered chambers remain readable. */
  if(selectedMapCell){let px=cx+(selectedMapCell.x-S.x)*unit,py=cy+(selectedMapCell.y-S.y)*unit;ctx.strokeStyle='#f4cf80';ctx.lineWidth=Math.max(2,unit*.11);ctx.strokeRect(px-unit*.49,py-unit*.49,unit*.98,unit*.98)}if(dynamiteAim){ctx.fillStyle='#e7ad4933';for(let yy=0;yy<N*H;yy++)for(let xx=0;xx<N*W;xx++)if(validDynamiteTarget(xx,yy)){ctx.fillRect(cx+(xx-S.x)*unit-unit/2,cy+(yy-S.y)*unit-unit/2,unit,unit)}}if(hover&&cellAt(hover.x,hover.y)&&visibleAt(hover.x,hover.y)){let hx=cx+(hover.x-S.x)*unit,hy=cy+(hover.y-S.y)*unit;ctx.strokeStyle='#dfd4a788';ctx.lineWidth=Math.max(1,unit*.035);ctx.strokeRect(hx-unit*.42,hy-unit*.42,unit*.84,unit*.84)}

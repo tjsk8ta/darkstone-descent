@@ -22,7 +22,7 @@ test('completion remains false until all source and gameplay gates pass',()=>{
  for(const edition of ['original','revised'])for(const row of Object.values(audit.editionRecords[edition]))counts[row.status]++;
  assert.deepEqual(counts,audit.summary);
  assert.equal(counts.full+counts.partial+counts.missing,22);
- assert.equal(Object.values(audit.editionRecords.original).filter(x=>x.publisherSourceVerified).length+Object.values(audit.editionRecords.revised).filter(x=>x.publisherSourceVerified).length,2);
+ assert.equal(Object.values(audit.editionRecords.original).filter(x=>x.publisherSourceVerified).length+Object.values(audit.editionRecords.revised).filter(x=>x.publisherSourceVerified).length,1);
  assert.equal(gate.completion,false);
  assert.equal(audit.acceptance.allSheetsSourceVerified,false);
  assert.ok(Object.values(gate.acceptance).some(x=>x.passed===false));

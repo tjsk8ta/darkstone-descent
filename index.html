@@ -318,6 +318,13 @@ const ORIGINAL_THREAT_NAMES=['Night Terror','Strangler','Void Spider','Tentacle'
 TYPES.Goliath={...TYPES.boss,name:'Goliath',hp:38,exp:100};
 TYPES.Harbinger={...TYPES.boss,name:'Harbinger',hp:38,exp:100};
 TYPES['Targa Pylon']={...TYPES.wraith,name:'Targa Pylon',steps:0};
+// Physical figure limits from the core-set component lists. Corpse Piles and
+// OtherWorld variants require separate token/model-count verification.
+for(const [type,cap] of Object.entries({
+ 'Tentacle':6,'Strangler':6,'Void Spider':12,'Night Terror':3,'Goliath':1,
+ 'Hellbat':6,'Hungry Dead':12,'Slasher':3,'Harbinger':1
+}))TYPES[type].modelCap=cap;
+
 function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='swamp'?['swamp']:['city','swamp'];return sets.flatMap(k=>ORIGINAL_THREAT_DECKS[k][tier].flatMap(([copies,card])=>Array(copies).fill(null).map(()=>({card,set:k}))));}
 // The physical Peril die is 3,3,4,4,5,6. Never substitute a D6.
 const threatEngine=globalThis.DarkstoneThreatEngine;
@@ -339,6 +346,26 @@ function eliteHas(type,ability){
  return active.some(n=>chart[n-1]?.id===ability);
 }
 function effectiveEnemyInitiative(e){return TYPES[e.type].initiative+(eliteHas(e.type,'swift')?2:0)}
+function applyModelLimits(groups){
+ const result=groups.map(g=>({...g}));
+ const types=[...new Set(result.map(g=>g.type))];
+ for(const type of types){
+  const base=TYPES[type]?.modelCap;
+  if(!base)continue;
+  const cap=base+(type==='Tentacle'&&S.coreThreatSet==='combined'?6:0);
+  const already=S.enemies.filter(e=>e.type===type).length;
+  const requested=result.filter(g=>g.type===type).reduce((n,g)=>n+g.n,0);
+  let shortage=Math.max(0,already+requested-cap);
+  if(!shortage)continue;
+  if(requested<=shortage&&already===0)throw Error('No physical models available for '+type);
+  for(const g of result.filter(g=>g.type===type).reverse()){
+   const removed=Math.min(g.n,shortage);g.n-=removed;shortage-=removed;
+   if(!shortage)break;
+  }
+  result.find(g=>g.type===type).elite+=1;
+ }
+ return result;
+}
 function previewEliteAbilities(groups){
  const result=JSON.parse(JSON.stringify(S.eliteAbilities||{}));
  for(const g of groups)if(g.elite){
@@ -373,6 +400,7 @@ function drawThreat(r,tier='low'){
    groups=threatEngine.resolveCard(candidate.card,{
     rng:rnd,currentTier:'low',draw:nextTier=>drawDeckCard(nextTier)
    });
+   groups=applyModelLimits(groups);
    // Elite Charts are enemy-specific. Do not silently use fabricated abilities.
    const unknownElite=groups.find(g=>g.elite&&!(TYPES[g.type]?.eliteChart?.length===6));
    if(unknownElite)throw Error('Elite chart unverified for '+unknownElite.type);

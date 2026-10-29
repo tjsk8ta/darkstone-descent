@@ -54,11 +54,11 @@ const TYPES={thrall:{initiative:4,escape:3,name:'Hollow Miner',glyph:'♟',hp:5,
 // These are NOT transcriptions of official Enemy Record Sheets or Elite charts.
 const CORE_ENEMY_PROTOTYPES={
  'Night Terror':{initiative:4,escape:4,hp:12,def:1,damage:3,hit:4,steps:2,exp:24,sane:1,glyph:'♜',color:'#a17dba'},
- 'Strangler':{initiative:5,escape:4,hp:5,def:0,damage:2,hit:4,steps:2,exp:12,sane:0,glyph:'♟',color:'#a88d70'},
- 'Void Spider':{initiative:6,escape:4,hp:4,def:0,damage:2,hit:5,steps:3,exp:10,sane:0,glyph:'✣',color:'#b77a99'},
+ 'Strangler':{initiative:5,escape:4,hp:5,def:0,damage:2,hit:4,steps:2,combat:4,exp:12,sane:0,glyph:'♟',color:'#a88d70'},
+ 'Void Spider':{initiative:6,escape:4,hp:4,def:0,damage:2,hit:5,steps:3,combat:2,exp:10,sane:0,glyph:'✣',color:'#b77a99'},
  'Tentacle':{initiative:2,escape:4,hp:4,def:2,damage:3,hit:4,steps:6,combat:3,smash:true,exp:30,sane:0,glyph:'☷',color:'#9b88bc'},
- 'Hellbat':{initiative:6,escape:4,hp:3,def:0,damage:1,hit:5,steps:3,exp:8,sane:0,glyph:'✦',color:'#c47d65'},
- 'Hungry Dead':{initiative:2,escape:3,hp:5,def:0,damage:2,hit:4,steps:1,exp:10,sane:0,glyph:'♟',color:'#8ca37e'},
+ 'Hellbat':{initiative:6,escape:4,hp:3,def:0,damage:1,hit:5,steps:3,combat:3,exp:8,sane:0,glyph:'✦',color:'#c47d65'},
+ 'Hungry Dead':{initiative:2,escape:3,hp:5,def:0,damage:2,hit:4,steps:1,combat:1,exp:10,sane:0,glyph:'♟',color:'#8ca37e'},
  'Corpse Pile':{initiative:1,escape:5,hp:9,def:1,damage:2,hit:5,steps:0,exp:16,sane:1,glyph:'▣',color:'#a1a08a'},
  'Slasher':{initiative:4,escape:4,hp:11,def:1,damage:3,hit:4,steps:2,exp:23,sane:0,glyph:'⚔',color:'#c07565'}
 };
@@ -236,9 +236,9 @@ function originalLowThreatPool(set){
  return decks.flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
 }
 // Revised Swamps of Death inventory differs from the original 2014 deck:
-// two 6 Hungry Dead cards, and one (not three) P Hungry Dead + Corpse Pile.
+// two 6 Hungry Dead cards in addition to three P Hungry Dead + Corpse Pile.
 const REVISED_SWAMP_LOW_THREAT=[
- {card:'P Hellbats',copies:2},{card:'P Hungry Dead & 1 Corpse Pile',copies:1},
+ {card:'P Hellbats',copies:2},{card:'P Hungry Dead & 1 Corpse Pile',copies:3},
  {card:'6 Hungry Dead',copies:2},{card:'1 Slasher',copies:2},
  {card:'1 Slasher & P Hellbats',copies:1},{card:'P Tentacles',copies:2}
 ];
@@ -301,7 +301,7 @@ function drawThreat(r,tier='low'){
  return spawned;
 }
 function drawLowThreat(r){
- if(S.threatDeckVersion!==3){S.lowThreatDeck=[];S.threatDeckVersion=3}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
+ if(S.threatDeckVersion!==4){S.lowThreatDeck=[];S.threatDeckVersion=4}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=S.lowThreatDeck.pop(),groups=threat.groups,prior=S.enemies.length;
  for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
  const spawned=S.enemies.length-prior;

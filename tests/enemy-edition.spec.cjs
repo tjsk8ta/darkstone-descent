@@ -55,3 +55,15 @@ test('original Goliath performs three verified melee attack dice against a solo 
  expect(state.log.find(e=>/Goliath.*attacks: to-hit/.test(e.text)).text).toMatch(/\[3 3 3\]/);
  expect(errors).toEqual([]);
 });
+
+test('revised City and Swamps Tentacle Elite #4 retain their distinct official printed names',async({page})=>{
+ const names=[];
+ for(const set of ['city','swamp','combined']){
+  await page.goto('/?recovery');
+  await page.locator('#coreEdition').selectOption('revised');
+  await page.locator('#coreSet').selectOption(set);
+  await page.locator('#startGame').click();
+  names.push(await page.evaluate(()=>window.DarkstoneRuleAudit.getEnemyType('Tentacle').eliteChart[3].name));
+ }
+ expect(names).toEqual(['Brutal Suckers','Bitter Success','Brutal Suckers / Bitter Success']);
+});

@@ -428,7 +428,7 @@ function drawThreat(r,tier='low'){
   log('Threat '+candidate.card+' unresolved: '+e.message,'hit');return 0;
  }
  const placed=[],startId=S.nextEnemy;
- for(const g of [...groups].sort((x,y)=>TYPES[x.type].initiative-TYPES[y.type].initiative)){
+ for(const g of shuffleDeck([...groups]).sort((x,y)=>TYPES[x.type].initiative-TYPES[y.type].initiative)){
   for(let i=0;i<g.n;i++){
    if(!spawnEnemy(g.type,r)){
     S.enemies=S.enemies.filter(e=>!placed.includes(e.id));S.nextEnemy=startId;

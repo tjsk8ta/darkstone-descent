@@ -282,11 +282,8 @@ function threatGroupsFromCard(card,tier,depth=0){
  // A generic Threat Card means a High Threat card; Elite is not a synonym
  // for an arbitrary High Threat and must fail closed until its deck is modelled.
  if(/(?:^|[^a-z])Elite Threat Cards?/i.test(card))throw Error('Elite Threat subdraw requires a separate verified Elite deck');
- const unresolved=card.replace(/\\d+\\s+(?:Low|Medium) Threat Cards?/gi,'').replace(/\\d+\\s+Threat Cards?/gi,'');
- if(unresolved!==card) {
-  const generic=card.match(/(\\d+) Threat Cards?/gi)||[];
-  for(const part of generic){const count=Number(part.match(/\\d+/)[0]);for(let i=0;i<count;i++)groups.push(...drawOriginalThreatGroups('high',depth+1))}
- }
+ const generic=card.match(/(?:^|[^a-z])(\\d+) Threat Cards?/gi)||[];
+ for(const part of generic){const count=Number(part.match(/\\d+/)[0]);for(let i=0;i<count;i++)groups.push(...drawOriginalThreatGroups('high',depth+1))}
  const named=[['Night Terrors?','Night Terror'],['Stranglers?','Strangler'],['Void Spiders?','Void Spider'],['Tentacles?','Tentacle'],['Hellbats?','Hellbat'],['Hungry Dead','Hungry Dead'],['Corpse Piles?','Corpse Pile'],['Slashers?','Slasher'],['Goliath','Goliath'],['Harbinger','Harbinger']];
  for(const [pattern,type] of named){const re=new RegExp('(D3|PP|P|\\d+)\\s+'+pattern,'gi');let m;while((m=re.exec(card))!==null){const qty=m[1]==='D3'?1+rnd(3):m[1]==='PP'?2:m[1]==='P'?1:+m[1];add(type,qty)}}
  if(!groups.length)throw Error('Threat card has no resolved enemies: '+card);

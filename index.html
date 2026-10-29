@@ -320,7 +320,7 @@ function drawLowThreat(r){
  if(S.threatDeckVersion!==6){S.lowThreatDeck=[];S.threatDeckVersion=6}
  if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=r.pendingLowThreat||S.lowThreatDeck.pop();
- const groups=r.pendingLowThreatGroups||threat.groups.map(g=>{const plural=g.type==='Hungry Dead'?'Hungry Dead':g.type+'s';const escaped=g.type.replace(/[.*+?^${}()|[\]\\]/g,'\\threat.groups.map(g=>({...g,n:g.n===1&&/^P(?: |$)/.test(threat.card)?die():g.n}))');const match=threat.card.match(new RegExp('(PP|P|D3|\\\\d+)\\\\s+'+escaped+'s?','i'));const token=match?.[1];return {...g,n:token==='PP'?die()+die():token==='P'?die():token==='D3'?1+rnd(3):g.n}});
+ const groups=r.pendingLowThreatGroups||threat.groups.map(g=>{const match=threat.card.match(new RegExp('(PP|P|D3|[0-9]+)\\\\s+'+g.type+'s?','i'));const token=match?.[1];return {...g,n:token==='PP'?die()+die():token==='P'?die():token==='D3'?1+rnd(3):g.n}});
  r.pendingLowThreatGroups=groups;
  r.pendingLowThreat=threat;
  const total=groups.reduce((n,g)=>n+g.n,0);

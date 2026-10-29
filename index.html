@@ -209,7 +209,7 @@ const ORIGINAL_LOW_THREAT_REFERENCE={
 // Card identities/frequencies follow the prior inventory; stats and Posse Size are
 // provisional. Keep the card and encounter tier separate from enemy implementation.
 function lowThreatGroups(card){
- const map={'1 Night Terror':[['Night Terror',1]],'1 Night Terror & P Stranglers':[['Night Terror',1],['Strangler',1]],'1 Night Terror & P Void Spiders':[['Night Terror',1],['Void Spider',1]],'P Stranglers':[['Strangler',1]],'P Tentacles':[['Tentacle',1]],'6 Void Spiders':[['Void Spider',6]],'P Void Spiders & P Stranglers':[['Void Spider',1],['Strangler',1]],'P Hellbats':[['Hellbat',1]],'P Hungry Dead & 1 Corpse Pile':[['Hungry Dead',1],['Corpse Pile',1]],'1 Slasher':[['Slasher',1]],'1 Slasher & P Hellbats':[['Slasher',1],['Hellbat',1]]};
+ const map={'1 Night Terror':[['Night Terror',1]],'1 Night Terror & P Stranglers':[['Night Terror',1],['Strangler',1]],'1 Night Terror & P Void Spiders':[['Night Terror',1],['Void Spider',1]],'P Stranglers':[['Strangler',1]],'P Tentacles':[['Tentacle',1]],'6 Void Spiders':[['Void Spider',6]],'P Void Spiders & P Stranglers':[['Void Spider',1],['Strangler',1]],'P Hellbats':[['Hellbat',1]],'P Hungry Dead & 1 Corpse Pile':[['Hungry Dead',1],['Corpse Pile',1]],'6 Hungry Dead':[['Hungry Dead',6]],'1 Slasher':[['Slasher',1]],'1 Slasher & P Hellbats':[['Slasher',1],['Hellbat',1]]};
  if(!map[card])throw Error('Unmapped Low Threat: '+card);
  return map[card].map(([type,n])=>({type,n}));
 }
@@ -217,7 +217,20 @@ function originalLowThreatPool(set){
  const decks=set==='city'?[ORIGINAL_LOW_THREAT_REFERENCE.city]:set==='swamp'?[ORIGINAL_LOW_THREAT_REFERENCE.swamp]:[ORIGINAL_LOW_THREAT_REFERENCE.city,ORIGINAL_LOW_THREAT_REFERENCE.swamp];
  return decks.flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
 }
-const LOW_THREAT_POOL=originalLowThreatPool('combined');
+// Revised Swamps of Death inventory differs from the original 2014 deck:
+// two 6 Hungry Dead cards, and one (not three) P Hungry Dead + Corpse Pile.
+const REVISED_SWAMP_LOW_THREAT=[
+ {card:'P Hellbats',copies:2},{card:'P Hungry Dead & 1 Corpse Pile',copies:1},
+ {card:'6 Hungry Dead',copies:2},{card:'1 Slasher',copies:2},
+ {card:'1 Slasher & P Hellbats',copies:1},{card:'P Tentacles',copies:2}
+];
+function revisedLowThreatPool(set){
+ const city=ORIGINAL_LOW_THREAT_REFERENCE.city;
+ const swamp=REVISED_SWAMP_LOW_THREAT;
+ const decks=set==='city'?[city]:set==='swamp'?[swamp]:[city,swamp];
+ return decks.flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
+}
+const LOW_THREAT_POOL=revisedLowThreatPool('combined');
 // Published card labels and quantities: SoB Game Contents v2, original cores.
 // Enemy statistics and Posse Size remain provisional; Elite rules unresolved.
 const ORIGINAL_THREAT_DECKS={
@@ -270,11 +283,11 @@ function drawThreat(r,tier='low'){
  return spawned;
 }
 function drawLowThreat(r){
- if(S.threatDeckVersion!==2){S.lowThreatDeck=[];S.threatDeckVersion=2}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(originalLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
+ if(S.threatDeckVersion!==3){S.lowThreatDeck=[];S.threatDeckVersion=3}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=S.lowThreatDeck.pop(),groups=threat.groups,prior=S.enemies.length;
  for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
  const spawned=S.enemies.length-prior;
- if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Original 2014 Low Threat card: '+threat.card+'; prototype statistics: '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
+ if(spawned){r.fightThreats=(r.fightThreats||0)+1;log('Revised core Low Threat card: '+threat.card+'; unverified enemy statistics: '+groups.map(g=>g.n+' '+TYPES[g.type].name).join(', ')+'.','hit')}
  else log('Threat could not be placed; no Loot credit awarded.','hit');
  return spawned;
 }
@@ -408,7 +421,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
- if(distance>1){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
+ if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
  if(distance<=1){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
  for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let d=die();defRolls.push(d);if(d<C.defense||(t.smash&&hits[hitIndex]===6)){for(let j=0;j<t.damage;j++){

@@ -5,15 +5,15 @@
   "acceptance": {
     "coreEnemySheets": {
       "passed": false,
-      "reason": "Most original/revised normal-side enemy statistics lack independently verified primary-source record sheets"
+      "reason": "22 unique edition/enemy normal-side sheet combinations: 4 fully transcribed, 8 partially evidenced, 10 missing. Full source matrix at reference/enemy-sheet-audit.json."
     },
     "enemyAbilities": {
       "passed": false,
-      "reason": "Several enemy-specific normal-side rules and interactions remain provisional"
+      "reason": "Original Goliath, Night Terror and Tentacle mechanics improved; revised Harbinger's Bringer of Death and several enemy-specific mechanics still unimplemented or unverified."
     },
     "eliteCharts": {
       "passed": false,
-      "reason": "All requested enemy-specific Elite charts not yet source-verified and implemented"
+      "reason": "Original Goliath, Night Terror and original/revised Tentacle six-entry charts transcribed; 18 edition/type combinations still lack verified complete charts."
     },
     "threatDecks": {
       "passed": false,
@@ -25,7 +25,7 @@
     },
     "automatedTests": {
       "passed": false,
-      "reason": "Regression suite includes parser, Peril, nested Threats, Elite gating, card inventory and connected multi-room overflow tests; targeted in-memory checks passed. Full browser CI result and comprehensive combat scenarios not yet verified."
+      "reason": "13 new enemy-sheet/combat/XP unit tests passed in isolated execution, 2 Playwright edition-selection tests added but full GitHub Actions/Playwright execution not independently verified."
     },
     "deployment": {
       "passed": false,
@@ -42,7 +42,18 @@
     "parserFailures": 0,
     "spawnOverflowCheck": "3 connected rooms correctly traversed in isolated execution",
     "browserCI": "not independently verified",
-    "complete": false
+    "complete": false,
+    "enemyRecordSheets": {
+      "full": 4,
+      "partial": 8,
+      "missing": 10,
+      "total": 22
+    },
+    "enemyUnitTestsPassed": 13,
+    "enemyUnitTestsFailed": 0,
+    "playwrightEditionTestsAdded": 2,
+    "playwrightExecutionVerified": false,
+    "completion": false
   },
   "enemyRecordSheetSources": {
     "originalInventory": "https://pdfcoffee.com/sobgamecontentsv2bpdf-pdf-free.html",
@@ -69,5 +80,7 @@
       "Tentacle"
     ],
     "status": "Inventories identified; individual normal-side card faces not yet acquired and transcribed for all enemies"
-  }
+  },
+  "enemySheetAuditPath": "reference/enemy-sheet-audit.json",
+  "lastRunDate": "2026-10-29"
 }

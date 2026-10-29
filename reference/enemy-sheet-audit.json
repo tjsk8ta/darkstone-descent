@@ -444,7 +444,7 @@
     "verifiedEnemyCombatUnitTests": 3,
     "verifiedEnemyXPUnitTests": 4,
     "allPassInIsolatedExecution": true,
-    "playwrightTestsAdded": 3,
+    "playwrightTestsAdded": 4,
     "playwrightExecutionVerified": false,
     "verifiedEnemySheetMatrixTests": 2,
     "verifiedThreatInventoryTests": 3,

@@ -497,7 +497,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
  if(distance<=1&&t.combat!==0){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
- for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let d=die();defRolls.push(d);if(d<C.defense||(t.smash&&hits[hitIndex]===6)){for(let j=0;j<t.damage;j++){
+ for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let smash=t.smash&&hits[hitIndex]===6;let d=smash?null:die();defRolls.push(smash?'SMASH':d);if(smash||d<C.defense){for(let j=0;j<t.damage;j++){
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}
  // Original enemy 'sane' values represent extra Horror Hits, each prevented by Willpower.

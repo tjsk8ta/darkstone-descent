@@ -215,7 +215,9 @@
         "initiative-order checkerboard placement",
         "connected entrance-tile overflow",
         "nested Threat loot counts exclude parent cards without enemies",
-        "physical miniature limits and free Elite conversion on shortages for verified core figure counts"
+        "physical miniature limits and free Elite conversion on shortages for verified core figure counts",
+        "one global Fight-loot pool across rooms, capped at three draws after all enemies are defeated",
+        "random tie ordering for enemy types at equal Initiative"
       ],
       "outstanding": [
         "verify every revised card face against physical components",
@@ -235,7 +237,11 @@
         "Tentacle Smash",
         "Tentacle Elite effects",
         "Revive Token restores full Health/Sanity and recovers one Grit",
-        "Fear/Terror/Unspeakable Terror generic proximity and Willpower resolver (individual enemy values still unverified)"
+        "Fear/Terror/Unspeakable Terror generic proximity and Willpower resolver (individual enemy values still unverified)",
+        "ranged hits must be allocated to adjacent enemies before distant targets",
+        "Entangle affects exactly the next Hero Activation",
+        "per-Fight Catch Your Breath and loot timing",
+        "model-count shortage grants group-wide Elite ability"
       ],
       "outstanding": [
         "complete innate abilities for 10 other core enemies",
@@ -252,7 +258,9 @@
         "initial entrance and T-junction",
         "diagonal movement with no corner clipping",
         "exploration via doorway",
-        "enemy placement overflow"
+        "enemy placement overflow",
+        "third Clue required for prototype objective",
+        "core-set Goliath/Harbinger used as prototype final guardian rather than generic substitute"
       ],
       "outstanding": [
         "all 18 official Mine Map cards and geometry",
@@ -260,7 +268,8 @@
         "Depth Event charts",
         "all Exploration Token outcomes",
         "all Darkness, Encounter and Growing Dread card effects",
-        "full original/revised mission rules"
+        "full original/revised mission rules",
+        "verify and implement actual Epic Threat draw for the third-Clue mission objective; current final guardian remains a scenario approximation"
       ]
     },
     "characters": {
@@ -270,14 +279,14 @@
     "tests": {
       "status": "partial",
       "unit": "57 distinct original/revised Threat-card titles successfully resolved in deterministic in-run checks; Node regression suite added",
-      "browser": "Chromium desktop/mobile smoke tests added to GitHub Actions; full end-to-end and scenario acceptance outstanding",
-      "ci": "Node unit and Chromium desktop/mobile tests are configured in GitHub Actions; last confirmed green run b3ee82f9, latest run pending"
+      "browser": "Chromium desktop/mobile startup, save recovery, journal, turn controls and sequential multi-target critical-hit test added; latest CI result pending",
+      "ci": "GitHub Actions runs Node unit and Chromium E2E suites; latest HEAD not yet verified green"
     },
     "deployment": {
       "status": "unverified",
       "repository": "https://github.com/tjsk8ta/darkstone-descent",
       "site": "https://tjsk8ta.github.io/darkstone-descent/",
-      "notes": "GitHub Pages workflow runs on every push; latest deployed SHA must match HEAD before marking verified."
+      "notes": "GitHub Pages build is queued for latest HEAD; must confirm success and live-browser load before marking verified."
     }
   },
   "blockers": [
@@ -293,6 +302,7 @@
     }
   ],
   "nextActions": [
+    "Verify CI for the latest commit, fix any remaining Chromium multi-target test failure, and confirm GitHub Pages deployment.",
     "Complete browser end-to-end regression coverage for enemy placement, multi-target attacks, Elite effects, saved encounters and recovery.",
     "Verify and transcribe original and revised normal-side Enemy Record Sheets and Elite charts for every remaining core enemy; implement abilities and unit tests.",
     "Add OtherWorld Threat handling, ambush placement and complete enemy special abilities.",

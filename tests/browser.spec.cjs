@@ -39,7 +39,7 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await page.evaluate(()=>{
   const key='darkstone_descent_tiles_v3',state=JSON.parse(localStorage.getItem(key));
   const mk=(id,type,x,y)=>({id,type,x,y,hp:1,maxHp:1,home:'2,2',spawnTurn:0});
-  state.enemies=[mk(100,'Tentacle',state.x+1,state.y),mk(101,'Void Spider',state.x+1,state.y+2)];
+  state.enemies=[mk(100,'Tentacle',state.x+1,state.y),mk(101,'Void Spider',state.x+1,state.y-2)];
   state.nextEnemy=102;
   localStorage.setItem(key,JSON.stringify(state));
   Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}});
@@ -47,9 +47,11 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await page.reload();
  await page.evaluate(()=>Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}}));
  await expect(page.locator('#attackBtn')).toBeEnabled();
+ await page.evaluate(()=>{window.__attackEvents=[];for(const type of ['pointerdown','pointerup','mousedown','mouseup','click'])document.querySelector('#attackBtn').addEventListener(type,e=>window.__attackEvents.push(type+':'+e.target.tagName))});
  await page.locator('#attackBtn').click();
+ console.log('ATTACK_EVENTS',await page.evaluate(()=>window.__attackEvents));
  console.log('ATTACK_ERRORS',errors);console.log('ATTACK_DEBUG',JSON.stringify(await page.evaluate(()=>({combat:document.querySelector('#combatControls')?.innerHTML.slice(0,800),overlay:document.querySelector('#overlay')?.className,recovery:document.querySelector('#startupRecovery')?.textContent,pending:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.savedPendingAttack,log:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.log.slice(0,4),actionUsed:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.actionUsed,enemyCount:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.enemies.length,buttonDisabled:document.querySelector('#attackBtn')?.disabled,combatControlsHidden:document.querySelector('#combatControls')?.hidden,onclick:document.querySelector('#attackBtn')?.onclick?.name,audit:window.DarkstoneRuleAudit?.getCombatState()}))));
- await page.evaluate(()=>document.querySelector('#attackBtn').onclick());
+ await page.evaluate(()=>document.querySelector('#attackBtn').click());
  console.log('ATTACK_AFTER_DIRECT',JSON.stringify(await page.evaluate(()=>window.DarkstoneRuleAudit.getCombatState())));
  await expect(page.locator('[data-toggle-grit]')).toHaveCount(2);
  await page.locator('#confirmAttackRoll').click();

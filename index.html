@@ -584,19 +584,19 @@ function doorwayRoom(){
  if(!S)return null;
  const r=roomCurrent();if(!r?.explored)return null;
  const lx=S.x%W,ly=S.y%H;
- // Door activation is restricted to the actual threshold squares. A hero
- // in the centre of a chamber cannot open a distant west/east door.
+ // The map's blue passage marker and its immediately adjacent floor squares
+ // are valid exploration positions. Do not require a hidden exact coordinate.
  const thresholds={
   N:[[4,0],[5,0],[4,1],[5,1]],
   S:[[4,H-1],[5,H-1],[4,H-2],[5,H-2]],
-  E:[[W-1,1],[W-1,2],[W-2,1],[W-2,2]],
-  W:[[0,1],[0,2],[1,1],[1,2]]
+  E:[[W-1,1],[W-1,2],[W-2,1],[W-2,2],[W-3,1],[W-3,2]],
+  W:[[0,1],[0,2],[1,1],[1,2],[2,1],[2,2]]
  };
- for(const dir of r.doors){
+ for(const dir of r.doors||[]){
   const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
   if(nx<0||ny<0||nx>=N||ny>=N)continue;
   const nr=S.rooms[id(nx,ny)];if(nr?.seen)continue;
-  if(!thresholds[dir].some(([x,y])=>x===lx&&y===ly&&cellAt(S.x,S.y)))continue;
+  if(!thresholds[dir].some(([x,y])=>Math.max(Math.abs(x-lx),Math.abs(y-ly))<=1&&floorLocal(r,x,y)))continue;
   return nr||{undrawn:true,from:r,dir};
  }
  return null;

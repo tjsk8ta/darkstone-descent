@@ -35,3 +35,23 @@ test('revised 2020 expedition loads Harbinger HP-per-hero and does not reuse ori
  expect(result.tentacle).toMatchObject({initiative:2,steps:6,escape:4,hit:4,combat:3,damage:3,def:2,hp:4,smash:true,recordComplete:true});
  expect(errors).toEqual([]);
 });
+
+test('original Goliath performs three verified melee attack dice against a solo hero within three spaces',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/?recovery');
+ await page.locator('#coreEdition').selectOption('original');
+ await page.locator('#startGame').click();
+ await page.evaluate(()=>{
+  const key='darkstone_descent_tiles_v3',state=JSON.parse(localStorage.getItem(key));
+  state.enemies=[{id:900,type:'Goliath',x:state.x+3,y:state.y,hp:24,maxHp:24,home:'4,5',spawnTurn:0}];
+  state.nextEnemy=901;state.enemyActed=[];
+  localStorage.setItem(key,JSON.stringify(state));
+ });
+ await page.reload();
+ await page.evaluate(()=>Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(2);return arr}}));
+ await page.locator('#endBtn').click();
+ const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3')));
+ expect(state.log.some(e=>/Goliath.*attacks: to-hit/.test(e.text))).toBe(true);
+ expect(state.log.find(e=>/Goliath.*attacks: to-hit/.test(e.text)).text).toMatch(/\[3 3 3\]/);
+ expect(errors).toEqual([]);
+});

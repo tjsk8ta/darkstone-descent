@@ -38,8 +38,8 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await page.locator('#startGame').click();
  await page.evaluate(()=>{
   const key='darkstone_descent_tiles_v3',state=JSON.parse(localStorage.getItem(key));
-  const mk=(id,type,x)=>({id,type,x,y:state.y,hp:1,maxHp:1,home:'4,5',spawnTurn:0});
-  state.enemies=[mk(100,'Tentacle',state.x+1),mk(101,'Void Spider',state.x+2)];
+  const mk=(id,type,x,y)=>({id,type,x,y,hp:1,maxHp:1,home:'2,2',spawnTurn:0});
+  state.enemies=[mk(100,'Tentacle',state.x+1,state.y),mk(101,'Void Spider',state.x+1,state.y+2)];
   state.nextEnemy=102;
   localStorage.setItem(key,JSON.stringify(state));
   Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}});

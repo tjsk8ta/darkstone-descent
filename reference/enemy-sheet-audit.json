@@ -275,7 +275,23 @@
         ],
         "fullGameplayAccepted": false,
         "sourceTier": "publisher_rulebook",
-        "publisherSourceVerified": true
+        "publisherSourceVerified": true,
+        "setVariants": {
+          "city": {
+            "elite4Name": "Brutal Suckers",
+            "effect": "+2 Combat Hit Damage",
+            "publisherSource": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22"
+          },
+          "swamp": {
+            "elite4Name": "Bitter Success",
+            "effect": "+2 Combat Hit Damage",
+            "publisherSource": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf#page=22"
+          },
+          "combined": {
+            "display": "Brutal Suckers / Bitter Success",
+            "note": "Shared mechanics; individual spawned enemies are not yet tagged with their originating core-set card."
+          }
+        }
       },
       "Targa Pylon": {
         "status": "missing",
@@ -414,7 +430,8 @@
     "Revised Harbinger and four other Swamp types have partial visible data; source images overlap and do not expose every stat and Elite chart.",
     "Original Targa Pylon is ranged-only (3+ ranged To Hit), not 3+ melee; revised Corpse Pile has no melee attack.",
     "Verified size categories have been recorded; large/extra-large multi-space footprints are not yet fully implemented or tested.",
-    "The four fully transcribed unique edition/type combinations are not all publisher-sourced: only Tentacle (original and revised) is supported by a directly published rulebook example; Goliath and Night Terror original rely on physical-card photos/translations."
+    "The four fully transcribed unique edition/type combinations are not all publisher-sourced: only Tentacle (original and revised) is supported by a directly published rulebook example; Goliath and Night Terror original rely on physical-card photos/translations.",
+    "The two revised Tentacle record sheets are not identical: City Elite #4 is Brutal Suckers, Swamps Elite #4 is Bitter Success. Both give +2 Combat Hit Damage. Combined-set encounter provenance remains a pending implementation detail."
   ],
   "remainingSourceAcquisition": [
     "Original Swamp: complete Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries.",
@@ -423,7 +440,7 @@
     "Revised Swamp: unobstructed Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries."
   ],
   "testEvidence": {
-    "verifiedEnemyRecordUnitTests": 7,
+    "verifiedEnemyRecordUnitTests": 8,
     "verifiedEnemyCombatUnitTests": 3,
     "verifiedEnemyXPUnitTests": 4,
     "allPassInIsolatedExecution": true,
@@ -431,7 +448,8 @@
     "playwrightExecutionVerified": false,
     "verifiedEnemySheetMatrixTests": 2,
     "verifiedThreatInventoryTests": 3,
-    "all19PassInIsolatedExecution": true
+    "all19PassInIsolatedExecution": false,
+    "all20PassInIsolatedExecution": false
   },
   "summary": {
     "full": 4,

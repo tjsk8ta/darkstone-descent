@@ -490,12 +490,21 @@ function tileSpawnSpaces(r,entryDir='N'){
  return locs.filter(p=>(p.lx+p.ly)%2===parity).concat(locs.filter(p=>(p.lx+p.ly)%2!==parity)).map(({x,y})=>({x,y}));
 }
 function spawnSpaces(r){
- const entrance=spawnEntrance(r);
- const local=tileSpawnSpaces(r,entrance?.dir||'N');
- if(!entrance)return local;
- // If the encounter tile is full, the room at its entrance is the first overflow tile.
- const overflow=tileSpawnSpaces(entrance.room,OP[entrance.dir]);
- return local.concat(overflow);
+ // Place on the encounter tile first, then overflow only into explored rooms
+ // connected by real doors. Breadth-first order keeps overflow as near as possible.
+ const entrance=spawnEntrance(r),queue=[{room:r,entry:entrance?.dir||'N'}];
+ const visited=new Set([id(r.x,r.y)]),spaces=[];
+ while(queue.length){
+  const current=queue.shift(),room=current.room;
+  spaces.push(...tileSpawnSpaces(room,current.entry));
+  for(const dir of Object.keys(D)){
+   const [dx,dy]=D[dir],neighbor=S.rooms[id(room.x+dx,room.y+dy)];
+   if(!neighbor?.seen||visited.has(id(neighbor.x,neighbor.y))||!adjoiningDoorConnected(room,dir,neighbor))continue;
+   visited.add(id(neighbor.x,neighbor.y));
+   queue.push({room:neighbor,entry:OP[dir]});
+  }
+ }
+ return spaces;
 }
 function spawnEnemy(type,r){
  const t=TYPES[type];

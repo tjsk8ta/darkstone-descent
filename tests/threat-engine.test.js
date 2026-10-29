@@ -18,7 +18,7 @@ test('two Low Threat cards resolve once each',()=>{
 test('nested generic Threat draws inherit their own tier',()=>{
  const calls=[];
  const result=engine.resolveEncounter('1 Medium Threat Card',{rng:fixed,currentTier:'high',draw:tier=>{
- calls.push(tier);return tier==='medium'?{card:'1 Threat Card'}:{card:'1 Slasher'};
+ calls.push(tier);return calls.length===1?{card:'1 Threat Card'}:{card:'1 Slasher'};
  }});
  assert.deepEqual(calls,['medium','medium']);
  assert.equal(result.groups[0].type,'Slasher');

@@ -378,12 +378,15 @@
     "Revised Swamp: unobstructed Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries."
   ],
   "testEvidence": {
-    "verifiedEnemyRecordUnitTests": 6,
+    "verifiedEnemyRecordUnitTests": 7,
     "verifiedEnemyCombatUnitTests": 3,
     "verifiedEnemyXPUnitTests": 4,
     "allPassInIsolatedExecution": true,
-    "playwrightTestsAdded": 2,
-    "playwrightExecutionVerified": false
+    "playwrightTestsAdded": 3,
+    "playwrightExecutionVerified": false,
+    "verifiedEnemySheetMatrixTests": 2,
+    "verifiedThreatInventoryTests": 3,
+    "all19PassInIsolatedExecution": true
   },
   "summary": {
     "full": 4,

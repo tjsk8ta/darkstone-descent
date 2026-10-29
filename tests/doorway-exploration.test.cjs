@@ -9,10 +9,11 @@ function doorwayHarness({hero,doors,edgeFloor,neighbor=null}){
  const S={x:2*9+hero[0],y:2*7+hero[1],rooms:neighbor?{'3,2':neighbor}:{}};
  const ctx={S,W:9,H:7,N:9,D:{N:[0,-1],S:[0,1],E:[1,0],W:[-1,0]},id:(x,y)=>x+','+y,roomCurrent:()=>r,floorLocal:(_,x,y)=>edgeFloor(x,y)};
  const shared=html.slice(html.indexOf('const PORTAL_LANES='),html.indexOf('const MAP_CARD_POOL='));
- vm.runInNewContext(shared,ctx);
+ vm.createContext(ctx);
+ vm.runInContext(shared,ctx);
  const start=html.indexOf('function doorwayRoom(){'),end=html.indexOf('function lookThroughDoor()',start);
  assert.ok(start>=0&&end>start);
- vm.runInNewContext(html.slice(start,end),ctx);
+ vm.runInContext(html.slice(start,end),ctx);
  return ctx.doorwayRoom();
 }
 test('hero standing on the actual east boundary half-space can reveal door',()=>{

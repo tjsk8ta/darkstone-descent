@@ -22,3 +22,16 @@ test('direct and click-path movement both check connected doors',()=>{
  assert.match(html,/if\(!crossesConnectedDoor\(p\.x,p\.y,x,y\)\)continue/);
  assert.match(html,/if\(!cellAt\(x,y\)\|\|!crossesConnectedDoor\(S\.x,S\.y,x,y\)/);
 });
+
+test('line of sight is blocked by disconnected doors and diagonal walls',()=>{
+ const a=html.indexOf('function lineOfSight('),b=html.indexOf('function canAttack(',a);
+ assert.ok(a>=0&&b>a);
+ function run(connected,blocked=false){
+  const ctx={cellAt:(x,y)=>!blocked||!(x===1&&y===0),visibleAt:()=>true,crossesConnectedDoor:()=>connected};
+  vm.runInNewContext(html.slice(a,b),ctx);
+  return ctx.lineOfSight({x:0,y:0},{x:1,y:1});
+ }
+ assert.equal(run(true,false),true);
+ assert.equal(run(false,false),false);
+ assert.equal(run(true,true),false);
+});

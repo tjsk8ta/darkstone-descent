@@ -13,13 +13,13 @@ function quantity(symbol,rng){if(symbol==='P')return peril(rng);if(symbol==='PP'
 function normalizeName(raw){const x=raw.trim().toLowerCase().replace(/[^a-z ]/g,'').replace(/\s+/g,' ');
  for(const name of ENEMY_NAMES){const y=name.toLowerCase();if(x===y||x===y+'s'||(y==='hellbat'&&x==='hellbats')||(y==='hungry dead'&&x==='hungry dead'))return name}
  throw Error('Unverified enemy identity: '+raw)}
-function resolveCard(card,options={}){
+function resolveEncounter(card,options={}){
  const {rng,draw,currentTier='low',depth=0,maxDepth=8}=options;
  assertRng(rng);if(typeof draw!=='function')throw Error('A deck draw callback is required');
  if(depth>maxDepth)throw Error('Nested Threat-card recursion limit');
  if(typeof card!=='string'||!card.trim())throw Error('Invalid Threat card');
  const chunks=card.replace(/\s+and\s+/gi,' & ').split(/\s*(?:&|,)\s*/).map(x=>x.trim()).filter(Boolean);
- const groups=[];
+ const groups=[];let lootThreats=0,hasDirectEnemy=false;
  for(const chunk of chunks){
   const m=/^(PP|P|D3|[0-9]+)\s+(.+)$/i.exec(chunk);
   if(!m)throw Error('Unverified Threat-card text: '+chunk);
@@ -32,16 +32,17 @@ function resolveCard(card,options={}){
    for(let i=0;i<n;i++){
     const next=draw(tier);
     if(!next||typeof next.card!=='string')throw Error('Missing '+tier+' Threat card in nested draw');
-    for(const group of resolveCard(next.card,{rng,draw,currentTier:tier,depth:depth+1,maxDepth})){
-     groups.push({...group,elite:group.elite+(elite?1:0)});
-    }
+    const sub=resolveEncounter(next.card,{rng,draw,currentTier,depth:depth+1,maxDepth});
+    lootThreats+=sub.lootThreats;
+    for(const group of sub.groups)groups.push({...group,elite:group.elite+(elite?1:0)});
    }
-  }else groups.push({type:normalizeName(target),n:quantity(token,rng),elite:0});
+  }else {hasDirectEnemy=true;groups.push({type:normalizeName(target),n:quantity(token,rng),elite:0})}
  }
  if(!groups.length)throw Error('Threat card resolved to no enemies');
- return groups;
+ return {groups,lootThreats:lootThreats+(hasDirectEnemy?1:0)};
 }
-const api=Object.freeze({PERIL_FACES,ENEMY_NAMES,peril,d3,quantity,normalizeName,resolveCard});
+function resolveCard(card,options={}){return resolveEncounter(card,options).groups}
+const api=Object.freeze({PERIL_FACES,ENEMY_NAMES,peril,d3,quantity,normalizeName,resolveCard,resolveEncounter});
 root.DarkstoneThreatEngine=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

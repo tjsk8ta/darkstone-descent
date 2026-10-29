@@ -46,7 +46,7 @@ test('unverified fields never appear as verified record-sheet data',()=>{
  assert.deepEqual(records.verifiedFields('original','Strangler').sort(),['escape','hit','initiative','size','steps'].sort());
  assert.equal(records.get('original','Strangler').complete,false);
  assert.equal(records.get('revised','Night Terror'),null);
- assert.deepEqual(records.verifiedFields('revised','Corpse Pile').sort(),['combat','initiative','steps']);
+ assert.deepEqual(records.verifiedFields('revised','Corpse Pile').sort(),['combat','initiative','size','steps']);
 });
 test('applying a record does not mutate base stats or silently transfer another edition',()=>{
  const base={hp:999,initiative:99,eliteChart:[{id:'invented'}]};

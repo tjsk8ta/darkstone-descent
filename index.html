@@ -215,18 +215,32 @@ function frontierCandidates(){
 function ensureOpenFrontier(){
  if(!S||S.bossDefeated||S.ended)return;
  if(frontierCandidates().length)return;
+ // Prefer adding a reachable exit to a genuinely undrawn tile. If every
+ // adjacent position is occupied by a pre-generated unseen tile, reconnect
+ // one of those tiles rather than declaring a false dead end.
  const reachable=Object.values(S.rooms).filter(r=>r.seen&&r.explored&&
   path({x:S.x,y:S.y},{x:r.x*W+4,y:r.y*H+3},false,false)!==null);
- for(const r of reachable){
-  const options=shuffleDeck(['N','E','S','W'].filter(dir=>{
-   const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
-   return nx>=0&&ny>=0&&nx<N&&ny<N&&!S.rooms[id(nx,ny)]&&
-    PORTAL_LANES[dir].some(([lx,ly])=>path({x:S.x,y:S.y},{x:r.x*W+lx,y:r.y*H+ly},false,false)!==null);
-  }));
-  if(options.length){
-   r.doors=r.doors||[];
-   if(!r.doors.includes(options[0]))r.doors.push(options[0]);
-   log('A reachable unexplored passage opens from '+r.name+'.','info');
+ for(const allowExisting of [false,true]){
+  for(const r of reachable){
+   const options=shuffleDeck(['N','E','S','W'].filter(dir=>{
+    const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
+    if(nx<0||ny<0||nx>=N||ny>=N)return false;
+    const neighbor=S.rooms[id(nx,ny)];
+    if(allowExisting?!neighbor||neighbor.seen:!!neighbor)return false;
+    if(roomExits(r).includes(dir))return false;
+    return PORTAL_LANES[dir].some(([lx,ly])=>
+     path({x:S.x,y:S.y},{x:r.x*W+lx,y:r.y*H+ly},false,false)!==null);
+   }));
+   if(!options.length)continue;
+   const dir=options[0],dx=D[dir][0],dy=D[dir][1];
+   r.doors=r.doors||[];r.doors.push(dir);
+   if(allowExisting){
+    const neighbor=S.rooms[id(r.x+dx,r.y+dy)];
+    neighbor.doors=neighbor.doors||[];
+    const reverse=OPPOSITE_DOOR[dir];
+    if(!neighbor.doors.includes(reverse))neighbor.doors.push(reverse);
+   }
+   log('A reachable unexplored passage opens from '+r.name+(allowExisting?' (reconnected existing tile)':'')+'.','info');
    return;
   }
  }

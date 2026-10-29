@@ -25,7 +25,7 @@
     },
     "automatedTests": {
       "passed": false,
-      "reason": "20 new enemy-sheet, combat, XP, Threat inventory and audit-gate unit tests passed in isolated execution. Three Playwright browser scenarios are committed and discoverable, but full CI/browser execution is not independently verified."
+      "reason": "20 targeted source/edition/combat/XP/Threat inventory/gate tests passed in isolated execution. Four Playwright browser scenarios are committed and discoverable, but full CI/browser execution remains unverified."
     },
     "deployment": {
       "passed": false,
@@ -51,7 +51,7 @@
     },
     "enemyUnitTestsPassed": 13,
     "enemyUnitTestsFailed": 0,
-    "playwrightEditionTestsAdded": 3,
+    "playwrightEditionTestsAdded": 4,
     "playwrightExecutionVerified": false,
     "completion": false,
     "sourceAndEditionRegressionTestsPassed": 20,

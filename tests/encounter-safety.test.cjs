@@ -13,7 +13,7 @@ test('Elite selection requires complete verified record sheet, not merely six na
  assert.equal(records.get('original','Night Terror').complete,true);
 });
 test('unresolved final encounter cannot award room completion before enemy placement',()=>{
- assert.match(html,/function checkCleared\(r\)\{if\(!r\?\.seen\|\|r\.pendingThreat\|\|Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)\|\|S\.enemies\.length/);
+ assert.match(html,/function checkCleared\(r\)\{if\(!S\|\|S\.ended\|\|!r\?\.seen\|\|r\.pendingThreat\|\|Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)\|\|S\.enemies\.length/);
 });
 test('movement cannot bypass encounter modal through directional keys or map clicks',()=>{
  assert.match(html,/function moveStep\(dx,dy\)[\s\S]*?S\.pendingEvent\|\|!\$\('overlay'\)\.classList\.contains\('hidden'\)/);
@@ -21,7 +21,7 @@ test('movement cannot bypass encounter modal through directional keys or map cli
 });
 
 test('room rewards and clues are withheld during any active Fight or unresolved Threat',()=>{
- assert.match(html,/function checkCleared\(r\)\{if\(!r\?\.seen\|\|r\.pendingThreat\|\|Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)\|\|S\.enemies\.length/);
+ assert.match(html,/function checkCleared\(r\)\{if\(!S\|\|S\.ended\|\|!r\?\.seen\|\|r\.pendingThreat\|\|Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)\|\|S\.enemies\.length/);
 });
 
 test('unverified Corpse Pile Fast Spawner cannot create invented enemies',()=>{

@@ -73,6 +73,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/375750948185",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "escape",
@@ -86,6 +87,7 @@
         "status": "full",
         "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "escape",
@@ -107,6 +109,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/375750948185",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "rangedHit",
@@ -120,6 +123,7 @@
         "status": "full",
         "source": "https://www.scribd.com/document/771872867/SoB-VF-Monstre-Fiche-Terreur-nocturne",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "escape",
@@ -142,6 +146,7 @@
         "status": "full",
         "source": "https://www.ebay.com/itm/375750948185",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "escape",
@@ -226,6 +231,7 @@
         "status": "full",
         "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "escape",
@@ -271,6 +277,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/376978662614",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps"
         ],
@@ -282,6 +289,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/376978662614",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps"
         ],
@@ -293,6 +301,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/376978662614",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "combat"
@@ -305,6 +314,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/376978662614",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps"
         ],
@@ -316,6 +326,7 @@
         "status": "partial",
         "source": "https://www.ebay.com/itm/376978662614",
         "verifiedFields": [
+          "size",
           "initiative",
           "steps",
           "escape",
@@ -357,7 +368,8 @@
     "The existing prototype still contains unverified fallback stats; they must be eliminated or validated before completion.",
     "Original Goliath/Night Terror/Tentacle have transcribed normal-side stats and six Elite entries; full end-to-end gameplay acceptance remains pending.",
     "Revised Harbinger and four other Swamp types have partial visible data; source images overlap and do not expose every stat and Elite chart.",
-    "Original Targa Pylon is ranged-only (3+ ranged To Hit), not 3+ melee; revised Corpse Pile has no melee attack."
+    "Original Targa Pylon is ranged-only (3+ ranged To Hit), not 3+ melee; revised Corpse Pile has no melee attack.",
+    "Verified size categories have been recorded; large/extra-large multi-space footprints are not yet fully implemented or tested."
   ],
   "remainingSourceAcquisition": [
     "Original Swamp: complete Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries.",

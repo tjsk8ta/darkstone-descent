@@ -236,7 +236,7 @@ function finishFinalEncounter(){
   e.hp+=bonuses.hp||0;e.maxHp+=bonuses.hp||0;
   e.dreadDefense=(bonuses.defense||0)+(['wraith','spider','boss'].includes(type)?(S.voidDefenseBonus||0):0);
  }
- f.started=true;r.fightThreats=(r.fightThreats||0)+1;
+ f.started=true;if(r.fightRewarded){r.fightRewarded=false;r.fightThreats=0}r.fightThreats=(r.fightThreats||0)+1;
  log('Growing Dread resolved. Final encounter enemies placed: '+types.map(type=>TYPES[type].name).join(', ')+'. Fight begins.','hit');
  save();render();closeModal();
 }
@@ -441,6 +441,7 @@ function drawThreat(r,tier='low'){
   }
  }
  S.eliteAbilities=nextElite;
+ if(r.fightRewarded){r.fightRewarded=false;r.fightThreats=0}
  r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatError=null;
  r.pendingThreatCard=null;r.pendingThreatGroups=null;
  r.pendingLowThreat=null;r.pendingLowThreatGroups=null;

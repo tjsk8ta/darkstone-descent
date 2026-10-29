@@ -375,7 +375,7 @@ function previewEliteAbilities(groups){
   const used=result[g.type]||[];
   for(let i=0;i<g.elite;i++){
    if(used.length===6)throw Error('No unused Elite ability remains for '+g.type);
-   let roll=die();while(used.includes(roll))roll=die();
+   let roll=die(),attempts=0;while(used.includes(roll)){if(++attempts>128)throw Error('Elite chart reroll exhausted');roll=die()}
    used.push(roll);
   }
   result[g.type]=used;

@@ -328,13 +328,21 @@ let changes=[['Health',S.hp-before.hp],['Sanity',S.sanity-before.sanity],['Darks
 function spawnEnemy(type,r){let locs=[];for(let ly=1;ly<=5;ly++)for(let lx=1;lx<=7;lx++){let x=r.x*W+lx,y=r.y*H+ly;if(cellAt(x,y)&&man({x,y},S)>=3&&!S.enemies.some(e=>e.x===x&&e.y===y))locs.push({x,y})}if(!locs.length){log('No valid space for '+type+'; enemy placement deferred.','hit');return false}let p=locs[rnd(locs.length)],t=TYPES[type],boost=S.mode==='hard'?1:0;S.enemies.push({id:S.nextEnemy++,type,x:p.x,y:p.y,hp:t.hp+boost,maxHp:t.hp+boost,home:id(r.x,r.y),spawnTurn:S.turn});return true}
 // Separate shuffled prototype rewards from official physical card identities.
 // The FAQ confirms a 12-card core Loot/Scavenge deck and a 3-card Fight loot cap.
+// Original core 12-card Loot inventory (names/quantities). Non-monetary
+// special-card resolutions are explicitly provisional until card faces verified.
 const LOOT_REWARDS=[
- {name:'Gold cache',type:'coins',value:25},{name:'Gold purse',type:'coins',value:15},
- {name:'Dark Stone shard',type:'stone',value:1},{name:'Bandages',type:'bandages',value:1},
- {name:'Whiskey',type:'whiskey',value:1},{name:'Dynamite',type:'bombs',value:1},
- {name:'Gold nuggets',type:'coins',value:20},{name:'Dark Stone fragment',type:'stone',value:1},
- {name:'Supplies',type:'bandages',value:1},{name:'Gold dust',type:'coins',value:10},
- {name:'Grit recovery',type:'grit',value:1},{name:'Gold stash',type:'coins',value:30}
+ {name:'Blood Money (D6 x $25)',type:'coins',value:'d6x25'},
+ {name:'Cash ($50)',type:'coins',value:50},
+ {name:'Coins ($25)',type:'coins',value:25},
+ {name:'Dark Stone Rock (D3)',type:'stone',value:'d3'},
+ {name:'Dark Stone Shard',type:'stone',value:1},
+ {name:'Dark Stone Shard',type:'stone',value:1},
+ {name:'Gold Bars ($250)',type:'coins',value:250},
+ {name:'Gold Nuggets (D6 x $50)',type:'coins',value:'d6x50'},
+ {name:'Sack Of Gold Dust ($100)',type:'coins',value:100},
+ {name:'This Should Come In Handy',type:'bandages',value:1,provisional:true},
+ {name:'This Should Come In Handy',type:'bandages',value:1,provisional:true},
+ {name:"What's This?!",type:'none',value:0,provisional:true}
 ];
 const SCAVENGE_REWARDS=[
  {name:'Nothing Here',type:'none',value:0},{name:'Nothing Here',type:'none',value:0},
@@ -353,9 +361,10 @@ function drawReward(kind){
  S[deckKey]=shuffleDeck(pool.map(x=>({...x})));
  const reward=S[deckKey].pop();
  if(kind==='scavenge'&&reward.name==='Emerging Darkness')resolveDarknessCard();
- if(reward.type==='grit')S.grit=Math.min(4,S.grit+reward.value);
- else if(reward.type!=='none')S[reward.type]=(S[reward.type]||0)+reward.value;
- log((kind==='loot'?'Loot':'Scavenge')+' draw: '+reward.name+(kind==='scavenge'?' (original card name; effect provisional)':'')+'.','good');
+ const amount=reward.value==='d3'?1+Math.floor((die()-1)/2):reward.value==='d6x25'?die()*25:reward.value==='d6x50'?die()*50:reward.value;
+ if(reward.type==='grit')S.grit=Math.min(4,S.grit+amount);
+ else if(reward.type!=='none')S[reward.type]=(S[reward.type]||0)+amount;
+ log((kind==='loot'?'Loot':'Scavenge')+' draw: '+reward.name+(kind==='scavenge'||reward.provisional?' (effect provisional)':'')+(amount&&reward.type!=='none'?' ['+amount+' '+reward.type+']':'')+'.','good');
  return reward;
 }
 function resolveFightRewards(r){

@@ -35,11 +35,18 @@ test('Tentacle publisher example has same verified core mechanics in both editio
   assert.equal(t.eliteChart.length,6);
  }
 });
+test('Targa Pylon is ranged-only and Corpse Piles cannot make melee attacks',()=>{
+ const p=records.get('original','Targa Pylon');
+ assert.equal(p.stats.rangedHit,3);
+ assert.equal(p.stats.combat,0);
+ assert.equal('hit' in p.stats,false,'do not mislabel ranged To Hit as melee To Hit');
+ assert.equal(records.get('revised','Corpse Pile').stats.combat,0);
+});
 test('unverified fields never appear as verified record-sheet data',()=>{
  assert.deepEqual(records.verifiedFields('original','Strangler').sort(),['escape','hit','initiative','steps'].sort());
  assert.equal(records.get('original','Strangler').complete,false);
  assert.equal(records.get('revised','Night Terror'),null);
- assert.deepEqual(records.verifiedFields('revised','Corpse Pile').sort(),['initiative','steps']);
+ assert.deepEqual(records.verifiedFields('revised','Corpse Pile').sort(),['combat','initiative','steps']);
 });
 test('applying a record does not mutate base stats or silently transfer another edition',()=>{
  const base={hp:999,initiative:99,eliteChart:[{id:'invented'}]};

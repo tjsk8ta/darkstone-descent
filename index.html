@@ -285,7 +285,7 @@ function threatGroupsFromCard(card,tier,depth=0){
  const generic=card.match(/(?:^|[^a-z])(\\d+) Threat Cards?/gi)||[];
  for(const part of generic){const count=Number(part.match(/\\d+/)[0]);for(let i=0;i<count;i++)groups.push(...drawOriginalThreatGroups('high',depth+1))}
  const named=[['Night Terrors?','Night Terror'],['Stranglers?','Strangler'],['Void Spiders?','Void Spider'],['Tentacles?','Tentacle'],['Hellbats?','Hellbat'],['Hungry Dead','Hungry Dead'],['Corpse Piles?','Corpse Pile'],['Slashers?','Slasher'],['Goliath','Goliath'],['Harbinger','Harbinger']];
- for(const [pattern,type] of named){const re=new RegExp('(D3|PP|P|\\d+)\\s+'+pattern,'gi');let m;while((m=re.exec(card))!==null){const qty=m[1]==='D3'?1+rnd(3):m[1]==='PP'?2:m[1]==='P'?1:+m[1];add(type,qty)}}
+ for(const [pattern,type] of named){const re=new RegExp('(D3|PP|P|\\d+)\\s+'+pattern,'gi');let m;while((m=re.exec(card))!==null){const qty=m[1]==='D3'?1+rnd(3):m[1]==='PP'?die()+die():m[1]==='P'?die():+m[1];add(type,qty)}}
  if(!groups.length)throw Error('Threat card has no resolved enemies: '+card);
  return groups;
 }
@@ -319,7 +319,9 @@ function drawThreat(r,tier='low'){
 function drawLowThreat(r){
  if(S.threatDeckVersion!==6){S.lowThreatDeck=[];S.threatDeckVersion=6}
  if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
- const threat=r.pendingLowThreat||S.lowThreatDeck.pop(),groups=threat.groups;
+ const threat=r.pendingLowThreat||S.lowThreatDeck.pop();
+ const groups=r.pendingLowThreatGroups||threat.groups.map(g=>({...g,n:g.n===1&&/^P(?: |$)/.test(threat.card)?die():g.n}));
+ r.pendingLowThreatGroups=groups;
  r.pendingLowThreat=threat;
  const total=groups.reduce((n,g)=>n+g.n,0);
  const free=spawnSpaces(r);
@@ -339,7 +341,7 @@ function drawLowThreat(r){
   }
   placed.push(S.nextEnemy-1);
  }
- r.pendingLowThreat=null;
+ r.pendingLowThreat=null;r.pendingLowThreatGroups=null;
  r.fightThreats=(r.fightThreats||0)+1;
  log('Revised core Low Threat: '+threat.card+'; '+groups.map(g=>g.n+' '+TYPES[g.type].name+(CORE_ENEMY_PROVENANCE[g.type]?.verified?' [verified]':' [provisional]')).join(', ')+'.','hit');
  return total;

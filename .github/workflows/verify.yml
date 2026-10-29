@@ -1,7 +1,5 @@
 name: Verify Darkstone rules engine
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 concurrency:
   group: verify-${{ github.ref }}

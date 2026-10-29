@@ -7,7 +7,8 @@
 const ORIGINAL_CITY='https://www.ebay.com/itm/375750948185';
 const ORIGINAL_NIGHT='https://www.scribd.com/document/771872867/SoB-VF-Monstre-Fiche-Terreur-nocturne';
 const REVISED_SWAMP='https://www.ebay.com/itm/376978662614';
-const OFFICIAL_TENTACLE='https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22';
+const OFFICIAL_TENTACLE_CITY='https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22';
+const OFFICIAL_TENTACLE_SWAMP='https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf#page=22';
 const original={
  'Goliath':{
   source:ORIGINAL_CITY,confidence:'readable original 2014 physical card photograph',complete:true,
@@ -39,20 +40,20 @@ const original={
   stats:{initiative:6,steps:8,escape:4,hit:4}},
  'Targa Pylon':{source:ORIGINAL_CITY,confidence:'visible fields on 2014 card; lower stats obscured',complete:false,
   stats:{size:'large',initiative:4,steps:0,rangedHit:3,combat:0}},
- 'Tentacle':{source:OFFICIAL_TENTACLE,confidence:'publisher normal-side example matches original 2014 card image',complete:true,
+ 'Tentacle':{source:OFFICIAL_TENTACLE_CITY,confidence:'2020 publisher example corroborated by original-era French card translation',complete:true,
   stats:{size:'medium',initiative:2,steps:6,escape:4,hit:4,combat:3,damage:3,def:2,hp:4,exp:30,smash:true},
   mechanics:['SMASH: melee rolls of 6 bypass Hero Defense'],
   eliteChart:[
    {id:'entangle',name:'Entangle',effect:'Wounded Heroes cannot move on next Activation'},
    {id:'eruption',name:'Eruption',effect:'Move through models and change target'},
    {id:'writhing',name:'Writhing',effect:'+2 Defense'},
-   {id:'bitter-success',name:'Bitter Success',effect:'+2 Damage'},
+   {id:'tentacle-bonus-damage',name:'Brutal Suckers',effect:'+2 Damage'},
    {id:'lashing-strike',name:'Lashing Strike',effect:'+1 Combat'},
    {id:'swift',name:'Swift',effect:'+2 Initiative'}
   ]}
 };
 const revised={
- 'Tentacle':{...original.Tentacle,source:OFFICIAL_TENTACLE,confidence:'publisher 2020 normal-side rulebook example'},
+ 'Tentacle':{...original.Tentacle,source:OFFICIAL_TENTACLE_CITY,confidence:'publisher 2020 City normal-side rulebook example'},
  'Harbinger':{
   source:REVISED_SWAMP,confidence:'readable normal-side 2020 physical card photograph; elite chart too small to verify',complete:false,
   stats:{size:'extra-large',initiative:4,steps:12,escape:3,hit:4,combat:3,damage:4,def:3,hp:14,hpPerHero:3,exp:10,xpPerWound:5,unspeakableTerror:3,immuneCrit:true,flight:true},
@@ -63,10 +64,24 @@ const revised={
  'Slasher':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{size:'large',initiative:4,steps:5}}
 };
 const editions=Object.freeze({original,revised});
-function get(edition,name){if(!Object.hasOwn(editions,edition))throw Error('Unknown edition '+edition);return editions[edition][name]||null}
-function verifiedFields(edition,name){return Object.keys(get(edition,name)?.stats||{})}
-function apply(edition,name,base){
- const record=get(edition,name);
+const revisedSwampTentacle={...revised.Tentacle,source:OFFICIAL_TENTACLE_SWAMP,
+ confidence:'publisher 2020 Swamps normal-side rulebook example',
+ eliteChart:revised.Tentacle.eliteChart.map((e,i)=>i===3?{...e,name:'Bitter Success'}:{...e})};
+const revisedCombinedTentacle={...revised.Tentacle,
+ confidence:'publisher City and Swamps examples; same +2 Damage mechanics, different printed Elite #4 names',
+ eliteChart:revised.Tentacle.eliteChart.map((e,i)=>i===3?{...e,name:'Brutal Suckers / Bitter Success'}:{...e}),
+ variantSources:[OFFICIAL_TENTACLE_CITY,OFFICIAL_TENTACLE_SWAMP]};
+function get(edition,name,set='city'){
+ if(!Object.hasOwn(editions,edition))throw Error('Unknown edition '+edition);
+ if(edition==='revised'&&name==='Tentacle'){
+  if(set==='swamp')return revisedSwampTentacle;
+  if(set==='combined')return revisedCombinedTentacle;
+ }
+ return editions[edition][name]||null;
+}
+function verifiedFields(edition,name,set){return Object.keys(get(edition,name,set)?.stats||{})}
+function apply(edition,name,base,set){
+ const record=get(edition,name,set);
  if(!record)return {...base};
  return {...base,...record.stats,eliteChart:record.eliteChart?record.eliteChart.map(x=>({...x})):undefined,recordSource:record.source,recordConfidence:record.confidence,recordComplete:record.complete};
 }

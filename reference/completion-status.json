@@ -5,7 +5,7 @@
   "acceptance": {
     "coreEnemySheets": {
       "passed": false,
-      "reason": "22 unique edition/enemy normal-side sheet combinations: 4 fully transcribed, 8 partially evidenced, 10 missing. Full source matrix at reference/enemy-sheet-audit.json."
+      "reason": "24 physical normal-side sheets across four core boxes: 2 publisher card examples verified, 22 remain unverified against publisher card images. At 22 unique edition/type level: 4 fully transcribed from mixed sources, 8 partial, 10 missing. See both source ledgers."
     },
     "enemyAbilities": {
       "passed": false,
@@ -86,7 +86,18 @@
         ]
       }
     },
-    "coreEnemyFootprints": "not fully implemented for Large and Extra Large enemies"
+    "coreEnemyFootprints": "not fully implemented for Large and Extra Large enemies",
+    "physicalSheets": {
+      "publisherVerified": 2,
+      "total": 24
+    },
+    "uniqueEditionEnemyTypes": {
+      "fullyTranscribed": 4,
+      "partial": 8,
+      "missing": 10,
+      "total": 22
+    },
+    "sourceCaveat": "Only revised City and Swamps Tentacle publisher card images directly verified; original-era translations/third-party photos support additional transcriptions but are not publisher-hosted."
   },
   "enemyRecordSheetSources": {
     "originalInventory": "https://pdfcoffee.com/sobgamecontentsv2bpdf-pdf-free.html",

@@ -67,7 +67,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Strangler": {
         "status": "partial",
@@ -81,7 +83,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Tentacle": {
         "status": "full",
@@ -103,7 +107,9 @@
         "abilitiesVerified": [
           "SMASH: melee rolls of 6 bypass Hero Defense"
         ],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "publisher_rulebook",
+        "publisherSourceVerified": true
       },
       "Targa Pylon": {
         "status": "partial",
@@ -117,7 +123,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Night Terror": {
         "status": "full",
@@ -140,7 +148,9 @@
         "abilitiesVerified": [
           "Terror (2)"
         ],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_translation_scan",
+        "publisherSourceVerified": false
       },
       "Goliath": {
         "status": "full",
@@ -167,7 +177,9 @@
           "Unspeakable Terror (3)",
           "Immune to Critical Hits"
         ],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Hellbat": {
         "status": "missing",
@@ -175,7 +187,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Hungry Dead": {
         "status": "missing",
@@ -183,7 +197,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Corpse Pile": {
         "status": "missing",
@@ -191,7 +207,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Slasher": {
         "status": "missing",
@@ -199,7 +217,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Harbinger": {
         "status": "missing",
@@ -207,7 +227,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       }
     },
     "revised": {
@@ -217,7 +239,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Strangler": {
         "status": "missing",
@@ -225,7 +249,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Tentacle": {
         "status": "full",
@@ -247,7 +273,9 @@
         "abilitiesVerified": [
           "SMASH: melee rolls of 6 bypass Hero Defense"
         ],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "publisher_rulebook",
+        "publisherSourceVerified": true
       },
       "Targa Pylon": {
         "status": "missing",
@@ -255,7 +283,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Night Terror": {
         "status": "missing",
@@ -263,7 +293,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Goliath": {
         "status": "missing",
@@ -271,7 +303,9 @@
         "verifiedFields": [],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "none",
+        "publisherSourceVerified": false
       },
       "Hellbat": {
         "status": "partial",
@@ -283,7 +317,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Hungry Dead": {
         "status": "partial",
@@ -295,7 +331,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Corpse Pile": {
         "status": "partial",
@@ -308,7 +346,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Slasher": {
         "status": "partial",
@@ -320,7 +360,9 @@
         ],
         "eliteChartEntriesVerified": 0,
         "abilitiesVerified": [],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       },
       "Harbinger": {
         "status": "partial",
@@ -349,7 +391,9 @@
           "Immune to Critical Hits",
           "Bringer of Death D6 table (details require full readable card)"
         ],
-        "fullGameplayAccepted": false
+        "fullGameplayAccepted": false,
+        "sourceTier": "third_party_photograph",
+        "publisherSourceVerified": false
       }
     }
   },
@@ -369,7 +413,8 @@
     "Original Goliath/Night Terror/Tentacle have transcribed normal-side stats and six Elite entries; full end-to-end gameplay acceptance remains pending.",
     "Revised Harbinger and four other Swamp types have partial visible data; source images overlap and do not expose every stat and Elite chart.",
     "Original Targa Pylon is ranged-only (3+ ranged To Hit), not 3+ melee; revised Corpse Pile has no melee attack.",
-    "Verified size categories have been recorded; large/extra-large multi-space footprints are not yet fully implemented or tested."
+    "Verified size categories have been recorded; large/extra-large multi-space footprints are not yet fully implemented or tested.",
+    "The four fully transcribed unique edition/type combinations are not all publisher-sourced: only Tentacle (original and revised) is supported by a directly published rulebook example; Goliath and Night Terror original rely on physical-card photos/translations."
   ],
   "remainingSourceAcquisition": [
     "Original Swamp: complete Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries.",

@@ -397,17 +397,18 @@ function drawThreat(r,tier='low'){
   const snapshot={};
   for(const t of ['low','medium','high','epic'])snapshot[threatDeckKey(t)]=S[threatDeckKey(t)]?JSON.parse(JSON.stringify(S[threatDeckKey(t)])):null;
   try{
-   groups=threatEngine.resolveCard(candidate.card,{
+   const resolved=threatEngine.resolveEncounter(candidate.card,{
     rng:rnd,currentTier:'low',draw:nextTier=>drawDeckCard(nextTier)
    });
-   groups=applyModelLimits(groups);
+   groups=applyModelLimits(resolved.groups);
+   r.pendingThreatLoot=resolved.lootThreats;
    // Elite Charts are enemy-specific. Do not silently use fabricated abilities.
    const unknownElite=groups.find(g=>g.elite&&!(TYPES[g.type]?.eliteChart?.length===6));
    if(unknownElite)throw Error('Elite chart unverified for '+unknownElite.type);
   }catch(e){
    for(const [key,value] of Object.entries(snapshot))S[key]=value;
    r.pendingThreat=true;r.pendingThreatTier=tier;
-   r.pendingThreatError=e.message;
+   r.pendingThreatError=e.message;r.pendingThreatLoot=null;
    log('Threat '+candidate.card+' unresolved: '+e.message+'. No substitute enemies placed.','hit');
    return 0;
   }
@@ -442,7 +443,7 @@ function drawThreat(r,tier='low'){
  r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatError=null;
  r.pendingThreatCard=null;r.pendingThreatGroups=null;
  r.pendingLowThreat=null;r.pendingLowThreatGroups=null;
- r.fightThreats=(r.fightThreats||0)+1;
+ r.fightThreats=(r.fightThreats||0)+(r.pendingThreatLoot||1);r.pendingThreatLoot=null;
  for(const [type,ids] of Object.entries(nextElite))if(ids.length)log(type+' Elite abilities: '+ids.map(n=>n+' '+TYPES[type].eliteChart[n-1].name).join(', ')+'.','hit');
  log(tier.toUpperCase()+' core Threat: '+candidate.card+'; '+groups.map(g=>g.n+' '+g.type+(g.elite?' (Elite '+g.elite+')':'')).join(', ')+'.','hit');
  return placed.length;

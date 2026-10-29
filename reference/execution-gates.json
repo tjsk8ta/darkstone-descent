@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "completion": false,
+  "priority": "Official enemy record sheet acquisition and implementation",
+  "gates": [
+    {
+      "id": "input",
+      "must": [
+        "Read enemy sheet ledger",
+        "Read completion status",
+        "Identify current code and user complaints"
+      ],
+      "passed": false
+    },
+    {
+      "id": "acquisition",
+      "must": [
+        "Open actual green/red sheet faces",
+        "Transcribe exact statistics",
+        "Transcribe abilities and Elite charts",
+        "Cite each edition and face"
+      ],
+      "passed": false
+    },
+    {
+      "id": "implementation",
+      "must": [
+        "Apply verified enemy mechanics",
+        "Compare original vs revised",
+        "Remove unverified defaults"
+      ],
+      "passed": false
+    },
+    {
+      "id": "tests",
+      "must": [
+        "Unit tests",
+        "End-to-end encounters",
+        "Mobile doorway",
+        "Journal",
+        "CI"
+      ],
+      "passed": false
+    },
+    {
+      "id": "selfCorrection",
+      "must": [
+        "Reject link-only sources as verified",
+        "Reject superficial code churn",
+        "Reject claims based on syntax-only tests",
+        "Correct previous erroneous abilities"
+      ],
+      "passed": false
+    },
+    {
+      "id": "stopAuthorization",
+      "must": [
+        "Completion verified or external execution boundary",
+        "Persist evidence and exact next action"
+      ],
+      "passed": false
+    },
+    {
+      "id": "notification",
+      "must": [
+        "No interim updates",
+        "Report only acceptance or actionable external blocker"
+      ],
+      "passed": false
+    }
+  ],
+  "failureCounters": {
+    "prematureProgressReports": 4,
+    "enemySheetsStillUnacquired": 1,
+    "contradictoryTentacleEliteAbilityName": 2
+  },
+  "mandatoryNextAction": "Acquire actual sheet faces and implement verified statistics and Elite charts; avoid unrelated features",
+  "sourceOfTruth": "reference/enemy-record-sheets.json"
+}

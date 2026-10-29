@@ -7,7 +7,7 @@
 const ORIGINAL_CITY='https://www.ebay.com/itm/375750948185';
 const ORIGINAL_NIGHT='https://www.scribd.com/document/771872867/SoB-VF-Monstre-Fiche-Terreur-nocturne';
 const REVISED_SWAMP='https://www.ebay.com/itm/376978662614';
-const ORIGINAL_TENTACLE='https://www.scribd.com/document/771872866/SoB-VF-Monstre-Fiche-Tentacule';
+const ORIGINAL_TENTACLE='https://ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf#page=20';
 const OFFICIAL_TENTACLE_CITY='https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22';
 const OFFICIAL_TENTACLE_SWAMP='https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf#page=22';
 const original={
@@ -41,7 +41,7 @@ const original={
   stats:{initiative:6,steps:8,escape:4,hit:4}},
  'Targa Pylon':{source:ORIGINAL_CITY,confidence:'visible fields on 2014 card; lower stats obscured',complete:false,
   stats:{size:'large',initiative:4,steps:0,rangedHit:3,combat:0}},
- 'Tentacle':{source:ORIGINAL_TENTACLE,confidence:'original-era French normal-side card image, independently corroborated by 2020 publisher example',complete:true,
+ 'Tentacle':{source:ORIGINAL_TENTACLE,confidence:'original 2014 publisher rulebook page 20; normal-side record and all six Elite abilities directly readable',complete:true,
   stats:{size:'medium',initiative:2,steps:6,escape:4,hit:4,combat:3,damage:3,def:2,hp:4,exp:30,smash:true},
   mechanics:['SMASH: melee rolls of 6 bypass Hero Defense'],
   eliteChart:[

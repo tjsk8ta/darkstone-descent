@@ -57,14 +57,14 @@
       "eliteChartVerified": false,
       "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
       "brutalFace": {
-        "status": "verified-third-party-physical-card-photo",
+        "status": "verified-record-partially-playtested",
         "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
         "statisticsVerified": true,
         "abilitiesVerified": true,
         "eliteChartVerified": true,
-        "implementation": "rules/enemy-records.js getFace(original,Void Spider,city,brutal)",
-        "notes": "Unobstructed red Brutal face; all stats, Void Venom, and six Elite abilities legible. Data-layer implementation only; not yet selectable in gameplay.",
-        "gameplayIntegrated": false
+        "implementation": "rules/enemy-records.js applyFace(original,Void Spider,city,brutal); index.html optional original Brutal Void Spider mode, Elite attacks and venom",
+        "notes": "Red Brutal face verified from physical photograph. Optional original-edition gameplay selection now applies verified statistics and six Elite chart entries. Hardened Shells, Vicious Bite, Rapid Climbing, Severing Bite, Acidic Ichor, Void Venom and Drop From Above activation implemented; full browser end-to-end acceptance still outstanding.",
+        "gameplayIntegrated": true
       },
       "gameplayIntegrated": false
     },

@@ -319,11 +319,11 @@ function drawThreat(r,tier='low'){
 function drawLowThreat(r){
  if(S.threatDeckVersion!==6){S.lowThreatDeck=[];S.threatDeckVersion=6}
  if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
- const threat=S.lowThreatDeck.pop(),groups=threat.groups;
+ const threat=r.pendingLowThreat||S.lowThreatDeck.pop(),groups=threat.groups;
+ r.pendingLowThreat=threat;
  const total=groups.reduce((n,g)=>n+g.n,0);
  const free=spawnSpaces(r);
  if(free.length<total){
-  S.lowThreatDeck.push(threat);
   r.pendingThreat=true;r.pendingThreatTier='low';
   log('Threat '+threat.card+' requires '+total+' enemy spaces; '+free.length+' available. Card returned; encounter unresolved.','hit');
   return 0;
@@ -334,11 +334,12 @@ function drawLowThreat(r){
   const e=spawnEnemy(group.type,r);
   if(!e){
    S.enemies=S.enemies.filter(x=>!placed.includes(x.id));
-   S.lowThreatDeck.push(threat);r.pendingThreat=true;r.pendingThreatTier='low';
+   r.pendingThreat=true;r.pendingThreatTier='low';
    log('Threat placement rolled back: '+threat.card+'.','hit');return 0;
   }
   placed.push(S.nextEnemy-1);
  }
+ r.pendingLowThreat=null;
  r.fightThreats=(r.fightThreats||0)+1;
  log('Revised core Low Threat: '+threat.card+'; '+groups.map(g=>g.n+' '+TYPES[g.type].name+(CORE_ENEMY_PROVENANCE[g.type]?.verified?' [verified]':' [provisional]')).join(', ')+'.','hit');
  return total;

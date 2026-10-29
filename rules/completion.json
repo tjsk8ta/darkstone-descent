@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-10-29",
+  "complete": false,
+  "policy": "Complete may become true only when every required gate is verified, tests pass, and GitHub Pages is confirmed deployed. Never treat a commit as completion.",
+  "publisherSources": [
+    "https://ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf",
+    "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf",
+    "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf",
+    "https://www.flyingfrog.net/shadowsofbrimstone/sobs_resources.html"
+  ],
+  "gates": {
+    "enemyRecordSheets": {
+      "status": "incomplete",
+      "required": "All 11 unique normal-side records in both 2014 and 2020 editions, with accurate stats, keyword, size, combat, innate abilities and XP",
+      "entries": {
+        "Tentacle": {
+          "originalNormal": "publisher_verified",
+          "revisedNormal": "publisher_verified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": true,
+          "originalEliteChart": "publisher_verified",
+          "revisedEliteChart": "publisher_verified",
+          "eliteEffectsImplemented": true,
+          "source": [
+            "https://ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf#page=20",
+            "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22"
+          ],
+          "notes": "The publisher reproduces its complete normal-side record and six Elite effects in both rulebooks."
+        },
+        "Strangler": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Void Spider": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Night Terror": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Goliath": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Targa Pylon": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Hellbat": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Hungry Dead": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Corpse Pile": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Slasher": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        },
+        "Harbinger": {
+          "originalNormal": "unverified",
+          "revisedNormal": "unverified",
+          "normalStatsImplemented": true,
+          "abilitiesImplemented": false,
+          "originalEliteChart": "unverified",
+          "revisedEliteChart": "unverified",
+          "eliteEffectsImplemented": false,
+          "source": [],
+          "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
+        }
+      }
+    },
+    "otherworldVariants": {
+      "status": "incomplete",
+      "required": [
+        "Ancient Spider",
+        "Snow Terror",
+        "Bogbat",
+        "Swamp Slasher"
+      ],
+      "verified": [],
+      "notes": "Names and otherworld card counts known; record-sheet modifiers and special abilities unverified."
+    },
+    "eliteCharts": {
+      "status": "incomplete",
+      "verified": [
+        "Tentacle (original and revised, six abilities)"
+      ],
+      "unverified": [
+        "Strangler",
+        "Void Spider",
+        "Night Terror",
+        "Goliath",
+        "Targa Pylon",
+        "Hellbat",
+        "Hungry Dead",
+        "Corpse Pile",
+        "Slasher",
+        "Harbinger"
+      ],
+      "required": "Six chart entries and executable effects for every core enemy, including group-wide stacking and duplicate rerolls"
+    },
+    "threatDecks": {
+      "status": "partial",
+      "originalMines": {
+        "city": {
+          "low": 10,
+          "medium": 10,
+          "high": 10,
+          "epic": 5
+        },
+        "swamp": {
+          "low": 10,
+          "medium": 10,
+          "high": 10,
+          "epic": 5
+        },
+        "inventorySource": "https://pdfcoffee.com/sobgamecontentsv2bpdf-pdf-free.html",
+        "verification": "community inventory; titles parser-tested, physical faces not independently verified"
+      },
+      "revisedMines": {
+        "city": {
+          "low": 10,
+          "medium": 10,
+          "high": 10,
+          "epic": 5
+        },
+        "swamp": {
+          "low": 10,
+          "medium": 10,
+          "high": 10,
+          "epic": 5
+        },
+        "inventorySource": "https://shadows-of-brimstone.fandom.com/wiki/Swamps_of_Death_Revised_Edition",
+        "verification": "community inventory; Swamps Low and one Medium card differentiated, remaining revised physical faces not independently verified"
+      },
+      "implemented": [
+        "Peril die 3/3/4/4/5/6",
+        "P and PP independent rolls",
+        "D3",
+        "nested Low/Medium/current-tier/Elite card semantics",
+        "shuffled per-tier decks",
+        "pending-card persistence",
+        "atomic enemy placement",
+        "initiative-order checkerboard placement",
+        "connected entrance-tile overflow"
+      ],
+      "outstanding": [
+        "verify every revised card face against physical components",
+        "OtherWorld Threats and Wandering Enemy rules",
+        "full Elite effects",
+        "model-count shortages grant Elite",
+        "ambush and special placement"
+      ]
+    },
+    "combat": {
+      "status": "partial",
+      "verified": [
+        "critical hits bypass Enemy Defense",
+        "per-hit damage subtraction",
+        "Hero Defense rolls",
+        "Escape tests",
+        "single-target grouped damage rolls and Grit rerolls",
+        "Tentacle Smash",
+        "Tentacle Elite effects"
+      ],
+      "outstanding": [
+        "complete innate abilities for 10 other core enemies",
+        "Fear/Terror/Unspeakable Terror per enemy and timing",
+        "Enemy Armor and ranged attacks",
+        "Large enemy displacement",
+        "verified per-wound XP for XL enemies",
+        "all hero class combat and gear effects"
+      ]
+    },
+    "exploration": {
+      "status": "partial",
+      "verified": [
+        "initial entrance and T-junction",
+        "diagonal movement with no corner clipping",
+        "exploration via doorway",
+        "enemy placement overflow"
+      ],
+      "outstanding": [
+        "all 18 official Mine Map cards and geometry",
+        "OtherWorld gates and tiles",
+        "Depth Event charts",
+        "all Exploration Token outcomes",
+        "all Darkness, Encounter and Growing Dread card effects",
+        "full original/revised mission rules"
+      ]
+    },
+    "characters": {
+      "status": "incomplete",
+      "notes": "Three prototype solo classes exist; the eight original-core-set Hero Record Sheets, starting gear and upgrades are not fully modelled."
+    },
+    "tests": {
+      "status": "partial",
+      "unit": "57 distinct original/revised Threat-card titles successfully resolved in deterministic in-run checks; Node regression suite added",
+      "browser": "Chromium desktop/mobile smoke tests added to GitHub Actions; full end-to-end and scenario acceptance outstanding",
+      "ci": "Verify current workflow runs before claiming green"
+    },
+    "deployment": {
+      "status": "unverified",
+      "repository": "https://github.com/tjsk8ta/darkstone-descent",
+      "site": "https://tjsk8ta.github.io/darkstone-descent/",
+      "notes": "GitHub Pages workflow exists; confirm success for the latest commit and run a live-browser smoke test."
+    }
+  },
+  "blockers": [
+    {
+      "id": "record-sheet-sources",
+      "kind": "source-verification",
+      "details": "Publisher freely distributes rulebooks, but the complete normal-side Enemy Record Sheets and Elite charts for the remaining core enemies are not included in those public PDFs. Do not infer values from prototype data. Obtain legible authorized references or user-provided photographs before marking verified."
+    },
+    {
+      "id": "full-physical-content",
+      "kind": "source-verification",
+      "details": "Many original/revised cards, official maps, encounters, Depth Events and mission charts remain unverified."
+    }
+  ],
+  "nextActions": [
+    "Verify and transcribe original and revised normal-side Enemy Record Sheets and Elite charts for every remaining core enemy; implement abilities and unit tests.",
+    "Implement physical model caps and source-grounded Elite conversion on shortage.",
+    "Add OtherWorld Threat handling, ambush placement and complete enemy special abilities.",
+    "Replace prototype heroes, map geometry, mission and reward subsystems with verified rules.",
+    "Run CI unit and Chromium smoke tests, inspect failures, and independently confirm latest GitHub Pages deployment.",
+    "Do not set complete=true until every gate is verified."
+  ]
+}

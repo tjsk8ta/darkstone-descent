@@ -29,3 +29,20 @@ test('summoned bats use Ambush phase without reclassifying spawn turn',()=>{
  assert.match(html,/enemyPhase\('ambush'\)/);
  assert.match(html,/if\(when!=='ambush'&&distance>1&&t\.steps>0\)/);
 });
+
+test('Ambush attack resolves without movement and does not spend regular activation',()=>{
+ const a=html.indexOf('function enemyPhase('),b=html.indexOf('function checkSurvival(',a);
+ assert.ok(a>=0&&b>a);
+ const bat={id:9,type:'Hellbat',x:1,y:0,spawnTurn:4,ambushPending:true};
+ const S={x:0,y:0,turn:4,ended:false,hp:5,sanity:5,enemies:[bat],enemyActed:[],profile:{hero:'marshal',upgrades:{armour:0}}};
+ const ctx={S,CLASSES:{marshal:{initiative:5,defense:4}},TYPES:{Hellbat:{name:'Hellbat',initiative:1,steps:12,attackRange:1,combat:1,hit:4,damage:1}},
+ eligibleEnemyActivations:xs=>xs.filter(e=>e.ambushPending),enemyActivationOrder:xs=>xs,effectiveEnemyInitiative:()=>1,
+ man:(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y)),eliteHas:()=>false,lineOfSight:()=>true,
+ roll:()=>[5],die:()=>1,log:()=>{},checkSurvival:()=>{},occupied:()=>false,enemyMovement:{chooseDestination:()=>null}};
+ vm.runInNewContext(html.slice(a,b),ctx);
+ ctx.enemyPhase('ambush');
+ assert.equal(S.hp,4);
+ assert.equal(bat.ambushPending,false);
+ assert.deepEqual(S.enemyActed,[]);
+ assert.equal(bat.x,1);
+});

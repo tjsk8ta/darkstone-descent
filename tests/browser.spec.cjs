@@ -31,3 +31,36 @@ test('mobile layout opens journal and supports turn controls',async({page})=>{
  await expect(page.locator('#turnCount')).toHaveText('2');
  expect(errors).toEqual([]);
 });
+
+test('two critical hits can be allocated sequentially across adjacent and distant enemies',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/');
+ await page.locator('#startGame').click();
+ await page.evaluate(()=>{
+  const key='darkstone_descent_tiles_v3',state=JSON.parse(localStorage.getItem(key));
+  const mk=(id,type,x)=>({id,type,x,y:state.y,hp:1,maxHp:1,home:'4,5',spawnTurn:0});
+  state.enemies=[mk(100,'Tentacle',state.x+1),mk(101,'Void Spider',state.x+2)];
+  state.nextEnemy=102;
+  localStorage.setItem(key,JSON.stringify(state));
+  Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}});
+ });
+ await page.reload();
+ await page.evaluate(()=>Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}}));
+ await expect(page.locator('#attackBtn')).toBeEnabled();
+ await page.locator('#attackBtn').click();
+ await expect(page.locator('[data-toggle-grit]')).toHaveCount(2);
+ await page.locator('#confirmAttackRoll').click();
+ await expect(page.locator('[data-choose-hit]')).toHaveCount(2);
+ await page.locator('[data-choose-hit]').first().click();
+ await expect(page.locator('[data-group-enemy="100"]')).toBeVisible();
+ await expect(page.locator('[data-group-enemy="101"]')).toHaveCount(0);
+ await page.locator('[data-group-enemy="100"]').click();
+ await page.locator('#applyDamageDice').click();
+ await expect(page.locator('[data-choose-hit]')).toHaveCount(1);
+ await page.locator('[data-choose-hit]').click();
+ await expect(page.locator('[data-group-enemy="101"]')).toBeVisible();
+ await page.locator('[data-group-enemy="101"]').click();
+ await page.locator('#applyDamageDice').click();
+ await expect(page.locator('#mapEyebrow')).toContainText('0 enemies active');
+ expect(errors).toEqual([]);
+});

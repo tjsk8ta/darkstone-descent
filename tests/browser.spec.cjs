@@ -48,6 +48,7 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await page.evaluate(()=>Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}}));
  await expect(page.locator('#attackBtn')).toBeEnabled();
  await page.locator('#attackBtn').click();
+ console.log('ATTACK_DEBUG',JSON.stringify(await page.evaluate(()=>({combat:document.querySelector('#combatControls')?.innerHTML.slice(0,800),overlay:document.querySelector('#overlay')?.className,recovery:document.querySelector('#startupRecovery')?.textContent,pending:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.savedPendingAttack}))));
  await expect(page.locator('[data-toggle-grit]')).toHaveCount(2);
  await page.locator('#confirmAttackRoll').click();
  await expect(page.locator('[data-choose-hit]')).toHaveCount(2);
@@ -72,7 +73,7 @@ test('entering a revealed passage resolves exploration immediately without End T
  await page.evaluate(()=>{
   const key='darkstone_descent_tiles_v3',state=JSON.parse(localStorage.getItem(key));
   state.x=2*9+8;state.y=2*7+3;state.move=5;state.moveMax=5;
-  state.rooms['2,2'].doors=['E'];
+  state.rooms['2,2']={x:2,y:2,shape:'corridor',name:'West Passage',kind:'normal',doors:['E'],seen:true,explored:true,searched:false};
   state.rooms['3,2']={x:3,y:2,shape:'corridor',name:'Unexplored Passage',kind:'normal',
    doors:['W'],seen:true,explored:false,searched:false,clue:false,token:null,firstJunction:false,entryDir:'W'};
   localStorage.setItem(key,JSON.stringify(state));

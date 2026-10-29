@@ -46,7 +46,7 @@ const original={
    {id:'entangle',name:'Entangle',effect:'Wounded Heroes cannot move on next Activation'},
    {id:'eruption',name:'Eruption',effect:'Move through models and change target'},
    {id:'writhing',name:'Writhing',effect:'+2 Defense'},
-   {id:'brutal-suckers',name:'Brutal Suckers',effect:'+2 Damage'},
+   {id:'bitter-success',name:'Bitter Success',effect:'+2 Damage'},
    {id:'lashing-strike',name:'Lashing Strike',effect:'+1 Combat'},
    {id:'swift',name:'Swift',effect:'+2 Initiative'}
   ]}

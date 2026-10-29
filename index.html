@@ -293,19 +293,19 @@ function drawThreat(r,tier='low'){
  if(!S[key]?.length)S[key]=shuffleDeck(originalThreatPool(tier,S.coreThreatSet||'combined'));
  const candidate=S[key][S[key].length-1];let groups;
  try{groups=threatGroupsFromCard(candidate.card,tier)}
- catch(e){r.pendingThreat=true;log('Threat '+candidate.card+' needs unsupported rule: '+e.message+'. Card held.','hit');return 0}
+ catch(e){r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat '+candidate.card+' needs unsupported rule: '+e.message+'. Card held.','hit');return 0}
  const required=groups.reduce((n,g)=>n+g.n,0);
  const free=spawnSpaces(r).length;
- if(free<required){r.pendingThreat=true;log('Threat '+candidate.card+' requires '+required+' spaces; '+free+' available. Card held.','hit');return 0}
+ if(free<required){r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat '+candidate.card+' requires '+required+' spaces; '+free+' available. Card held.','hit');return 0}
  const placed=[];
  for(const g of groups)for(let i=0;i<g.n;i++){
   if(!spawnEnemy(g.type,r)){
    S.enemies=S.enemies.filter(e=>!placed.includes(e.id));
-   r.pendingThreat=true;log('Threat placement rolled back: '+candidate.card,'hit');return 0;
+   r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat placement rolled back: '+candidate.card,'hit');return 0;
   }
   placed.push(S.nextEnemy-1);
  }
- S[key].pop();r.pendingThreat=false;
+ S[key].pop();r.pendingThreat=false;r.pendingThreatTier=null;
  r.fightThreats=(r.fightThreats||0)+1;
  log(tier.toUpperCase()+' original card: '+candidate.card+' ('+candidate.set+'); '+groups.map(g=>g.n+' '+g.type).join(', ')+'. Stats and Posse Size provisional.','hit');
  return placed.length;
@@ -320,17 +320,17 @@ function drawLowThreat(r){
  const free=spawnSpaces(r);
  if(free.length<total){
   S.lowThreatDeck.push(threat);
-  r.pendingThreat=true;
+  r.pendingThreat=true;r.pendingThreatTier='low';
   log('Threat '+threat.card+' requires '+total+' enemy spaces; '+free.length+' available. Card returned; encounter unresolved.','hit');
   return 0;
  }
- r.pendingThreat=false;
+ r.pendingThreat=false;r.pendingThreatTier=null;
  const placed=[];
  for(const group of groups)for(let i=0;i<group.n;i++){
   const e=spawnEnemy(group.type,r);
   if(!e){
    S.enemies=S.enemies.filter(x=>!placed.includes(x.id));
-   S.lowThreatDeck.push(threat);r.pendingThreat=true;
+   S.lowThreatDeck.push(threat);r.pendingThreat=true;r.pendingThreatTier='low';
    log('Threat placement rolled back: '+threat.card+'.','hit');return 0;
   }
   placed.push(S.nextEnemy-1);
@@ -506,7 +506,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  log(`${t.name} (Init ${t.initiative}) attacks: to-hit <span class="dice">[${rs.join(' ')}]</span>${defRolls.length?`, Defense [${defRolls.join(' ')}]`:''}${armorRolls.length?`, Armor [${armorRolls.join(' ')}]`:''}${willRolls.length?`, Willpower [${willRolls.join(' ')}]`:''}; ${physical} Wounds, ${horror} Sanity.`,physical||horror?'hit':'info');
  }} checkSurvival()}
 function checkSurvival(){if(!S||S.ended)return;if(S.hp<=0||S.sanity<=0){if(S.revives>0){S.revives--;S.hp=Math.max(6,Math.ceil(S.maxHp*.55));S.sanity=Math.max(5,Math.ceil(S.maxS*.55));S.x=2*W+4;S.y=2*H+3;S.darkness=Math.min(15,S.darkness+2);log('You fell — but a last reserve of life carries you back to the entrance. One revive consumed; Darkness +2.','hit');if(S.darkness>=16)finish(false,'The Darkness swallowed your second chance.')}else finish(false,S.hp<=0?'Your wounds prove fatal.':'Your mind finally breaks beneath the horrors.') }}
-function endTurn(){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack){log('Confirm your pending attack before ending the turn.','info');render();return}if(!S||S.ended)return;if(S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started){showGrowingDread();return}for(const r of Object.values(S.rooms)){if(r.pendingThreat){drawThreat(r,S.depth>=12?'epic':S.depth>=8?'high':S.depth>=5?'medium':'low');if(r.pendingThreat){log('Unresolved Threat placement prevents ending turn.','hit');save();render();return}}}log('End turn: resolving room exploration and remaining enemy activations.','info');for(let r of Object.values(S.rooms)){if(r.seen&&!r.explored){enterRoom(r);if(S.pendingEvent){save();render();return}}}enemyPhase('after');if(!S.ended)startRound();save();render()}
+function endTurn(){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack){log('Confirm your pending attack before ending the turn.','info');render();return}if(!S||S.ended)return;if(S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started){showGrowingDread();return}for(const r of Object.values(S.rooms)){if(r.pendingThreat){drawThreat(r,r.pendingThreatTier||'low');if(r.pendingThreat){log('Unresolved Threat placement prevents ending turn.','hit');save();render();return}}}log('End turn: resolving room exploration and remaining enemy activations.','info');for(let r of Object.values(S.rooms)){if(r.seen&&!r.explored){enterRoom(r);if(S.pendingEvent){save();render();return}}}enemyPhase('after');if(!S.ended)startRound();save();render()}
 function finish(success,reason){if(!S||S.ended)return;S.ended=true;S.success=success;S.profile.coins+=S.coins;S.profile.stone+=S.stone;S.profile.missions+=(success?1:0);if(success){S.profile.exp+=25;let missionStone=1+rnd(3);S.profile.stone+=missionStone;log('A Fistful of Dark Stone: objective complete! +25 XP and '+missionStone+' Dark Stone (D3).','good')}log(reason,success?'good':'hit');let levelups=0;while(S.profile.level<10&&S.profile.exp>=S.profile.level*110){S.profile.exp-=S.profile.level*110;S.profile.level++;levelups++}if(levelups)log(`Promoted ${levelups} level(s)! Higher-level expeditions await.`,'good');save();render();resultsModal(reason)}
 function resultsModal(reason){let p=S.profile;let result=S.success?'<span style="color:#b9cfb2">EXTRACTION SUCCESSFUL</span>':'<span style="color:#e2a294">EXPEDITION LOST</span>';openModal(`<div class="kicker">${result}</div><h2>${S.success?'The mine is silent.':'The lantern goes out.'}</h2><p>${reason} Your surviving equipment and hard-earned knowledge carry forward into a new expedition.</p><div class="reviewstats"><div><span>Chambers explored</span><b>${S.cleared}</b></div><div><span>Coins earned</span><b>${S.coins}</b></div><div><span>Hero level</span><b>${p.level}</b></div></div><div class="modalbuttons"><button class="btn gold" id="visitTown">Visit frontier town →</button><button class="btn" id="retryRun">New expedition</button></div>`,'results');$('visitTown').onclick=townModal;$('retryRun').onclick=()=>makeRun(S.profile,S.mode)}
 function townModal(){

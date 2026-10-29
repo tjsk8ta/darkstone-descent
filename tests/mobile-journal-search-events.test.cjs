@@ -25,11 +25,11 @@ test('event choices are recorded at reveal, with concise result and numeric enem
  assert.doesNotMatch(html,/S\.enemies\.length-before\.enemies\.length/);
 });
 test('empty first junction and corridor do not award imaginary room-clearing loot',()=>{
- assert.match(html,/!r\.firstJunction&&r\.shape!=='corridor'&&!S\.pendingEvent/);
+ assert.match(html,/!r\.firstJunction&&r\.shape!=='corridor'&&!S\.pendingEvent&&\(r\.fightThreats>0\|\|r\.hadEnemies\)/);
 });
 
 test('an unresolved event prevents room reward and clue before choosing',()=>{
- assert.match(html,/!r\.firstJunction&&r\.shape!=='corridor'&&!S\.pendingEvent/);
+ assert.match(html,/!r\.firstJunction&&r\.shape!=='corridor'&&!S\.pendingEvent&&\(r\.fightThreats>0\|\|r\.hadEnemies\)/);
  assert.match(html,/if\(r\.clue&&!r\.clueFound&&!S\.pendingEvent\)/);
 });
 test('both searches consume the action and cannot be combined with attacking',()=>{
@@ -40,4 +40,9 @@ test('both searches consume the action and cannot be combined with attacking',()
 test('safe junctions and corridors give explicit onward exploration instructions',()=>{
  assert.match(html,/Initial T-Junction: no Exploration Token or enemies/);
  assert.match(html,/Passage: no Exploration Token or enemies/);
+});
+
+test('empty token chambers cannot claim fight rewards before actual combat',()=>{
+ assert.match(html,/if\(count>0\)r\.hadEnemies=true/);
+ assert.match(html,/\(r\.fightThreats>0\|\|r\.hadEnemies\)/);
 });

@@ -16,7 +16,7 @@ function scenario({enemyCount=1,remaining=[1],hp=1}={}){
  selectedEnemyId:null,gritDiceSelection:new Set(),damageModifier:()=>0,
  enemyCritIgnoresDefense:()=>false,effectiveEnemyDefense:()=>0,
  awardEnemyWoundXP:()=>0,remainingHitIndices:()=>remaining,
- rnd:()=>0,log:msg=>events.push(msg),checkCleared:()=>{},save:()=>{},render:()=>{}};
+ rnd:()=>0,log:msg=>events.push(msg),checkCleared:()=>events.push('CLEAR_STATE:'+String(ctx.pendingAttack?.phase||'none')),save:()=>{},render:()=>{}};
  vm.runInNewContext(code,ctx);
  ctx.applyDamageGroup();
  return {S,ctx,events};
@@ -39,4 +39,9 @@ test('attack closes after all hits resolved regardless of surviving enemies',()=
 test('enemy sheet Elite label remains edition-specific and is not overwritten by Threat resolution',()=>{
  assert.doesNotMatch(html,/TYPES\.Tentacle\.eliteChart\[3\]\.name\s*=/);
  assert.match(html,/function applyEnemyEdition\(edition,set='combined'\)/);
+});
+
+test('fight reward check occurs only after final attack state is cleared',()=>{
+ const {events}=scenario({enemyCount:1,remaining:[1,2]});
+ assert.ok(events.includes('CLEAR_STATE:none'));
 });

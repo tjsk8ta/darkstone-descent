@@ -483,6 +483,8 @@ function drawThreat(r,tier='low'){
  log('ENCOUNTER RESULT · '+r.name+' · '+tier.toUpperCase()+' Threat · '+placed.length+' enemy model(s) · '+threatLoot+' loot-bearing Threat card(s).','hit');
  log('Threat card: '+candidate.card+'. Resolved: '+groups.map(g=>g.n+' '+g.type+(g.elite?' (Elite '+g.elite+')':'')).join('; ')+'.','hit');
  log('Encounter placed at: '+placed.map(enemyId=>{const e=S.enemies.find(v=>v.id===enemyId);return e?e.type+' ('+e.x+','+e.y+')':''}).filter(Boolean).join('; ')+'.','info');
+ for(const enemyId of placed){const e=S.enemies.find(v=>v.id===enemyId);if(e&&eliteHas(e.type,'drop-from-above'))e.ambushPending=true}
+ if(placed.some(enemyId=>S.enemies.some(e=>e.id===enemyId&&e.ambushPending))){log('Drop From Above: resolving immediate Elite Ambush Attacks.','hit');enemyPhase('ambush')}
  return placed.length;
 }
 function drawLowThreat(r){return drawThreat(r,'low')}

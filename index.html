@@ -643,9 +643,17 @@ function resolveHorrorHits(){
  log('Horror Hits '+total+': Willpower ['+checks.join(' ')+']; '+damage+' Sanity Damage.','hit');
  checkSurvival();
 }
+function enemyActivationOrder(enemies){
+ const initiatives=[...new Set(enemies.map(e=>effectiveEnemyInitiative(e)))].sort((a,b)=>b-a);
+ return initiatives.flatMap(initiative=>{
+  const group=enemies.filter(e=>effectiveEnemyInitiative(e)===initiative);
+  const types=shuffleDeck([...new Set(group.map(e=>e.type))]);
+  return types.flatMap(type=>group.filter(e=>e.type===type));
+ });
+}
 function enemyPhase(when='after'){if(!S||S.ended)return;
  let C=CLASSES[S.profile.hero],own=C.initiative;
- let remaining=S.enemies.filter(e=>e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)).sort((a,b)=>effectiveEnemyInitiative(b)-effectiveEnemyInitiative(a));
+ let remaining=enemyActivationOrder(S.enemies.filter(e=>e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)));
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);

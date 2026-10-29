@@ -653,25 +653,26 @@ function doorwayRoom(){
  if(!S)return null;
  const r=roomCurrent();if(!r?.explored)return null;
  const lx=S.x%W,ly=S.y%H;
- // Derive doorway squares from the actual traversable tile geometry, rather
- // than fixed markers that can disagree with generated passage shapes.
- for(const dir of r.doors||[]){
+ // A doorway is a traversable boundary square, not an icon or a guessed offset.
+ // In particular, both ends of the first T-Junction are valid even on old saves.
+ const exits=r.firstJunction||r.shape==='tee'&&r.name==='T-Junction'
+  ? Array.from(new Set([...(r.doors||[]),'E','W'])):(r.doors||[]);
+ for(const dir of exits){
   const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
   if(nx<0||ny<0||nx>=N||ny>=N)continue;
-  const nr=S.rooms[id(nx,ny)];if(nr?.seen)continue;
-  const edge=dir==='N'?[[4,0],[5,0]]:
-   dir==='S'?[[4,H-1],[5,H-1]]:
-   dir==='E'?[[W-1,2],[W-1,3]]:
-   [[0,2],[0,3]];
-  const adjacent=edge.some(([x,y])=>floorLocal(r,x,y)&&
-   x===lx&&y===ly);
-  if(!adjacent)continue;
-  if(nr&&!adjoiningDoorConnected(r,dir,nr))continue;
+  const nr=S.rooms[id(nx,ny)];
+  if(nr?.seen)continue;
+  const onEdge=dir==='N'?ly===0&&(lx===4||lx===5):
+   dir==='S'?ly===H-1&&(lx===4||lx===5):
+   dir==='E'?lx===W-1&&(ly===2||ly===3):
+   lx===0&&(ly===2||ly===3);
+  if(!onEdge||!floorLocal(r,lx,ly))continue;
+  // An unrevealed room cannot invalidate a doorway already drawn on the map.
   return nr||{undrawn:true,from:r,dir};
  }
  return null;
 }
-function lookThroughDoor(){if(!S||S.ended||pendingAttack||S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started||!$('overlay').classList.contains('hidden'))return;if(Object.values(S.rooms).some(room=>room.pendingThreat)){log('Resolve the outstanding Threat before exploring another doorway.','hit');render();return}if(S.enemies.length){log('Cannot explore while '+S.enemies.length+' enemy/enemies remain active. Defeat them first; use Fit explored map to locate them.','info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(!roomCurrent()?.explored){log('Resolve this tile’s Exploration Token before Searching.','info');render();return}if(S.searchUsedTurn===S.turn||S.actionUsed){log('Already used an action or search this Activation: Scavenge and Look Through a Door are mutually exclusive.','info');render();return}if(nr.undrawn){nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}nr.seen=true;nr.explored=false;S.searchUsedTurn=S.turn;S.actionUsed=true;S.move=0;S.profile.exp+=5;S.depth=Math.min(16,(S.depth||0)+1);log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Search ends movement for this Activation; entering the new tile resolves exploration.","good");save();render()}
+function lookThroughDoor(){if(!S||S.ended||pendingAttack||S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started||!$('overlay').classList.contains('hidden'))return;if(Object.values(S.rooms).some(room=>room.pendingThreat)){log('Resolve the outstanding Threat before exploring another doorway.','hit');render();return}if(S.enemies.length){log('Cannot explore while '+S.enemies.length+' enemy/enemies remain active. Defeat them first; use Fit explored map to locate them.','info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(!roomCurrent()?.explored){log('Resolve this tile’s Exploration Token before Searching.','info');render();return}if(S.searchUsedTurn===S.turn||S.actionUsed){log('Already used an action or search this Activation: Scavenge and Look Through a Door are mutually exclusive.','info');render();return}if(nr.undrawn){if(!nr.from.doors.includes(nr.dir))nr.from.doors.push(nr.dir);nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}nr.seen=true;nr.explored=false;S.searchUsedTurn=S.turn;S.actionUsed=true;S.move=0;S.profile.exp+=5;S.depth=Math.min(16,(S.depth||0)+1);log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Search ends movement for this Activation; entering the new tile resolves exploration.","good");save();render()}
 function moveStep(dx,dy){if(S?.entangledUntilTurn>=S?.turn){log('Entangle prevents movement this Activation.','hit');render();return}if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack)return;if(!S||S.ended||S.pendingEvent||!$('overlay').classList.contains('hidden'))return;if(S.move<=0){log('No movement remains. End your turn.','info');render();return}let x=S.x+dx,y=S.y+dy;if(!cellAt(x,y)||!crossesConnectedDoor(S.x,S.y,x,y)||dx&&dy&&(!cellAt(S.x+dx,S.y)||!cellAt(S.x,S.y+dy)||!crossesConnectedDoor(S.x,S.y,S.x+dx,S.y)||!crossesConnectedDoor(S.x,S.y,S.x,S.y+dy))){log('A wall blocks your path.');render();return}if(occupied(x,y)){log('An enemy blocks that square. Press Attack to roll To Hit.');render();return}let r=roomAt(x,y);if(!r?.seen){log("Unexplored chamber: look through the doorway first; no movement spent.","info");render();return}if(S.enemies.length){let neighbors=S.enemies.filter(e=>man(S,e)<=1&&man({x,y},e)>1&&effectiveEnemyEscape(e)>S.escapedValue);
  if(neighbors.length){let difficulty=Math.max(...neighbors.map(e=>effectiveEnemyEscape(e))),test=die();
  if(test<difficulty){log(`Escape test <span class="dice">[${test}]</span> vs ${difficulty}+ failed; unable to move.`, 'hit');render();return}

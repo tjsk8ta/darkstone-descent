@@ -17,7 +17,7 @@
     },
     "threatDecks": {
       "passed": false,
-      "reason": "Threat deck parser exists but card inventories, model caps and nested encounters need exhaustive validation"
+      "reason": "Original City/Swamp Low, Medium, High, Epic printed card strings (51 distinct inventory entries) passed deterministic parser checks. Complete deck, model cap, nested effects and source verification still outstanding."
     },
     "gameRules": {
       "passed": false,
@@ -25,7 +25,7 @@
     },
     "automatedTests": {
       "passed": false,
-      "reason": "Unit and browser tests exist but comprehensive encounter/combat regression coverage and CI results are not yet verified"
+      "reason": "Regression suite includes parser, Peril, nested Threats, Elite gating, card inventory and connected multi-room overflow tests; targeted in-memory checks passed. Full browser CI result and comprehensive combat scenarios not yet verified."
     },
     "deployment": {
       "passed": false,
@@ -36,5 +36,12 @@
   "sources": [
     "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf",
     "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf"
-  ]
+  ],
+  "lastVerified": {
+    "originalCoreCardParserEntries": 51,
+    "parserFailures": 0,
+    "spawnOverflowCheck": "3 connected rooms correctly traversed in isolated execution",
+    "browserCI": "not independently verified",
+    "complete": false
+  }
 }

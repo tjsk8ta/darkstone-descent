@@ -34,7 +34,7 @@ function resolveEncounter(card,options={}){
    for(let i=0;i<n;i++){
     const next=draw(tier);
     if(!next||typeof next.card!=='string')throw Error('Missing '+tier+' Threat card in nested draw');
-    const sub=resolveEncounter(next.card,{rng,draw,currentTier,depth:depth+1,maxDepth});
+    const sub=resolveEncounter(next.card,{rng,draw,currentTier:tier,depth:depth+1,maxDepth});
     lootThreats+=sub.lootThreats;
     for(const group of sub.groups)groups.push({...group,elite:group.elite+(elite?1:0)});
    }

@@ -727,8 +727,9 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
- if(e.type==='Corpse Pile'&&S.enemies.filter(v=>v.type==='Hungry Dead'&&v.home===e.home).length<12){
-  const home=S.rooms[e.home];if(home&&spawnEnemy('Hungry Dead',home))log('Corpse Pile raises a Hungry Dead (provisional spawn rate).','hit');
+ if(e.type==='Corpse Pile'&&!S.corpsePileRuleWarning){
+  S.corpsePileRuleWarning=true;
+  log('RULE VERIFICATION PENDING: Corpse Pile Fast Spawner frequency and placement are unverified. No invented automatic Hungry Dead spawn applied.','hit');
  }
  if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,!eliteHas(e.type,'eruption')&&!t.flight);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));const destination=enemyMovement.chooseDestination(route,steps,{x:S.x,y:S.y},p=>!!occupied(p.x,p.y));if(destination){e.x=destination.x;e.y=destination.y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');

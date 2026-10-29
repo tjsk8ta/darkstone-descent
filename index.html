@@ -360,7 +360,7 @@ function spawnSpaces(r){
  const locs=[];
  for(let ly=1;ly<=5;ly++)for(let lx=1;lx<=7;lx++){
   const x=r.x*W+lx,y=r.y*H+ly;
-  if(cellAt(x,y)&&man({x,y},S)>=3&&!S.enemies.some(e=>e.x===x&&e.y===y))locs.push({x,y});
+  if(cellAt(x,y)&&!(S.x===x&&S.y===y)&&!S.enemies.some(e=>e.x===x&&e.y===y))locs.push({x,y});
  }
  return locs;
 }
@@ -369,7 +369,8 @@ function spawnEnemy(type,r){
  if(!t){log('Unknown enemy type '+type+'; cannot spawn.','hit');return false}
  const locs=spawnSpaces(r);
  if(!locs.length){log('No valid space for '+type+'; placement deferred.','hit');return false}
- const p=locs[rnd(locs.length)],boost=S.mode==='hard'?1:0;
+ const far=locs.filter(p=>man(p,S)>=3),placement=far.length?far:locs;
+ const p=placement[rnd(placement.length)],boost=S.mode==='hard'?1:0;
  S.enemies.push({id:S.nextEnemy++,type,x:p.x,y:p.y,hp:t.hp+boost,maxHp:t.hp+boost,home:id(r.x,r.y),spawnTurn:S.turn});
  return true;
 }

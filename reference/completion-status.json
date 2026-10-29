@@ -17,7 +17,7 @@
     },
     "threatDecks": {
       "passed": false,
-      "reason": "Original City/Swamp Low, Medium, High, Epic printed card strings (51 distinct inventory entries) passed deterministic parser checks. Complete deck, model cap, nested effects and source verification still outstanding."
+      "reason": "All 2014/2020 City/Swamp Low/Medium/High/Epic core deck inventory counts verified as 10/10/10/5 in tests; 2014-to-2020 Swamp card substitutions tested. Card-face source verification and full encounter/Elite execution remain outstanding."
     },
     "gameRules": {
       "passed": false,
@@ -25,7 +25,7 @@
     },
     "automatedTests": {
       "passed": false,
-      "reason": "13 new enemy-sheet/combat/XP unit tests passed in isolated execution, 2 Playwright edition-selection tests added but full GitHub Actions/Playwright execution not independently verified."
+      "reason": "19 new source/edition/combat/XP/deck/gate regression assertions passed in isolated execution, and 2 Playwright edition-selection scenarios added and included in config. Full Node/Playwright CI and browser deployment verification remain unconfirmed."
     },
     "deployment": {
       "passed": false,
@@ -53,7 +53,40 @@
     "enemyUnitTestsFailed": 0,
     "playwrightEditionTestsAdded": 2,
     "playwrightExecutionVerified": false,
-    "completion": false
+    "completion": false,
+    "sourceAndEditionRegressionTestsPassed": 19,
+    "sourceAndEditionRegressionTestsFailed": 0,
+    "threatDeckSizes": {
+      "original": {
+        "city": [
+          10,
+          10,
+          10,
+          5
+        ],
+        "swamp": [
+          10,
+          10,
+          10,
+          5
+        ]
+      },
+      "revised": {
+        "city": [
+          10,
+          10,
+          10,
+          5
+        ],
+        "swamp": [
+          10,
+          10,
+          10,
+          5
+        ]
+      }
+    },
+    "coreEnemyFootprints": "not fully implemented for Large and Extra Large enemies"
   },
   "enemyRecordSheetSources": {
     "originalInventory": "https://pdfcoffee.com/sobgamecontentsv2bpdf-pdf-free.html",

@@ -38,7 +38,7 @@ const original={
  'Void Spider':{source:ORIGINAL_CITY,confidence:'visible fields on 2014 card; lower stats obscured',complete:false,
   stats:{initiative:6,steps:8,escape:4,hit:4}},
  'Targa Pylon':{source:ORIGINAL_CITY,confidence:'visible fields on 2014 card; lower stats obscured',complete:false,
-  stats:{initiative:4,steps:0,hit:3}},
+  stats:{initiative:4,steps:0,rangedHit:3,combat:0}},
  'Tentacle':{source:OFFICIAL_TENTACLE,confidence:'publisher normal-side example matches original 2014 card image',complete:true,
   stats:{initiative:2,steps:6,escape:4,hit:4,combat:3,damage:3,def:2,hp:4,exp:30,smash:true},
   mechanics:['SMASH: melee rolls of 6 bypass Hero Defense'],
@@ -57,7 +57,7 @@ const revised={
   source:REVISED_SWAMP,confidence:'readable normal-side 2020 physical card photograph; elite chart too small to verify',complete:false,
   stats:{initiative:4,steps:12,escape:3,hit:4,combat:3,damage:4,def:3,hp:14,hpPerHero:3,exp:10,xpPerWound:5,unspeakableTerror:3,immuneCrit:true,flight:true},
   mechanics:['Unspeakable Terror (3)','Flight','Immune to Critical Hits','Bringer of Death D6 table (details require full readable card)']},
- 'Corpse Pile':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:0,steps:0}},
+ 'Corpse Pile':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:0,steps:0,combat:0}},
  'Hungry Dead':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:1,steps:2}},
  'Hellbat':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:6,steps:12}},
  'Slasher':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:4,steps:5}}

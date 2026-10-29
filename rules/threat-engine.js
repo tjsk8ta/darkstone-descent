@@ -28,12 +28,13 @@ function resolveEncounter(card,options={}){
   if(nested){
    const n=quantity(token,rng),qual=nested[1]?.toLowerCase();
    const tier=qual==='low'?'low':qual?.startsWith('med')?'medium':qual==='high'?'high':currentTier;
-   if(qual==='elite')throw Error('Elite Threat deck/chart unavailable: cannot substitute a normal Threat card');
+   // Elite is a modifier to the Posse's ordinary Threat draw, not a separate deck.
+   // An unverified enemy Elite Chart is rejected later by the game placement gate.
    const elite=qual==='elite';
    for(let i=0;i<n;i++){
     const next=draw(tier);
     if(!next||typeof next.card!=='string')throw Error('Missing '+tier+' Threat card in nested draw');
-    const sub=resolveEncounter(next.card,{rng,draw,currentTier:tier,depth:depth+1,maxDepth});
+    const sub=resolveEncounter(next.card,{rng,draw,currentTier,depth:depth+1,maxDepth});
     lootThreats+=sub.lootThreats;
     for(const group of sub.groups)groups.push({...group,elite:group.elite+(elite?1:0)});
    }

@@ -31,3 +31,10 @@ test('unknown Brutal face is never silently replaced by original normal or revis
  const r=records.applyFace('original','Void Spider',{hp:999},'city','brutal');
  assert.equal(r.hp,5);assert.equal(r.recordFace,'brutal');
 });
+test('revised Brutal Corpse Pile partially visible values do not become a playable complete sheet',()=>{
+ const r=records.getFace('revised','Corpse Pile','swamp','brutal');
+ assert.deepEqual([r.stats.initiative,r.stats.steps,r.stats.escape,r.stats.combat,r.stats.damage,r.stats.def,r.stats.hp],[0,0,1,0,0,0,10]);
+ assert.equal(r.stats.immobile,true);assert.equal(r.stats.fear,2);
+ assert.equal(r.complete,false);
+ assert.throws(()=>records.applyFace('revised','Corpse Pile',{},'swamp','brutal'),/incomplete/);
+});

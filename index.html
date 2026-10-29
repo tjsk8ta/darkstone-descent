@@ -324,7 +324,7 @@ const ORIGINAL_THREAT_NAMES=['Night Terror','Strangler','Void Spider','Tentacle'
 // OtherWorld variants require separate token/model-count verification.
 for(const [type,cap] of Object.entries({
  'Tentacle':6,'Strangler':6,'Void Spider':12,'Night Terror':3,'Goliath':1,
- 'Hellbat':6,'Hungry Dead':12,'Slasher':3,'Harbinger':1
+ 'Hellbat':6,'Hungry Dead':12,'Corpse Pile':8,'Slasher':3,'Harbinger':1,'Targa Pylon':2
 }))TYPES[type].modelCap=cap;
 const enemyRecords=globalThis.DarkstoneEnemyRecords;
 if(!enemyRecords)throw Error('Enemy record-sheet module did not load');

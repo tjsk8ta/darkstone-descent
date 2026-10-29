@@ -46,6 +46,7 @@
 <button type="button" id="journalTab" class="journal-tab" aria-controls="journalDrawer" aria-expanded="false" aria-label="Open field journal">Journal ◀</button><div id="journalBackdrop" class="journal-backdrop" hidden></div><aside id="journalDrawer" class="journal-drawer" role="dialog" aria-modal="true" aria-label="Field journal" aria-hidden="true"><div class="journal-drawer-head"><div class="sectionhead">Field journal</div><button type="button" class="btn" id="journalClose" aria-label="Close field journal">Close ✕</button></div><div class="loglist" id="logList" aria-live="polite"></div></aside><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
 <script src="rules/threat-engine.js"></script>
 <script src="rules/enemy-movement.js"></script>
+<script src="rules/harbinger-ability.js"></script>
 <script src="rules/enemy-records.js"></script>
 <script>
 (()=>{'use strict';
@@ -748,7 +749,51 @@ function checkSurvival(){
  // A lone KO Hero cannot defeat active enemies; do not invent a free rescue.
  finish(false,S.hp<=0?'The lone Hero was knocked out by Wounds.':'The lone Hero was knocked out by Sanity Damage.');
 }
-function endTurn(){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack){log('Confirm your pending attack before ending the turn.','info');render();return}if(!S||S.ended)return;if(S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started){showGrowingDread();return}for(const r of Object.values(S.rooms)){if(r.pendingThreat){drawThreat(r,r.pendingThreatTier||'low');if(r.pendingThreat){log('Unresolved Threat placement prevents ending turn.','hit');save();render();return}}}log('End turn: resolving room exploration and remaining enemy activations.','info');let current=roomCurrent();if(current?.seen&&!current.explored){enterRoom(current);if(S.pendingEvent){save();render();return}}enemyPhase('after');if(!S.ended)startRound();save();render()}
+/* Revised Harbinger: end-of-turn Bringer of Death. Green normal face:
+ * https://i.ebayimg.com/images/g/qx4AAeSwwoppmIwY/s-l1600.webp
+ * The sheet's six Elite entries and Brutal face are not yet verified. */
+function resolveHarbingerBringerOfDeath(){
+ if(!S||S.ended||S.coreEdition!=='revised')return;
+ const rule=globalThis.DarkstoneHarbinger;
+ if(!rule)throw Error('Harbinger source-verified ability module missing');
+ for(const e of [...S.enemies].filter(v=>v.type==='Harbinger')){
+  if(S.ended||!S.enemies.some(v=>v.id===e.id))break;
+  const effect=rule.rollBringerOfDeath(die);
+  if(effect.kind==='regeneration'){
+   const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+effect.wounds);
+   log('Bringer of Death ['+effect.roll+'] · Regeneration D6 ['+effect.wounds+']: Harbinger #'+e.id+' healed '+(e.hp-before)+' Wounds.','hit');
+  }else if(effect.kind==='sweeping-strike'){
+   const adjacent=man(S,e)<=1;
+   let physical=0,defense=[],armor=[];
+   if(adjacent){
+    const C=CLASSES[S.profile.hero];
+    for(let i=0;i<effect.combatHits;i++){
+     const d=die();defense.push(d);
+     if(d<C.defense)for(let j=0;j<TYPES.Harbinger.damage;j++){
+      const armourTarget=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7;
+      const ar=die();if(armourTarget<=6){armor.push(ar);if(ar>=armourTarget)continue}
+      physical++;
+     }
+    }
+    S.hp=Math.max(0,S.hp-physical);
+   }
+   log('Bringer of Death ['+effect.roll+'] · Sweeping Strike D6 ['+effect.combatHits+'] Combat Hits'+(adjacent?'; Defense ['+defense.join(' ')+']'+(armor.length?'; Armor ['+armor.join(' ')+']':'')+'; '+physical+' Wounds.':'; no adjacent Hero, no damage.'),'hit');
+   checkSurvival();
+  }else if(effect.kind==='summon-hellbats'){
+   const home=S.rooms[e.home]||roomAt(e.x,e.y),cap=TYPES.Hellbat.modelCap||6;
+   const available=Math.max(0,cap-S.enemies.filter(v=>v.type==='Hellbat').length);
+   const target=Math.min(effect.models,available);let spawned=0;
+   for(let i=0;i<target;i++){
+    if(!home||!spawnEnemy('Hellbat',home))break;
+    const bat=S.enemies[S.enemies.length-1];bat.spawnTurn=S.turn-1;spawned++;
+   }
+   log('Bringer of Death ['+effect.roll+'] · Summon HellBats D6 ['+effect.models+']: '+spawned+' summoned'+(spawned<effect.models?'; insufficient physical models/placement.':'')+'.','hit');
+   if(spawned<effect.models){advanceDarkness('Bringer of Death: insufficient HellBats');if(S.ended)break}
+   if(spawned){log('Summoned HellBats make an immediate Ambush Attack.','hit');enemyPhase('before')}
+  }
+ }
+}
+function endTurn(){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack){log('Confirm your pending attack before ending the turn.','info');render();return}if(!S||S.ended)return;if(S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started){showGrowingDread();return}for(const r of Object.values(S.rooms)){if(r.pendingThreat){drawThreat(r,r.pendingThreatTier||'low');if(r.pendingThreat){log('Unresolved Threat placement prevents ending turn.','hit');save();render();return}}}log('End turn: resolving room exploration and remaining enemy activations.','info');let current=roomCurrent();if(current?.seen&&!current.explored){enterRoom(current);if(S.pendingEvent){save();render();return}}enemyPhase('after');if(!S.ended)resolveHarbingerBringerOfDeath();if(!S.ended)startRound();save();render()}
 function finish(success,reason){if(!S||S.ended)return;S.ended=true;S.success=success;S.profile.coins+=S.coins;S.profile.stone+=S.stone;S.profile.missions+=(success?1:0);if(success){S.profile.exp+=25;let missionStone=1+rnd(3);S.profile.stone+=missionStone;log('A Fistful of Dark Stone: objective complete! +25 XP and '+missionStone+' Dark Stone (D3).','good')}log(reason,success?'good':'hit');let levelups=0;while(S.profile.level<10&&S.profile.exp>=S.profile.level*110){S.profile.exp-=S.profile.level*110;S.profile.level++;levelups++}if(levelups)log(`Promoted ${levelups} level(s)! Higher-level expeditions await.`,'good');save();render();resultsModal(reason)}
 function resultsModal(reason){let p=S.profile;let result=S.success?'<span style="color:#b9cfb2">EXTRACTION SUCCESSFUL</span>':'<span style="color:#e2a294">EXPEDITION LOST</span>';openModal(`<div class="kicker">${result}</div><h2>${S.success?'The mine is silent.':'The lantern goes out.'}</h2><p>${reason} Your surviving equipment and hard-earned knowledge carry forward into a new expedition.</p><div class="reviewstats"><div><span>Chambers explored</span><b>${S.cleared}</b></div><div><span>Coins earned</span><b>${S.coins}</b></div><div><span>Hero level</span><b>${p.level}</b></div></div><div class="modalbuttons"><button class="btn gold" id="visitTown">Visit frontier town →</button><button class="btn" id="retryRun">New expedition</button></div>`,'results');$('visitTown').onclick=townModal;$('retryRun').onclick=()=>makeRun(S.profile,S.mode)}
 function townModal(){

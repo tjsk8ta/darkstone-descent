@@ -513,7 +513,7 @@ function drawThreat(r,tier='low'){
   for(const t of ['low','medium','high','epic'])snapshot[threatDeckKey(t)]=S[threatDeckKey(t)]?JSON.parse(JSON.stringify(S[threatDeckKey(t)])):null;
   try{
    const resolved=threatEngine.resolveEncounter(candidate.card,{
-    rng:rnd,currentTier:'low',draw:nextTier=>drawDeckCard(nextTier)
+    rng:rnd,currentTier:tier,draw:nextTier=>drawDeckCard(nextTier)
    });
    groups=applyModelLimits(resolved.groups);
    r.pendingThreatLoot=resolved.lootThreats;

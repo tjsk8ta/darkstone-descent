@@ -14,8 +14,8 @@ test('look through door requires hero to stand on actual boundary half-space',()
  ctx.S.x=7;assert.equal(ctx.doorwayRoom(),null);
 });
 test('searching consumes the movement phase and prevents another search',()=>{
- assert.match(html,/S\.searchUsedTurn=S\.turn;S\.move=0;S\.profile\.exp\+=5/);
- assert.match(html,/S\.searchUsedTurn=S\.turn;S\.move=0;let rs=roll\(3\)/);
+ assert.match(html,/S\.searchUsedTurn=S\.turn;S\.actionUsed=true;S\.move=0;S\.profile\.exp\+=5/);
+ assert.match(html,/S\.searchUsedTurn=S\.turn;S\.actionUsed=true;S\.move=0;let rs=roll\(3\)/);
  assert.match(html,/if\(S\.searchUsedTurn===S\.turn\)/);
 });
 test('event choices are recorded at reveal, with concise result and numeric enemy delta',()=>{
@@ -25,7 +25,7 @@ test('event choices are recorded at reveal, with concise result and numeric enem
  assert.doesNotMatch(html,/S\.enemies\.length-before\.enemies\.length/);
 });
 test('empty first junction and corridor do not award imaginary room-clearing loot',()=>{
- assert.match(html,/!r\.firstJunction&&r\.shape!=='corridor'&&!r\.pendingEvent/);
+ assert.match(html,/!r\.firstJunction&&r\.shape!=='corridor'&&!S\.pendingEvent/);
 });
 
 test('an unresolved event prevents room reward and clue before choosing',()=>{

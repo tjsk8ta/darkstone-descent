@@ -8,8 +8,9 @@ function harness({hero=[0,3],doors=['S','E','W'],actionUsed=false,searchUsedTurn
  if(seenNeighbor)S.rooms['3,4']={seen:true};
  const ctx={S,W:9,H:7,N:9,D:{N:[0,-1],E:[1,0],S:[0,1],W:[-1,0]},pendingAttack:null,
   id:(x,y)=>x+','+y,roomCurrent:()=>r,floorLocal:()=>true,$:()=>({classList:{contains:()=>true}})};
- vm.runInNewContext(extract('const PORTAL_LANES=','const MAP_CARD_POOL='),ctx);
- vm.runInNewContext(extract('function doorwayRoom(){','function lookThroughDoor(){'),ctx);
+ vm.createContext(ctx);
+ vm.runInContext(extract('const PORTAL_LANES=','const MAP_CARD_POOL='),ctx);
+ vm.runInContext(extract('function doorwayRoom(){','function lookThroughDoor(){'),ctx);
  return ctx;
 }
 test('west T-Junction boundary enables Look Through Door',()=>{let c=harness();assert.equal(c.doorwayRoom().dir,'W');assert.equal(c.doorwayStatus().ready,true)});

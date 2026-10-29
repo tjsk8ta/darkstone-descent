@@ -348,7 +348,8 @@ function enemyMaxHp(type){const t=TYPES[type];return t.hp+(t.hpPerHero||0)}
 globalThis.DarkstoneRuleAudit=Object.freeze({
  getEdition:()=>S?.coreEdition||null,
  getEnemyType:name=>TYPES[name]?JSON.parse(JSON.stringify(TYPES[name])):null,
- getVerifiedRecord:(edition,name,set)=>enemyRecords.get(edition,name,set)
+ getVerifiedRecord:(edition,name,set)=>enemyRecords.get(edition,name,set),
+ getCombatState:()=>({pendingAttack:pendingAttack?{phase:pendingAttack.phase,rolls:[...pendingAttack.rolls]}:null,actionUsed:S?.actionUsed,ended:S?.ended,attackable:S?.enemies?.filter(canAttack).map(e=>e.id)||[],enemies:S?.enemies?.map(e=>({id:e.id,type:e.type,x:e.x,y:e.y}))||[]})
 });
 
 function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='swamp'?['swamp']:['city','swamp'];return sets.flatMap(k=>ORIGINAL_THREAT_DECKS[k][tier].flatMap(([copies,card])=>Array(copies).fill(null).map(()=>({card,set:k}))));}

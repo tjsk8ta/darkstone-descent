@@ -23,5 +23,5 @@ test('T junction east blue exit can be activated at marker and adjacent floor',(
 test('already revealed doors and remote floor do not offer exploration',()=>{
  const r={x:0,y:0,explored:true,doors:['E']};
  assert.equal(doorway(r,[8,2],true),null);
- assert.equal(doorway(r,[4,4]),null);
+ assert.equal(doorway(r,[4,3]),null);
 });

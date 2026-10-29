@@ -64,6 +64,18 @@ const CORE_ENEMY_PROTOTYPES={
  'Slasher':{initiative:4,escape:4,hp:11,def:1,damage:3,hit:4,steps:2,exp:23,sane:0,glyph:'⚔',color:'#c07565'}
 };
 for(const [name,stats] of Object.entries(CORE_ENEMY_PROTOTYPES))TYPES[name]={name,...stats};
+/* Tentacles normal side and six Elite abilities are visible in the publisher's
+ * Revised City of the Ancients Rulebook, printed p.22.
+ * https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf */
+TYPES.Tentacle.eliteChart=[
+ {id:'entangle',name:'Entangle',effect:'A Hero wounded by Tentacles cannot move on their next Activation.'},
+ {id:'eruption',name:'Eruption',effect:'Tentacles can move through other models and change targets each turn.'},
+ {id:'writhing',name:'Writhing',effect:'+2 Defense.'},
+ {id:'brutal-suckers',name:'Brutal Suckers',effect:'Tentacle Combat Hits deal +2 Damage.'},
+ {id:'lashing-strike',name:'Lashing Strike',effect:'+1 Combat.'},
+ {id:'swift',name:'Swift',effect:'+2 Initiative.'}
+];
+
 
 // Both revised core sets: enemy types not represented by ordinary Low Threat cards
 // remain available to the encounter engine. Figures and stats are PROVISIONAL
@@ -170,7 +182,7 @@ function startRound(){if(!S||S.ended||S.mutationReviewPending)return;
  checkSurvival();if(S.ended)return;
  // Enemies with initiative equal to or higher than the hero activate first (ties to enemies).
  enemyPhase('before');if(S.ended)return;
- pendingAttack=null;let v=die();S.movementDie=v;S.movementRerolled=false;log('New turn '+S.turn+': movement die ['+v+'].','info');S.moveMax=v+mutationMoveBonus()+(CLASSES[S.profile.hero].move||0);S.move=S.moveMax;S.actionUsed=false;S.powered=false;
+ pendingAttack=null;let v=die();S.movementDie=v;S.movementRerolled=false;log('New turn '+S.turn+': movement die ['+v+'].','info');S.moveMax=v+mutationMoveBonus()+(CLASSES[S.profile.hero].move||0);S.move=S.entangledUntilTurn>=S.turn?0:S.moveMax;if(!S.move&&S.entangledUntilTurn>=S.turn)log('Entangle: unable to move this Activation.','hit');S.actionUsed=false;S.powered=false;
  if(v===1){S.grit=Math.min(4,S.grit+1);log('Move <span class="dice">[1]</span>: recover 1 Grit.','good')}
  else log(`Movement <span class="dice">[${v}]</span>: ${S.move} spaces available.`);
  }
@@ -287,6 +299,26 @@ function ensureThreatDeck(tier){
  return S[key];
 }
 function drawDeckCard(tier){return ensureThreatDeck(tier).pop()}
+function eliteHas(type,ability){
+ const chart=TYPES[type]?.eliteChart||[],active=S?.eliteAbilities?.[type]||[];
+ return active.some(n=>chart[n-1]?.id===ability);
+}
+function effectiveEnemyInitiative(e){return TYPES[e.type].initiative+(eliteHas(e.type,'swift')?2:0)}
+function previewEliteAbilities(groups){
+ const result=JSON.parse(JSON.stringify(S.eliteAbilities||{}));
+ for(const g of groups)if(g.elite){
+  const chart=TYPES[g.type]?.eliteChart;
+  if(!chart||chart.length!==6)throw Error('Unverified Elite chart: '+g.type);
+  const used=result[g.type]||[];
+  for(let i=0;i<g.elite;i++){
+   if(used.length===6)throw Error('No unused Elite ability remains for '+g.type);
+   let roll=die();while(used.includes(roll))roll=die();
+   used.push(roll);
+  }
+  result[g.type]=used;
+ }
+ return result;
+}
 function drawThreat(r,tier='low'){
  if(!S||!r)throw Error('Missing encounter state');
  if(!['low','medium','high','epic'].includes(tier))throw Error('Unsupported Threat tier '+tier);
@@ -325,6 +357,11 @@ function drawThreat(r,tier='low'){
   log('Threat '+candidate.card+' requires '+required+' spaces; '+available+' connected spaces available. Encounter held, not discarded.','hit');
   return 0;
  }
+ let nextElite;
+ try{nextElite=previewEliteAbilities(groups)}catch(e){
+  r.pendingThreat=true;r.pendingThreatTier=tier;r.pendingThreatError=e.message;
+  log('Threat '+candidate.card+' unresolved: '+e.message,'hit');return 0;
+ }
  const placed=[],startId=S.nextEnemy;
  for(const g of [...groups].sort((x,y)=>TYPES[x.type].initiative-TYPES[y.type].initiative)){
   for(let i=0;i<g.n;i++){
@@ -338,10 +375,12 @@ function drawThreat(r,tier='low'){
    placed.push(e.id);
   }
  }
+ S.eliteAbilities=nextElite;
  r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatError=null;
  r.pendingThreatCard=null;r.pendingThreatGroups=null;
  r.pendingLowThreat=null;r.pendingLowThreatGroups=null;
  r.fightThreats=(r.fightThreats||0)+1;
+ for(const [type,ids] of Object.entries(nextElite))if(ids.length)log(type+' Elite abilities: '+ids.map(n=>n+' '+TYPES[type].eliteChart[n-1].name).join(', ')+'.','hit');
  log(tier.toUpperCase()+' core Threat: '+candidate.card+'; '+groups.map(g=>g.n+' '+g.type+(g.elite?' (Elite '+g.elite+')':'')).join(', ')+'.','hit');
  return placed.length;
 }
@@ -452,7 +491,7 @@ function resolveFightRewards(r){
  for(let i=0;i<cards;i++)drawReward('loot');
  log('Fight loot: '+cards+' draw(s) from '+r.fightThreats+' Threat instance(s), maximum 3.','info');
 }
-function checkCleared(r){if(!r?.seen||r.pendingThreat)return;let foes=S.enemies.filter(e=>e.home===id(r.x,r.y));if(foes.length)return;resolveFightRewards(r);if(!r.rewarded&&r.kind!=='entry'){r.rewarded=true;let coins=5+rnd(9);S.coins+=coins;S.profile.exp+=6;log(`${r.name} secured: +${coins} coins, +6 XP.`,'good');if(Math.random()<.24){S.stone++;log('A glint of darkstone lies beneath the rubble.','good')}}if(r.clue&&!r.clueFound){r.clueFound=true;S.clues++;S.profile.exp+=20;log(`Clue discovered! <b>${S.clues}/2</b> found. (+20 prototype XP)`,'good');if(r.kind==='boss'&&S.clues===2)log('Both seals resonate. The Rift Warden must fall.','info')}if(r.kind==='boss'&&!S.bossDefeated&&r.rewarded){S.bossDefeated=true;if(S.clues<2)log('The guardian has fallen, but more clues are missing.','info')}if(S.clues>=2&&S.bossDefeated)finish(true,'The Dark Stone deposit is secured.')}
+function checkCleared(r){if(!S.enemies.length)S.eliteAbilities={};if(!r?.seen||r.pendingThreat)return;let foes=S.enemies.filter(e=>e.home===id(r.x,r.y));if(foes.length)return;resolveFightRewards(r);if(!r.rewarded&&r.kind!=='entry'){r.rewarded=true;let coins=5+rnd(9);S.coins+=coins;S.profile.exp+=6;log(`${r.name} secured: +${coins} coins, +6 XP.`,'good');if(Math.random()<.24){S.stone++;log('A glint of darkstone lies beneath the rubble.','good')}}if(r.clue&&!r.clueFound){r.clueFound=true;S.clues++;S.profile.exp+=20;log(`Clue discovered! <b>${S.clues}/2</b> found. (+20 prototype XP)`,'good');if(r.kind==='boss'&&S.clues===2)log('Both seals resonate. The Rift Warden must fall.','info')}if(r.kind==='boss'&&!S.bossDefeated&&r.rewarded){S.bossDefeated=true;if(S.clues<2)log('The guardian has fallen, but more clues are missing.','info')}if(S.clues>=2&&S.bossDefeated)finish(true,'The Dark Stone deposit is secured.')}
 function occupied(x,y){return S.enemies.find(e=>e.x===x&&e.y===y)}
 function path(from,to,allowUnknown=false,avoidEnemies=true){const start=id(from.x,from.y),dest=id(to.x,to.y),queue=[from],came={[start]:null};let dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];while(queue.length){let p=queue.shift(),key=id(p.x,p.y);if(key===dest)break;for(let [dx,dy] of dirs){let x=p.x+dx,y=p.y+dy,k=id(x,y);if(k in came||!cellAt(x,y))continue;if(dx&&dy&&(!cellAt(p.x+dx,p.y)||!cellAt(p.x,p.y+dy)))continue;if(!visibleAt(x,y)){let r=roomAt(x,y);if(!allowUnknown||!r||!Object.values(D).some(([a,b])=>S.rooms[id(r.x+a,r.y+b)]?.seen))continue}if(avoidEnemies&&occupied(x,y)&&k!==dest)continue;came[k]=key;queue.push({x,y})}}if(!(dest in came))return null;let result=[],curr=dest;while(curr!==start){let [x,y]=curr.split(',').map(Number);result.unshift({x,y});curr=came[curr]}return result}
 function doorwayRoom(){
@@ -477,7 +516,7 @@ function doorwayRoom(){
  return null;
 }
 function lookThroughDoor(){if(!S||S.ended)return;if(S.enemies.length){log('Cannot explore while '+S.enemies.length+' enemy/enemies remain active. Defeat them first; use Fit explored map to locate them.','info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(S.actionUsed){log("Your action has already been spent.","info");render();return}if(!roomCurrent()?.explored){log('Resolve this tile’s Exploration Token before Searching.','info');render();return}if(nr.undrawn){nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}S.actionUsed=true;nr.seen=true;nr.explored=false;S.profile.exp+=5;S.depth=Math.min(16,(S.depth||0)+1);log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Remaining movement is preserved; resolve exploration at end of turn.","good");save();render()}
-function moveStep(dx,dy){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack)return;if(!S||S.ended||modalMode==='event'&&!$('overlay').classList.contains('hidden'))return;if(S.move<=0){log('No movement remains. End your turn.','info');render();return}let x=S.x+dx,y=S.y+dy;if(!cellAt(x,y)||dx&&dy&&(!cellAt(S.x+dx,S.y)||!cellAt(S.x,S.y+dy))){log('A wall blocks your path.');render();return}if(S.enemies.length){let neighbors=S.enemies.filter(e=>man(S,e)<=1&&TYPES[e.type].escape>S.escapedValue);
+function moveStep(dx,dy){if(S?.entangledUntilTurn>=S?.turn){log('Entangle prevents movement this Activation.','hit');render();return}if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack)return;if(!S||S.ended||modalMode==='event'&&!$('overlay').classList.contains('hidden'))return;if(S.move<=0){log('No movement remains. End your turn.','info');render();return}let x=S.x+dx,y=S.y+dy;if(!cellAt(x,y)||dx&&dy&&(!cellAt(S.x+dx,S.y)||!cellAt(S.x,S.y+dy))){log('A wall blocks your path.');render();return}if(S.enemies.length){let neighbors=S.enemies.filter(e=>man(S,e)<=1&&TYPES[e.type].escape>S.escapedValue);
  if(neighbors.length){let difficulty=Math.max(...neighbors.map(e=>TYPES[e.type].escape)),test=die();
  if(test<difficulty){log(`Escape test <span class="dice">[${test}]</span> vs ${difficulty}+ failed; unable to move.`, 'hit');render();return}
  S.escapedValue=difficulty;log(`Escape test <span class="dice">[${test}]</span> vs ${difficulty}+ passed.`, 'good')
@@ -494,7 +533,7 @@ function toggleAssignedHit(i){if(!pendingAttack||pendingAttack.phase!=='assign'|
 function beginDamageGroup(enemyId,count){if(!S||!pendingAttack||pendingAttack.phase!=='assign')return;let e=attackEligibleTargets().find(v=>String(v.id)===String(enemyId)),available=remainingHitIndices();count=Math.floor(Number(count));let chosen=pendingAttack.selectedHits||[];if(!e||!chosen.length||chosen.some(i=>!available.includes(i))||count!==chosen.length){log('Invalid hit allocation.','info');render();return}let indices=[...chosen].sort((a,b)=>a-b);pendingAttack.selectedHits=[];pendingAttack.damageGroup={enemyId:e.id,dice:indices.map(i=>({hitIndex:i,hit:pendingAttack.rolls[i],roll:die(),rerolled:false})),selected:[]};pendingAttack.phase='damage';log('Assigned '+count+' hit(s) to '+TYPES[e.type].name+' #'+e.id+'. Damage D6 rolls: ['+pendingAttack.damageGroup.dice.map(d=>d.roll).join(', ')+']. Choose Grit rerolls before applying damage.','info');save();render()}
 function toggleDamageDie(i){if(!pendingAttack||pendingAttack.phase!=='damage')return;let g=pendingAttack.damageGroup,d=g.dice[i];if(!d||d.rerolled)return;let n=g.selected.indexOf(i);if(n>=0)g.selected.splice(n,1);else g.selected.push(i);render()}
 function rerollDamageGroup(){if(!S||!pendingAttack||pendingAttack.phase!=='damage'||S.grit<1)return;let g=pendingAttack.damageGroup,selected=g.selected.filter(i=>g.dice[i]&&!g.dice[i].rerolled);if(!selected.length){log('Select at least one damage die to reroll.','info');render();return}S.grit--;for(let i of selected){let d=g.dice[i],old=d.roll;d.roll=die();d.rerolled=true;log('Damage die '+(i+1)+' ['+old+'] → ['+d.roll+'] (1 Grit for '+selected.length+' selected dice).','good')}g.selected=[];save();render()}
-function applyDamageGroup(){if(!S||!pendingAttack||pendingAttack.phase!=='damage')return;let pa=pendingAttack,g=pa.damageGroup,e=S.enemies.find(v=>v.id===g.enemyId);if(!e){log('Target no longer exists; return to hit allocation.','info');pa.phase='assign';pa.damageGroup=null;pa.selectedHits=[];save();render();return}let mod=damageModifier(),total=0,details=[];for(let d of g.dice){let def=d.hit===6?0:TYPES[e.type].def+(e.dreadDefense||0),damage=Math.max(0,d.roll+mod-def);total+=damage;details.push('hit die '+(d.hitIndex+1)+' ['+d.hit+']'+(d.hit===6?' CRIT':'')+': D6 ['+d.roll+']'+(mod>=0?' + '+mod:' − '+(-mod))+' − Defense '+def+' = '+damage);pa.resolved.push(d.hitIndex)}e.hp-=total;log('Damage to '+TYPES[e.type].name+' #'+e.id+': '+details.join(' | ')+'; TOTAL '+total+' Wounds.','good');pa.damageGroup=null;pa.phase='assign';if(e.hp<=0){if(selectedEnemyId===e.id)selectedEnemyId=null;S.enemies=S.enemies.filter(v=>v.id!==e.id);S.profile.exp+=TYPES[e.type].exp;S.coins+=3+rnd(5);log(TYPES[e.type].name+' #'+e.id+' defeated. +'+TYPES[e.type].exp+' XP.','good');checkCleared(S.rooms[e.home])}if(!remainingHitIndices().length){pendingAttack=null;gritDiceSelection.clear();log('All successful attack dice resolved.','info')}save();render()}
+function applyDamageGroup(){if(!S||!pendingAttack||pendingAttack.phase!=='damage')return;let pa=pendingAttack,g=pa.damageGroup,e=S.enemies.find(v=>v.id===g.enemyId);if(!e){log('Target no longer exists; return to hit allocation.','info');pa.phase='assign';pa.damageGroup=null;pa.selectedHits=[];save();render();return}let mod=damageModifier(),total=0,details=[];for(let d of g.dice){let def=d.hit===6?0:TYPES[e.type].def+(e.dreadDefense||0)+(eliteHas(e.type,'writhing')?2:0),damage=Math.max(0,d.roll+mod-def);total+=damage;details.push('hit die '+(d.hitIndex+1)+' ['+d.hit+']'+(d.hit===6?' CRIT':'')+': D6 ['+d.roll+']'+(mod>=0?' + '+mod:' − '+(-mod))+' − Defense '+def+' = '+damage);pa.resolved.push(d.hitIndex)}e.hp-=total;log('Damage to '+TYPES[e.type].name+' #'+e.id+': '+details.join(' | ')+'; TOTAL '+total+' Wounds.','good');pa.damageGroup=null;pa.phase='assign';if(e.hp<=0){if(selectedEnemyId===e.id)selectedEnemyId=null;S.enemies=S.enemies.filter(v=>v.id!==e.id);let earned=TYPES[e.type].exp+5*(S.eliteAbilities?.[e.type]?.length||0);S.profile.exp+=earned;S.coins+=3+rnd(5);log(TYPES[e.type].name+' #'+e.id+' defeated. +'+earned+' XP.','good');checkCleared(S.rooms[e.home])}if(!remainingHitIndices().length){pendingAttack=null;gritDiceSelection.clear();log('All successful attack dice resolved.','info')}save();render()}
 function resolveOneHit(enemyId){beginDamageGroup(enemyId,1)}
 function resolvePendingAttack(){if(!S||!pendingAttack)return;let pa=pendingAttack;if(pa.phase==='damage'){applyDamageGroup();return}if(pa.phase==='assign'){log('Choose the target and number of hits to group in the hit allocation controls.','info');render();return}pa.phase='assign';pa.resolved=[];pa.selectedHits=[];gritDiceSelection.clear();let hits=pa.rolls.filter(v=>v>=CLASSES[S.profile.hero].hit).length;log('Attack roll confirmed: '+hits+' successful hit(s). Allocate successful dice to eligible enemies.','info');if(!hits){pendingAttack=null;save();render();return}save();render()}
 function rerollAttackDie(i){if(!S||!pendingAttack||S.grit<1||pendingAttack.rerolled.includes(i))return;let old=pendingAttack.rolls[i],v=die();S.grit--;pendingAttack.rolls[i]=v;pendingAttack.rerolled.push(i);log('Spend 1 Grit: attack die '+(i+1)+' ['+old+'] → ['+v+'].','good');save();render()}
@@ -519,23 +558,23 @@ function throwDynamite(x,y){if(!dynamiteAim||!validDynamiteTarget(x,y)){log('Cho
 function supply(type){if(!S||S.ended)return;if(type==='bandages'&&S.bandages>0){let h=die()+1;S.bandages--;S.hp=Math.min(S.maxHp,S.hp+h);log(`Bandage restores up to ${h} Wounds.`,'good')}else if(type==='whiskey'&&S.whiskey>0){let h=die()+1;S.whiskey--;S.sanity=Math.min(S.maxS,S.sanity+h);log(`Whiskey restores up to ${h} Sanity.`,'good')}else if(type==='bombs'&&S.bombs>0){startDynamiteAim();return}else log('No such supplies remain.');save();render()}
 function enemyPhase(when='after'){if(!S||S.ended)return;
  let C=CLASSES[S.profile.hero],own=C.initiative;
- let remaining=S.enemies.filter(e=>e.spawnTurn!==S.turn&&(when==='before'?TYPES[e.type].initiative>=own:TYPES[e.type].initiative<own)).sort((a,b)=>TYPES[b.type].initiative-TYPES[a.type].initiative);
+ let remaining=S.enemies.filter(e=>e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)).sort((a,b)=>effectiveEnemyInitiative(b)-effectiveEnemyInitiative(a));
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
  if(e.type==='Corpse Pile'&&S.enemies.filter(v=>v.type==='Hungry Dead'&&v.home===e.home).length<12){
   const home=S.rooms[e.home];if(home&&spawnEnemy('Hungry Dead',home))log('Corpse Pile raises a Hungry Dead (provisional spawn rate).','hit');
  }
- if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
+ if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,!eliteHas(e.type,'eruption'));if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));const destination=route.slice(0,steps).reverse().find(p=>!occupied(p.x,p.y));if(destination){e.x=destination.x;e.y=destination.y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
- if(distance<=1&&t.combat!==0){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
- for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let smash=t.smash&&hits[hitIndex]===6;let d=smash?null:die();defRolls.push(smash?'SMASH':d);if(smash||d<C.defense){for(let j=0;j<t.damage;j++){
+ if(distance<=1&&t.combat!==0){let rs=roll((t.combat||(e.type==='boss'?2:1))+(eliteHas(e.type,'lashing-strike')?1:0)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
+ for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let smash=t.smash&&hits[hitIndex]===6;let d=smash?null:die();defRolls.push(smash?'SMASH':d);if(smash||d<C.defense){for(let j=0;j<t.damage+(eliteHas(e.type,'brutal-suckers')?2:0);j++){
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}
  // Original enemy 'sane' values represent extra Horror Hits, each prevented by Willpower.
  if(t.sane){for(let i=0;i<t.sane;i++){let w=die();willRolls.push(w);if(w<C.willpower)horror++}}
- S.hp=Math.max(0,S.hp-physical);S.sanity=Math.max(0,S.sanity-horror);
- log(`${t.name} (Init ${t.initiative}) attacks: to-hit <span class="dice">[${rs.join(' ')}]</span>${defRolls.length?`, Defense [${defRolls.join(' ')}]`:''}${armorRolls.length?`, Armor [${armorRolls.join(' ')}]`:''}${willRolls.length?`, Willpower [${willRolls.join(' ')}]`:''}; ${physical} Wounds, ${horror} Sanity.`,physical||horror?'hit':'info');
+ S.hp=Math.max(0,S.hp-physical);S.sanity=Math.max(0,S.sanity-horror);if(physical>0&&eliteHas(e.type,'entangle')){S.entangledUntilTurn=S.turn+1;log('Entangle: movement prohibited on the next Activation.','hit')}
+ log(`${t.name} (Init ${effectiveEnemyInitiative(e)}) attacks: to-hit <span class="dice">[${rs.join(' ')}]</span>${defRolls.length?`, Defense [${defRolls.join(' ')}]`:''}${armorRolls.length?`, Armor [${armorRolls.join(' ')}]`:''}${willRolls.length?`, Willpower [${willRolls.join(' ')}]`:''}; ${physical} Wounds, ${horror} Sanity.`,physical||horror?'hit':'info');
  }} checkSurvival()}
 function checkSurvival(){if(!S||S.ended)return;if(S.hp<=0||S.sanity<=0){if(S.revives>0){S.revives--;S.hp=Math.max(6,Math.ceil(S.maxHp*.55));S.sanity=Math.max(5,Math.ceil(S.maxS*.55));S.x=2*W+4;S.y=2*H+3;S.darkness=Math.min(15,S.darkness+2);log('You fell — but a last reserve of life carries you back to the entrance. One revive consumed; Darkness +2.','hit');if(S.darkness>=16)finish(false,'The Darkness swallowed your second chance.')}else finish(false,S.hp<=0?'Your wounds prove fatal.':'Your mind finally breaks beneath the horrors.') }}
 function endTurn(){if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack){log('Confirm your pending attack before ending the turn.','info');render();return}if(!S||S.ended)return;if(S.pendingEvent||S.finalEncounter&&!S.finalEncounter.started){showGrowingDread();return}for(const r of Object.values(S.rooms)){if(r.pendingThreat){drawThreat(r,r.pendingThreatTier||'low');if(r.pendingThreat){log('Unresolved Threat placement prevents ending turn.','hit');save();render();return}}}log('End turn: resolving room exploration and remaining enemy activations.','info');for(let r of Object.values(S.rooms)){if(r.seen&&!r.explored){enterRoom(r);if(S.pendingEvent){save();render();return}}}enemyPhase('after');if(!S.ended)startRound();save();render()}

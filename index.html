@@ -192,7 +192,46 @@ function resolveExplorationToken(r){if(r.kind==='entry')return;ensureMineDeck();
  if(token.event==='darkness')resolveDarknessCard();if(token.event==='depth'){let d=die();S.depthEvents=(S.depthEvents||0)+1;log('Depth Event ['+d+']: chart unavailable; no fabricated effect applied.','hit')}if(S.ended)return;if(token.clue&&S.clues>=2){if(token.dread){S.growingDread=(S.growingDread||0)+1;log('Final Clue token: Growing Dread added before the objective fight.','hit')}r.kind='boss';r.name='Dark Stone Deposit';r.finalEnemies=S.coreThreatSet==='swamp'?['Harbinger']:S.coreThreatSet==='city'?['Goliath']:[rnd(2)?'Goliath':'Harbinger'];r.doors=r.doors.slice(0,1);log('Third Clue: Dark Stone deposit discovered; ignore the token’s normal doors and encounter.','hit');return}
  let dirs=shuffleDeck(['N','E','W','S'].filter(d=>!r.doors.includes(d)&&r.x+D[d][0]>=0&&r.y+D[d][1]>=0&&r.x+D[d][0]<N&&r.y+D[d][1]<N&&!S.rooms[id(r.x+D[d][0],r.y+D[d][1])]));r.doors.push(...dirs.slice(0,token.exits));if(token.dread){S.growingDread=(S.growingDread||0)+1;log('Exploration Token: Growing Dread added.','hit')}log('Exploration Token: '+(token.clue?'CLUE · ':'')+token.exits+' exits · '+token.event+'.','info')
 }
-function ensureOpenFrontier(r){if(!S||S.bossDefeated)return;let open=Object.values(S.rooms).some(q=>q.explored&&roomExits(q).some(d=>{let x=q.x+D[d][0],y=q.y+D[d][1];return x>=0&&y>=0&&x<N&&y<N&&!S.rooms[id(x,y)]}));if(open)return;let candidates=Object.values(S.rooms).filter(q=>q.explored);for(let q of candidates){let dirs=shuffleDeck(['N','E','S','W'].filter(d=>!roomExits(q).includes(d)&&(()=>{let x=q.x+D[d][0],y=q.y+D[d][1];return x>=0&&y>=0&&x<N&&y<N&&!S.rooms[id(x,y)]})()));if(dirs.length){q.doors.push(dirs[0]);log('An unexplored tunnel opens from '+q.name+' (dead-end recovery).','info');return}}log('No unexplored route remains. The mine generator has reached its boundary.','hit')}
+// A frontier is usable only if its boundary can be reached from the hero.
+function frontierCandidates(){
+ if(!S)return [];
+ const found=[];
+ for(const r of Object.values(S.rooms)){
+  if(!r.seen||!r.explored)continue;
+  for(const dir of roomExits(r)){
+   const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
+   if(nx<0||ny<0||nx>=N||ny>=N)continue;
+   const neighbor=S.rooms[id(nx,ny)];
+   if(neighbor?.seen)continue;
+   const accessible=PORTAL_LANES[dir].some(([lx,ly])=>{
+    const x=r.x*W+lx,y=r.y*H+ly;
+    return floorLocal(r,lx,ly)&&path({x:S.x,y:S.y},{x,y},false,false)!==null;
+   });
+   if(accessible)found.push({room:r,dir,neighbor});
+  }
+ }
+ return found;
+}
+function ensureOpenFrontier(){
+ if(!S||S.bossDefeated||S.ended)return;
+ if(frontierCandidates().length)return;
+ const reachable=Object.values(S.rooms).filter(r=>r.seen&&r.explored&&
+  path({x:S.x,y:S.y},{x:r.x*W+4,y:r.y*H+3},false,false)!==null);
+ for(const r of reachable){
+  const options=shuffleDeck(['N','E','S','W'].filter(dir=>{
+   const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
+   return nx>=0&&ny>=0&&nx<N&&ny<N&&!S.rooms[id(nx,ny)]&&
+    PORTAL_LANES[dir].some(([lx,ly])=>path({x:S.x,y:S.y},{x:r.x*W+lx,y:r.y*H+ly},false,false)!==null);
+  }));
+  if(options.length){
+   r.doors=r.doors||[];
+   if(!r.doors.includes(options[0]))r.doors.push(options[0]);
+   log('A reachable unexplored passage opens from '+r.name+'.','info');
+   return;
+  }
+ }
+ log('No reachable unexplored passage: mine topology requires recovery.','hit');
+}
 function createProfile(hero){return{hero,level:1,exp:0,coins:0,stone:0,upgrades:{health:0,armour:0,power:0},missions:0}}
 function makeRun(profile,mode){if(new URLSearchParams(location.search).has('recovery')){const url=new URL(location.href);url.searchParams.delete('recovery');history.replaceState(null,'',url.pathname+url.search+url.hash)}$('startupRecovery').style.display='none';let C=CLASSES[profile.hero],maxHp=C.hp+profile.upgrades.health*3,maxS=C.sanity;
  selectedEnemyId=null;S={profile,mode,rooms:generateRooms(),x:4*W+4,y:5*H+5,hp:maxHp,sanity:maxS,maxHp,maxS,coins:0,stone:0,bandages:2,whiskey:1,bombs:1,revives:mode==='story'?3:mode==='hard'?1:2,maxGrit:2,grit:1,darkness:0,depth:0,turn:0,move:0,moveMax:0,actionUsed:false,powered:false,enemies:[],nextEnemy:1,clues:0,cleared:0,bossDefeated:false,ended:false,log:[],pendingEvent:null,modeScreen:null,bossRitual:false,depthEvents:0,growingDread:0,enemyActed:[],escapedValue:1,coreThreatSet:selectedSet,coreEdition:selectedEdition,brutalVoidSpiders:selectedEdition==='original'&&selectedBrutalVoidSpiders,threatDeckVersion:7};
@@ -688,13 +727,25 @@ function doorwayRoom(){
  }
  return null;
 }
-function lookThroughDoor(){const state=doorwayStatus();if(!state.ready){log('Cannot look through door: '+state.reason,'info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(!roomCurrent()?.explored){log('Resolve this tile’s Exploration Token before Searching.','info');render();return}if(S.searchUsedTurn===S.turn||S.actionUsed){log('Already used an action or search this Activation: Scavenge and Look Through a Door are mutually exclusive.','info');render();return}if(nr.undrawn){if(!nr.from.doors.includes(nr.dir))nr.from.doors.push(nr.dir);nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}nr.seen=true;nr.explored=false;S.searchUsedTurn=S.turn;S.actionUsed=true;S.move=0;S.profile.exp+=5;S.depth=Math.min(16,(S.depth||0)+1);log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Search ends movement for this Activation; entering the new tile resolves exploration.","good");save();render()}
+function lookThroughDoor(){const state=doorwayStatus();if(!state.ready){log('Cannot look through door: '+state.reason,'info');render();return}let nr=doorwayRoom();if(!nr){log("Stand at a blue doorway marker, with no active enemies.","info");render();return}if(!roomCurrent()?.explored){log('Resolve this tile’s Exploration Token before Searching.','info');render();return}if(S.searchUsedTurn===S.turn||S.actionUsed){log('Already used an action or search this Activation: Scavenge and Look Through a Door are mutually exclusive.','info');render();return}if(nr.undrawn){if(!nr.from.doors.includes(nr.dir))nr.from.doors.push(nr.dir);nr=drawNextMap(nr.from,nr.dir);if(!nr){log('The passage is blocked.','info');render();return}}// An existing unseen tile must have a reciprocal doorway before it is revealed.
+ if(!nr.undrawn){
+  const from=roomCurrent();
+  const direction=Object.keys(D).find(d=>from.x+D[d][0]===nr.x&&from.y+D[d][1]===nr.y);
+  if(direction){
+   const reverse=OPPOSITE_DOOR[direction];
+   nr.doors=nr.doors||[];
+   if(!nr.doors.includes(reverse))nr.doors.push(reverse);
+   from.doors=from.doors||[];
+   if(!from.doors.includes(direction))from.doors.push(direction);
+  }
+ }
+ nr.seen=true;nr.explored=false;S.searchUsedTurn=S.turn;S.actionUsed=true;S.move=0;S.profile.exp+=5;S.depth=Math.min(16,(S.depth||0)+1);log("Look Through Door: "+nr.name+" revealed (+5 XP). Depth advances to "+S.depth+". Search ends movement for this Activation; entering the new tile resolves exploration.","good");save();render()}
 function moveStep(dx,dy){if(S?.entangledUntilTurn>=S?.turn){log('Entangle prevents movement this Activation.','hit');render();return}if(S?.mutationReviewPending){mutationReviewModal();return}if(pendingAttack)return;if(!S||S.ended||S.pendingEvent||!$('overlay').classList.contains('hidden'))return;if(S.move<=0){log('No movement remains. End your turn.','info');render();return}let x=S.x+dx,y=S.y+dy;if(!cellAt(x,y)||!crossesConnectedDoor(S.x,S.y,x,y)||dx&&dy&&(!cellAt(S.x+dx,S.y)||!cellAt(S.x,S.y+dy)||!crossesConnectedDoor(S.x,S.y,S.x+dx,S.y)||!crossesConnectedDoor(S.x,S.y,S.x,S.y+dy))){log('A wall blocks your path.');render();return}if(occupied(x,y)){log('An enemy blocks that square. Press Attack to roll To Hit.');render();return}let r=roomAt(x,y);if(!r?.seen){log("Unexplored chamber: look through the doorway first; no movement spent.","info");render();return}if(S.enemies.length){let neighbors=S.enemies.filter(e=>man(S,e)<=1&&man({x,y},e)>1&&effectiveEnemyEscape(e)>S.escapedValue);
  if(neighbors.length){let difficulty=Math.max(...neighbors.map(e=>effectiveEnemyEscape(e))),test=die();
  if(test<difficulty){log(`Escape test <span class="dice">[${test}]</span> vs ${difficulty}+ failed; unable to move.`, 'hit');render();return}
  S.escapedValue=difficulty;log(`Escape test <span class="dice">[${test}]</span> vs ${difficulty}+ passed.`, 'good')
  }}
- S.x=x;S.y=y;S.move--;if(r.seen&&!r.explored)enterRoom(r);save();render()}
+ S.x=x;S.y=y;S.move--;if(r.seen&&!r.explored)enterRoom(r);if(!S.ended&&!S.enemies.length&&!S.pendingEvent)ensureOpenFrontier();save();render()}
 function moveTowards(x,y){if(S?.mutationReviewPending){mutationReviewModal();return}if(!S||S.ended||!cellAt(x,y)||dynamiteAim||pendingAttack||S.pendingEvent||!$('overlay').classList.contains('hidden'))return;if(occupied(x,y)){log('Enemy occupies this square. Press Attack to roll To Hit.','info');render();return}let route=path({x:S.x,y:S.y},{x,y},false);if(!route?.length){log('No accessible path to that square.');render();return}for(let p of route.slice(0,S.move)){if(!S||S.ended||S.pendingEvent||!$('overlay').classList.contains('hidden'))break;let dx=p.x-S.x,dy=p.y-S.y;if(Math.abs(dx)>1||Math.abs(dy)>1||(dx===0&&dy===0))break;let priorX=S.x,priorY=S.y,priorEnemies=S.enemies.length,priorRoom=roomCurrent();moveStep(dx,dy);if(S.x===priorX&&S.y===priorY)break;if(S.enemies.length>priorEnemies||S.pendingEvent||!$('overlay').classList.contains('hidden')||roomCurrent()!==priorRoom)break}render()}
 function lineOfSight(a,b){let x0=a.x,y0=a.y,x1=b.x,y1=b.y,dx=Math.abs(x1-x0),dy=Math.abs(y1-y0),sx=x0<x1?1:-1,sy=y0<y1?1:-1,err=dx-dy;while(x0!==x1||y0!==y1){const px=x0,py=y0;let e2=2*err;if(e2>-dy){err-=dy;x0+=sx}if(e2<dx){err+=dx;y0+=sy}if(!cellAt(x0,y0)||!visibleAt(x0,y0)||!crossesConnectedDoor(px,py,x0,y0))return false;if(x0!==px&&y0!==py&&(!cellAt(x0,py)||!cellAt(px,y0)||!crossesConnectedDoor(px,py,x0,py)||!crossesConnectedDoor(px,py,px,y0)))return false}return true}
 function canAttack(e){if(!e)return false;let c=CLASSES[S.profile.hero],d=man(S,e);return d<=c.range&&lineOfSight({x:S.x,y:S.y},{x:e.x,y:e.y})}

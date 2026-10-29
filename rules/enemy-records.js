@@ -65,6 +65,43 @@ const revised={
  'Slasher':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{size:'large',initiative:4,steps:5}}
 };
 const editions=Object.freeze({original,revised});
+/* Original City 2014 physical red face, unobstructed at:
+ * https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp
+ * This is NOT the normal green face, nor the revised edition. */
+const brutal=Object.freeze({
+ original:{
+  'Void Spider':{
+   source:'https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp',
+   confidence:'readable 2014 physical red Brutal face photograph',
+   complete:true,face:'brutal',
+   stats:{size:'small',initiative:7,steps:8,escape:4,hit:4,combat:2,damage:4,def:0,hp:5,exp:20,voidVenom:true},
+   mechanics:['Void Venom: a wounded Hero receives -1 To Hit on their next Activation'],
+   eliteChart:[
+    {id:'drop-from-above',name:'Drop From Above',effect:'Ambush Attack on entry'},
+    {id:'hardened-shells',name:'Hardened Shells',effect:'+2 Defense'},
+    {id:'vicious-bite',name:'Vicious Bite',effect:'Melee To Hit 3+'},
+    {id:'acidic-ichor',name:'Acidic Ichor',effect:'When killed, adjacent Heroes suffer D3 Wounds ignoring Defense'},
+    {id:'rapid-climbing',name:'Rapid Climbing',effect:'+2 Combat'},
+    {id:'severing-bite',name:'Severing Bite',effect:'To Hit rolls of 6 bypass Hero Defense'}
+   ]
+  }
+ },
+ revised:{}
+});
+function getFace(edition,name,set='city',face='normal'){
+ if(face==='normal')return get(edition,name,set);
+ if(face!=='brutal')throw Error('Unknown Enemy Record Sheet face '+face);
+ if(!Object.hasOwn(brutal,edition))throw Error('Unknown edition '+edition);
+ return brutal[edition][name]||null;
+}
+function applyFace(edition,name,base={},set='city',face='normal'){
+ const record=getFace(edition,name,set,face);
+ if(!record)throw Error('Unverified '+edition+' '+face+' Enemy Record Sheet: '+name);
+ return {...base,...record.stats,eliteChart:record.eliteChart?.map(x=>({...x})),
+  recordSource:record.source,recordConfidence:record.confidence,recordComplete:record.complete,
+  recordFace:face};
+}
+
 const revisedSwampTentacle={...revised.Tentacle,source:OFFICIAL_TENTACLE_SWAMP,
  confidence:'publisher 2020 Swamps normal-side rulebook example',
  eliteChart:revised.Tentacle.eliteChart.map((e,i)=>i===3?{...e,name:'Bitter Success'}:{...e})};
@@ -86,7 +123,7 @@ function apply(edition,name,base,set){
  if(!record)return {...base};
  return {...base,...record.stats,eliteChart:record.eliteChart?record.eliteChart.map(x=>({...x})):undefined,recordSource:record.source,recordConfidence:record.confidence,recordComplete:record.complete};
 }
-const api=Object.freeze({editions,get,verifiedFields,apply});
+const api=Object.freeze({editions,brutal,get,getFace,applyFace,verifiedFields,apply});
 root.DarkstoneEnemyRecords=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

@@ -8,7 +8,7 @@ test('mobile journal fills available drawer width and full-height scroll region'
  assert.match(html,/max-height:none!important;height:auto!important/);
 });
 test('look through door requires hero to stand on actual boundary half-space',()=>{
- const ctx={S:{x:8,y:1,rooms:{'0,0':{x:0,y:0,explored:true,doors:['E'],shape:'chamber'}}},W:9,H:7,N:9,D:{E:[1,0]},id:(x,y)=>x+','+y,roomCurrent:()=>ctx.S.rooms['0,0'],floorLocal:()=>true,adjoiningDoorConnected:()=>true};
+ const ctx={S:{x:8,y:3,rooms:{'0,0':{x:0,y:0,explored:true,doors:['E'],shape:'chamber'}}},W:9,H:7,N:9,D:{E:[1,0]},id:(x,y)=>x+','+y,roomCurrent:()=>ctx.S.rooms['0,0'],floorLocal:()=>true,adjoiningDoorConnected:()=>true};
  vm.runInNewContext(part('doorwayRoom','lookThroughDoor'),ctx);
  assert.ok(ctx.doorwayRoom());
  ctx.S.x=7;assert.equal(ctx.doorwayRoom(),null);

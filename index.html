@@ -623,7 +623,12 @@ function crossesConnectedDoor(fromX,fromY,toX,toY){
  const dx=to.x-from.x,dy=to.y-from.y;
  if(Math.abs(dx)+Math.abs(dy)!==1)return false;
  const dir=dx===1?'E':dx===-1?'W':dy===1?'S':'N';
- return !!to.seen&&adjoiningDoorConnected(from,dir,to);
+ if(!to.seen||!adjoiningDoorConnected(from,dir,to))return false;
+ // A connected pair of rooms does not make every square on their common
+ // boundary a doorway. Only the two advertised portal lanes can be crossed.
+ const fx=fromX%W,fy=fromY%H,tx=toX%W,ty=toY%H;
+ if(dir==='N'||dir==='S')return (fx===4||fx===5)&&fx===tx&&floorLocal(from,fx,fy)&&floorLocal(to,tx,ty);
+ return (fy===1||fy===2)&&fy===ty&&floorLocal(from,fx,fy)&&floorLocal(to,tx,ty);
 }
 function occupied(x,y){return S.enemies.find(e=>e.x===x&&e.y===y)}
 function path(from,to,allowUnknown=false,avoidEnemies=true){const start=id(from.x,from.y),dest=id(to.x,to.y),queue=[from],came={[start]:null};let dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];while(queue.length){let p=queue.shift(),key=id(p.x,p.y);if(key===dest)break;for(let [dx,dy] of dirs){let x=p.x+dx,y=p.y+dy,k=id(x,y);if(k in came||!cellAt(x,y))continue;if(!crossesConnectedDoor(p.x,p.y,x,y))continue;if(dx&&dy&&(!cellAt(p.x+dx,p.y)||!cellAt(p.x,p.y+dy)||!crossesConnectedDoor(p.x,p.y,p.x+dx,p.y)||!crossesConnectedDoor(p.x,p.y,p.x,p.y+dy)))continue;if(!visibleAt(x,y)){let r=roomAt(x,y);if(!allowUnknown||!r||!Object.values(D).some(([a,b])=>S.rooms[id(r.x+a,r.y+b)]?.seen))continue}if(avoidEnemies&&occupied(x,y)&&k!==dest)continue;came[k]=key;queue.push({x,y})}}if(!(dest in came))return null;let result=[],curr=dest;while(curr!==start){let [x,y]=curr.split(',').map(Number);result.unshift({x,y});curr=came[curr]}return result}

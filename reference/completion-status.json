@@ -25,7 +25,7 @@
     },
     "automatedTests": {
       "passed": false,
-      "reason": "19 new source/edition/combat/XP/deck/gate regression assertions passed in isolated execution, and 3 Playwright edition/Goliath scenarios added and included in config. Full Node/Playwright CI and browser deployment verification remain unconfirmed."
+      "reason": "20 new enemy-sheet, combat, XP, Threat inventory and audit-gate unit tests passed in isolated execution. Three Playwright browser scenarios are committed and discoverable, but full CI/browser execution is not independently verified."
     },
     "deployment": {
       "passed": false,
@@ -54,7 +54,7 @@
     "playwrightEditionTestsAdded": 3,
     "playwrightExecutionVerified": false,
     "completion": false,
-    "sourceAndEditionRegressionTestsPassed": 19,
+    "sourceAndEditionRegressionTestsPassed": 20,
     "sourceAndEditionRegressionTestsFailed": 0,
     "threatDeckSizes": {
       "original": {

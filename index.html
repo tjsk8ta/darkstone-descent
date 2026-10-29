@@ -212,7 +212,33 @@ function addGrowingDread(source){S.growingDread=(S.growingDread||0)+1;let f=S.fi
 function advanceDarkness(source){S.darkness++;log(source+': Darkness advances to '+S.darkness+'/16.','hit');if([2,4,8,10,13].includes(S.darkness))resolveDarknessCard();if([6,11,15].includes(S.darkness))addGrowingDread(source);if(S.darkness>=16)finish(false,'The Darkness escaped the mine.')}
 function finalEncounterEnemies(r){return Array.isArray(r.finalEnemies)&&r.finalEnemies.length?r.finalEnemies:(r.kind==='boss'?(S.coreThreatSet==='swamp'?['Harbinger']:S.coreThreatSet==='city'?['Goliath']:['Goliath']):[])}
 function beginFinalEncounter(r){S.finalEncounter={roomId:id(r.x,r.y),enemyTypes:finalEncounterEnemies(r),bonuses:{hp:0,defense:0},remaining:S.growingDread||0,drawn:null,resolved:0,started:false};log('Mission objective discovered: resolve '+S.finalEncounter.remaining+' Growing Dread card(s) before placing the final enemies.','hit');save();showGrowingDread()}
-function finishFinalEncounter(){let f=S.finalEncounter;if(!f||f.started||f.remaining>0||f.drawn!==null)return;let r=S.rooms[f.roomId];if(!r){log('Final encounter room unavailable; cannot spawn enemies.','hit');return}let types=f.enemyTypes||finalEncounterEnemies(r);if(!types.length){log('Final encounter has no configured enemies; setup paused.','hit');return}let bonuses=f.bonuses||{hp:S.bossDreadHp||0,defense:S.bossDreadDefense||0};f.started=true;r.fightThreats=(r.fightThreats||0)+1;for(let type of types){if(!TYPES[type]){log('Unknown final encounter enemy type: '+type,'hit');continue}let previous=S.nextEnemy;spawnEnemy(type,r);let e=S.enemies.find(v=>v.id===previous);if(e){e.hp+=bonuses.hp||0;e.maxHp+=bonuses.hp||0;e.dreadDefense=(bonuses.defense||0)+(['wraith','spider','boss'].includes(type)?(S.voidDefenseBonus||0):0)}}log('Growing Dread resolved. Final encounter enemies placed: '+types.map(type=>TYPES[type]?.name||type).join(', ')+'. Fight begins.','hit');save();render();closeModal()}
+function finishFinalEncounter(){
+ const f=S.finalEncounter;
+ if(!f||f.started||f.remaining>0||f.drawn!==null)return;
+ const r=S.rooms[f.roomId];
+ if(!r){log('Final encounter room unavailable; setup remains pending.','hit');return}
+ const types=f.enemyTypes||finalEncounterEnemies(r);
+ if(!types.length||types.some(type=>!TYPES[type])){
+  log('Final encounter includes an unknown enemy; setup remains pending.','hit');return
+ }
+ if(spawnSpaces(r).length<types.length){
+  log('Final encounter requires '+types.length+' connected spaces; insufficient capacity. Setup remains pending.','hit');return
+ }
+ const bonuses=f.bonuses||{hp:S.bossDreadHp||0,defense:S.bossDreadDefense||0};
+ const placed=[],startId=S.nextEnemy;
+ for(const type of types){
+  if(!spawnEnemy(type,r)){
+   S.enemies=S.enemies.filter(e=>!placed.includes(e.id));S.nextEnemy=startId;
+   log('Final encounter spawn failed and was rolled back. Setup remains pending.','hit');return
+  }
+  const e=S.enemies[S.enemies.length-1];placed.push(e.id);
+  e.hp+=bonuses.hp||0;e.maxHp+=bonuses.hp||0;
+  e.dreadDefense=(bonuses.defense||0)+(['wraith','spider','boss'].includes(type)?(S.voidDefenseBonus||0):0);
+ }
+ f.started=true;r.fightThreats=(r.fightThreats||0)+1;
+ log('Growing Dread resolved. Final encounter enemies placed: '+types.map(type=>TYPES[type].name).join(', ')+'. Fight begins.','hit');
+ save();render();closeModal();
+}
 function showGrowingDread(){let f=S?.finalEncounter;if(!f||f.started)return;if(f.remaining<=0&&f.drawn===null){finishFinalEncounter();return}let effect=f.drawn===null?null:DREAD_EFFECTS[f.drawn];openModal('<div class="kicker">Final encounter setup</div><h2>Growing Dread</h2><p>Resolve accumulated Dread before the final encounter enemies appear. '+f.remaining+' card(s) remain.</p><p style="color:#e8c990">Documented Growing Dread effects; the available deck is incomplete. Darkness and mutation subsystems have identified prototype limitations.</p>'+(effect?'<h3>'+effect.name+'</h3><p>'+effect.description+'</p>':'<p>The next card is face down.</p>')+'<div class="modalbuttons">'+(effect?'<button class="btn gold" id="dreadResolve">Resolve effect</button>':'<button class="btn gold" id="dreadReveal">Reveal next card</button>')+'<button class="btn" id="dreadCancel" '+(S.grit<1?'disabled':'')+'>Cancel this card (1 Grit)</button></div>','dread');let reveal=$('dreadReveal');if(reveal)reveal.onclick=()=>{f.drawn=rnd(DREAD_EFFECTS.length);log('Growing Dread revealed: '+DREAD_EFFECTS[f.drawn].name+'.','hit');save();showGrowingDread()};$('dreadCancel').onclick=()=>{if(S.grit<1)return;S.grit--;f.remaining--;f.resolved++;f.drawn=null;log('Spend 1 Grit: cancel a Growing Dread card before its effect. '+f.remaining+' remaining.','good');save();showGrowingDread()};let resolve=$('dreadResolve');if(resolve)resolve.onclick=()=>{let e=DREAD_EFFECTS[f.drawn];e.apply();log('Growing Dread resolved: '+e.name+' — '+e.description,'hit');f.remaining--;f.resolved++;f.drawn=null;save();if(S.ended)return;if(S.mutationReviewPending){mutationReviewModal();return}if(S.hp<=0||S.sanity<=0){checkSurvival();if(S.ended)return}showGrowingDread()}}
 // Solo adventures use Low Threats. These are original prototype enemy compositions,
 // not transcriptions of the published Low Threat cards.
@@ -539,7 +565,7 @@ function resolvePendingAttack(){if(!S||!pendingAttack)return;let pa=pendingAttac
 function rerollAttackDie(i){if(!S||!pendingAttack||S.grit<1||pendingAttack.rerolled.includes(i))return;let old=pendingAttack.rolls[i],v=die();S.grit--;pendingAttack.rolls[i]=v;pendingAttack.rerolled.push(i);log('Spend 1 Grit: attack die '+(i+1)+' ['+old+'] → ['+v+'].','good');save();render()}
 function lawmanReroll(i){if(!S||!pendingAttack||pendingAttack.phase==='assign'||S.profile.hero!=='marshal'||pendingAttack.lawmanUsed||pendingAttack.rerolled.includes(i))return;let old=pendingAttack.rolls[i],v=die();pendingAttack.rolls[i]=v;pendingAttack.rerolled.push(i);gritDiceSelection.delete(i);pendingAttack.lawmanUsed=true;log('Laying Down the Law (free): To Hit die '+(i+1)+' ['+old+'] → ['+v+'].','good');save();render()}
 function gritRerollAttack(){if(!S||!pendingAttack||pendingAttack.phase==='assign'||S.grit<1)return;let selected=[...gritDiceSelection].filter(i=>!pendingAttack.rerolled.includes(i));if(!selected.length){log('Select one or more eligible dice first.','info');render();return}S.grit--;gritDiceSelection.clear();for(let i of selected){let old=pendingAttack.rolls[i],v=die();pendingAttack.rolls[i]=v;pendingAttack.rerolled.push(i);log('Grit reroll: To Hit die '+(i+1)+' ['+old+'] → ['+v+'].','good')}save();render()}
-function rerollMovement(){if(!S||S.ended||S.grit<1||pendingAttack)return;let v=die();S.grit--;S.movementRerolled=true;S.moveMax+=v;S.move+=v;log('Spend 1 Grit: extra movement die ['+v+']; '+S.move+' movement points now remaining.','good');save();render()}
+function rerollMovement(){if(!S||S.ended||S.grit<1||pendingAttack)return;if(S.entangledUntilTurn>=S.turn){log('Entangle prevents movement this Activation.','hit');render();return}let v=die();S.grit--;S.movementRerolled=true;S.moveMax+=v;S.move+=v;log('Spend 1 Grit: extra movement die ['+v+']; '+S.move+' movement points now remaining.','good');save();render()}
 function attackNearest(){if(!S||S.ended)return;if(pendingAttack)return;attack()}
 function scavenge(){if(!S||S.ended)return;
  let r=roomCurrent();if(S.enemies.length){log('Searching is not permitted during a Fight.');render();return}
@@ -549,7 +575,7 @@ function scavenge(){if(!S||S.ended)return;
  if(hits){r.searched=true;r.scavengedTokens=(r.scavengedTokens||0)+1;log('Scavenged marker placed on '+r.name+'.','info');for(let i=0;i<hits;i++)drawReward('scavenge');} else log('No sixes; no cards drawn. This tile can be searched again next turn.','info');
  checkSurvival();save();render()}
 function rest(){if(!S||S.ended)return;if(S.actionUsed||S.enemies.length){log('You need an unused action and a safe chamber.');render();return}S.actionUsed=true;let a=Math.min(S.maxHp-S.hp,2),b=Math.min(S.maxS-S.sanity,2);S.hp+=a;S.sanity+=b;log(`Catch your breath: +${a} Wounds recovered, +${b} Sanity.`,'good');save();render()}
-function special(){if(!S||S.ended)return;if(S.grit<=0){log('No Grit available.');render();return}let k=S.profile.hero;if(k==='marshal'){log('Laying Down the Law is available free during your To Hit roll.','info');render();return}else if(k==='scout'){S.grit--;S.move+=3;S.moveMax+=3;log('Trailblaze: +3 movement points.','good')}else{S.grit--;S.hp=Math.min(S.maxHp,S.hp+2);S.sanity=Math.min(S.maxS,S.sanity+4);log('Soul Ward: heal 2 Wounds and 4 Sanity.','good')}save();render()}
+function special(){if(!S||S.ended)return;if(S.grit<=0){log('No Grit available.');render();return}let k=S.profile.hero;if(k==='marshal'){log('Laying Down the Law is available free during your To Hit roll.','info');render();return}else if(k==='scout'){if(S.entangledUntilTurn>=S.turn){log('Entangle prevents movement this Activation.','hit');render();return}S.grit--;S.move+=3;S.moveMax+=3;log('Trailblaze: +3 movement points.','good')}else{S.grit--;S.hp=Math.min(S.maxHp,S.hp+2);S.sanity=Math.min(S.maxS,S.sanity+4);log('Soul Ward: heal 2 Wounds and 4 Sanity.','good')}save();render()}
 function dynamiteRange(){return (CLASSES[S.profile.hero].strength||3)+3}
 function validDynamiteTarget(x,y){return !!(S&&cellAt(x,y)&&visibleAt(x,y)&&man(S,{x,y})<=dynamiteRange()&&lineOfSight(S,{x,y}))}
 function selectMapCell(x,y){if(!S||!visibleAt(x,y))return;selectedMapCell={x,y};if(dynamiteAim)log('Dynamite target selected ('+x+','+y+'). Confirm throw on map.','info');render()}

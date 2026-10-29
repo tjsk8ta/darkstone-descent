@@ -462,9 +462,21 @@
         "statisticsVerified": false,
         "abilitiesVerified": false,
         "eliteChartVerified": false,
-        "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
-        "gameplayIntegrated": false
+        "implementation": "rules/enemy-records.js: partial data only",
+        "notes": "Physical red face: basic statistics, Immobile and Fear (2) visible. Fast Spawner details and Elite chart not fully legible; do not enable gameplay. Source: photo showing Corpse Pile at front.",
+        "gameplayIntegrated": false,
+        "verifiedFields": [
+          "size",
+          "initiative",
+          "steps",
+          "escape",
+          "combat",
+          "damage",
+          "def",
+          "hp",
+          "immobile",
+          "fear"
+        ]
       },
       "gameplayIntegrated": false
     },

@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "acceptance": "All 24 set-edition entries must have official normal-side card face verified; Tentacle shared across sets",
+  "recordSheets": [
+    {
+      "edition": "original",
+      "set": "city",
+      "enemy": "Night Terror",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "city",
+      "enemy": "Strangler",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "city",
+      "enemy": "Void Spider",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "city",
+      "enemy": "Tentacle",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "city",
+      "enemy": "Goliath",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "city",
+      "enemy": "Targa Pylon",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "swamp",
+      "enemy": "Hellbat",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "swamp",
+      "enemy": "Hungry Dead",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "swamp",
+      "enemy": "Corpse Pile",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "swamp",
+      "enemy": "Tentacle",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "swamp",
+      "enemy": "Slasher",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "original",
+      "set": "swamp",
+      "enemy": "Harbinger",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "city",
+      "enemy": "Night Terror",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "city",
+      "enemy": "Strangler",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "city",
+      "enemy": "Void Spider",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "city",
+      "enemy": "Tentacle",
+      "status": "verified-official-card-image",
+      "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
+      "statisticsVerified": true,
+      "abilitiesVerified": true,
+      "eliteChartVerified": true,
+      "notes": "Publisher rulebook p22 prints complete normal-side Tentacles card and Elite chart"
+    },
+    {
+      "edition": "revised",
+      "set": "city",
+      "enemy": "Goliath",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "city",
+      "enemy": "Targa Pylon",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "swamp",
+      "enemy": "Hellbat",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "swamp",
+      "enemy": "Hungry Dead",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "swamp",
+      "enemy": "Corpse Pile",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "swamp",
+      "enemy": "Tentacle",
+      "status": "verified-official-card-image",
+      "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
+      "statisticsVerified": true,
+      "abilitiesVerified": true,
+      "eliteChartVerified": true,
+      "notes": "Publisher rulebook p22 prints complete normal-side Tentacles card and Elite chart"
+    },
+    {
+      "edition": "revised",
+      "set": "swamp",
+      "enemy": "Slasher",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    },
+    {
+      "edition": "revised",
+      "set": "swamp",
+      "enemy": "Harbinger",
+      "status": "needs-card-face",
+      "source": null,
+      "statisticsVerified": false,
+      "abilitiesVerified": false,
+      "eliteChartVerified": false,
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+    }
+  ],
+  "doNotInfer": true
+}

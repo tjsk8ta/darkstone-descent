@@ -13,8 +13,8 @@ function doorwayHarness({hero,doors,edgeFloor,neighbor=null}){
  vm.runInNewContext(html.slice(start,end),ctx);
  return ctx.doorwayRoom();
 }
-test('adjacent accessible east doorway can be revealed without exact marker coordinates',()=>{
- const result=doorwayHarness({hero:[7,3],doors:['E'],edgeFloor:(x,y)=>x===8&&y===2});
+test('hero standing on the actual east boundary half-space can reveal door',()=>{
+ const result=doorwayHarness({hero:[8,2],doors:['E'],edgeFloor:(x,y)=>x===8&&y===2});
  assert.equal(result.undrawn,true);
  assert.equal(result.dir,'E');
 });
@@ -33,5 +33,10 @@ test('end turn does not route an ordinary pending encounter into Growing Dread',
 
 test('non-doorway edge squares cannot reveal adjacent rooms',()=>{
  const result=doorwayHarness({hero:[8,4],doors:['E'],edgeFloor:(x,y)=>x===8&&y===4});
+ assert.equal(result,null);
+});
+
+test('adjacent but non-boundary square cannot look through door',()=>{
+ const result=doorwayHarness({hero:[7,3],doors:['E'],edgeFloor:(x,y)=>x===8&&y===2});
  assert.equal(result,null);
 });

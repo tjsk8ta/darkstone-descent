@@ -358,7 +358,8 @@
         "notes": "No readable red card face acquired.",
         "gameplayIntegrated": false
       },
-      "gameplayIntegrated": false
+      "gameplayIntegrated": true,
+      "implementation": "rules/enemy-records.js get(revised,Tentacle,city); index.html applyEnemyEdition"
     },
     {
       "edition": "revised",
@@ -506,7 +507,8 @@
         "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
         "gameplayIntegrated": false
       },
-      "gameplayIntegrated": false
+      "gameplayIntegrated": true,
+      "implementation": "rules/enemy-records.js get(revised,Tentacle,swamp); index.html applyEnemyEdition"
     },
     {
       "edition": "revised",

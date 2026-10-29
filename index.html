@@ -236,9 +236,9 @@ function originalLowThreatPool(set){
  return decks.flatMap(deck=>deck.flatMap(x=>Array.from({length:x.copies},()=>({card:x.card,groups:lowThreatGroups(x.card)}))));
 }
 // Revised Swamps of Death inventory differs from the original 2014 deck:
-// two 6 Hungry Dead cards in addition to three P Hungry Dead + Corpse Pile.
+// two 6 Hungry Dead cards and one P Hungry Dead + Corpse Pile (revised inventory).
 const REVISED_SWAMP_LOW_THREAT=[
- {card:'P Hellbats',copies:2},{card:'P Hungry Dead & 1 Corpse Pile',copies:3},
+ {card:'P Hellbats',copies:2},{card:'P Hungry Dead & 1 Corpse Pile',copies:1},
  {card:'6 Hungry Dead',copies:2},{card:'1 Slasher',copies:2},
  {card:'1 Slasher & P Hellbats',copies:1},{card:'P Tentacles',copies:2}
 ];
@@ -301,7 +301,7 @@ function drawThreat(r,tier='low'){
  return spawned;
 }
 function drawLowThreat(r){
- if(S.threatDeckVersion!==4){S.lowThreatDeck=[];S.threatDeckVersion=4}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
+ if(S.threatDeckVersion!==5){S.lowThreatDeck=[];S.threatDeckVersion=5}if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
  const threat=S.lowThreatDeck.pop(),groups=threat.groups,prior=S.enemies.length;
  for(const group of groups)for(let i=0;i<group.n;i++)spawnEnemy(group.type,r);
  const spawned=S.enemies.length-prior;

@@ -730,9 +730,10 @@ function enemyActivationOrder(enemies){
   return types.flatMap(type=>group.filter(e=>e.type===type));
  });
 }
+function eligibleEnemyActivations(enemies,when,turn,heroInitiative){return enemies.filter(e=>when==='ambush'?e.ambushPending===true:e.spawnTurn!==turn&&(when==='before'?effectiveEnemyInitiative(e)>=heroInitiative:effectiveEnemyInitiative(e)<heroInitiative))}
 function enemyPhase(when='after'){if(!S||S.ended)return;
  let C=CLASSES[S.profile.hero],own=C.initiative;
- let remaining=enemyActivationOrder(S.enemies.filter(e=>when==='ambush'?e.ambushPending===true:e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)));
+ let remaining=enemyActivationOrder(eligibleEnemyActivations(S.enemies,when,S.turn,own));
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  if(when==='ambush'){e.ambushPending=false;log(TYPES[e.type].name+' #'+e.id+' resolves its immediate Ambush Attack.','hit')}else S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);

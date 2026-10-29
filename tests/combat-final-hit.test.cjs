@@ -15,7 +15,7 @@ function scenario({enemyCount=1,remaining=[1],hp=1}={}){
  const events=[],ctx={S,pendingAttack,TYPES:{Tentacle:{name:'Tentacles',exp:30,xpPerWound:0}},
  selectedEnemyId:null,gritDiceSelection:new Set(),damageModifier:()=>0,
  enemyCritIgnoresDefense:()=>false,effectiveEnemyDefense:()=>0,
- awardEnemyWoundXP:()=>0,remainingHitIndices:()=>remaining,
+ awardEnemyWoundXP:()=>0,remainingHitIndices:()=>remaining,eliteHas:()=>false,man:()=>9,die:()=>1,checkSurvival:()=>{},
  rnd:()=>0,log:msg=>events.push(msg),checkCleared:()=>events.push('CLEAR_STATE:'+String(ctx.pendingAttack?.phase||'none')),save:()=>{},render:()=>{}};
  vm.runInNewContext(code,ctx);
  ctx.applyDamageGroup();

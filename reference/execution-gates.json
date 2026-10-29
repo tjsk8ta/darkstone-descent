@@ -74,7 +74,7 @@
     "enemySheetsStillUnacquired": 1,
     "contradictoryTentacleEliteAbilityName": 2
   },
-  "mandatoryNextAction": "Acquire actual sheet faces and implement verified statistics and Elite charts; avoid unrelated features",
+  "mandatoryNextAction": "Acquire actual remaining enemy record sheet faces, transcribe and implement edition-specific rules, run full unit/browser/mobile tests, and validate all acceptance criteria before claiming completion.",
   "sourceOfTruth": "reference/enemy-record-sheets.json",
   "lastEvidence": {
     "source": "Official revised City and Swamps rulebooks page 22",
@@ -86,5 +86,13 @@
       "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf",
       "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf"
     ]
+  },
+  "enforcement": {
+    "completionRequiredForSuccess": true,
+    "blockInterimProgressReports": true,
+    "prohibitSyntaxOnlyCompletion": true,
+    "requireEvidenceForEveryAcceptanceGate": true,
+    "requireAutomatedCIEnforcement": true,
+    "importantLimitation": "Repository checker can gate CI and completion claims, but cannot technically prevent chat responses or guarantee uninterrupted assistant execution."
   }
 }

@@ -43,5 +43,31 @@
     "spawnOverflowCheck": "3 connected rooms correctly traversed in isolated execution",
     "browserCI": "not independently verified",
     "complete": false
+  },
+  "enemyRecordSheetSources": {
+    "originalInventory": "https://pdfcoffee.com/sobgamecontentsv2bpdf-pdf-free.html",
+    "revisedCityInventory": "https://shadows-of-brimstone.fandom.com/wiki/City_of_the_Ancients_Revised_Edition",
+    "revisedSwampInventory": "https://shadows-of-brimstone.fandom.com/wiki/Swamps_of_Death_Revised_Edition",
+    "officialTentacleExample": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf",
+    "communityOtherworld": "https://boardgamegeek.com/filepage/111074/philbarflys-missing-enemy-record-sheets-targa-jarg",
+    "originalCityTTS": "https://steamcommunity.com/sharedfiles/filedetails/?id=1909726897",
+    "revisedSwampSheetPhotos": "https://www.ebay.com/itm/376978662614",
+    "requiredCity": [
+      "Goliath",
+      "Night Terror",
+      "Strangler",
+      "Targa Pylon",
+      "Tentacle",
+      "Void Spider"
+    ],
+    "requiredSwamp": [
+      "Corpse Pile",
+      "Harbinger",
+      "Hellbat",
+      "Hungry Dead",
+      "Slasher",
+      "Tentacle"
+    ],
+    "status": "Inventories identified; individual normal-side card faces not yet acquired and transcribed for all enemies"
   }
 }

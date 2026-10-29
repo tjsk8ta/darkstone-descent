@@ -19,3 +19,7 @@ test('movement cannot bypass encounter modal through directional keys or map cli
  assert.match(html,/function moveStep\(dx,dy\)[\s\S]*?S\.pendingEvent\|\|!\$\('overlay'\)\.classList\.contains\('hidden'\)/);
  assert.match(html,/function moveTowards\(x,y\)[\s\S]*?dynamiteAim\|\|pendingAttack\|\|S\.pendingEvent/);
 });
+
+test('room rewards and clues are withheld during any active Fight or unresolved Threat',()=>{
+ assert.match(html,/function checkCleared\(r\)\{if\(!r\?\.seen\|\|r\.pendingThreat\|\|Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)\|\|S\.enemies\.length/);
+});

@@ -49,6 +49,8 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await expect(page.locator('#attackBtn')).toBeEnabled();
  await page.locator('#attackBtn').click();
  console.log('ATTACK_ERRORS',errors);console.log('ATTACK_DEBUG',JSON.stringify(await page.evaluate(()=>({combat:document.querySelector('#combatControls')?.innerHTML.slice(0,800),overlay:document.querySelector('#overlay')?.className,recovery:document.querySelector('#startupRecovery')?.textContent,pending:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.savedPendingAttack,log:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.log.slice(0,4),actionUsed:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.actionUsed,enemyCount:JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3'))?.enemies.length,buttonDisabled:document.querySelector('#attackBtn')?.disabled,combatControlsHidden:document.querySelector('#combatControls')?.hidden,onclick:document.querySelector('#attackBtn')?.onclick?.name,audit:window.DarkstoneRuleAudit?.getCombatState()}))));
+ await page.evaluate(()=>document.querySelector('#attackBtn').onclick());
+ console.log('ATTACK_AFTER_DIRECT',JSON.stringify(await page.evaluate(()=>window.DarkstoneRuleAudit.getCombatState())));
  await expect(page.locator('[data-toggle-grit]')).toHaveCount(2);
  await page.locator('#confirmAttackRoll').click();
  await expect(page.locator('[data-choose-hit]')).toHaveCount(2);

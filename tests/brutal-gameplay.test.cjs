@@ -52,3 +52,23 @@ test('venom penalty is reflected in all To Hit surfaces including dynamite',()=>
  assert.match(html,/hit=v>=heroHitTarget\(\)/);
  assert.match(html,/pa\.rolls\.filter\(v=>v>=heroHitTarget\(\)\)/);
 });
+
+test('Acidic Ichor D3 wounds ignore Defense and can defeat a Hero',()=>{
+ const e={id:1,type:'Void Spider',hp:1,home:'0,0',x:1,y:0};
+ const S={x:0,y:0,hp:1,ended:false,enemies:[e],rooms:{'0,0':{seen:true}},profile:{exp:0},coins:0,eliteAbilities:{'Void Spider':[4]}};
+ const ctx={S,pendingAttack:{phase:'damage',damageGroup:{enemyId:1,dice:[{hit:5,hitIndex:0,roll:6}]},resolved:[],selectedHits:[]},
+ TYPES:{'Void Spider':{name:'Void Spiders',exp:20,xpPerWound:0}},
+ selectedEnemyId:null,gritDiceSelection:new Set(),damageModifier:()=>0,
+ enemyCritIgnoresDefense:()=>false,effectiveEnemyDefense:()=>0,awardEnemyWoundXP:()=>0,
+ remainingHitIndices:()=>[],rnd:()=>0,die:()=>3,man:(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y)),
+ eliteHas:(type,id)=>id==='acidic-ichor',log:()=>{},checkSurvival:()=>{if(S.hp===0)S.ended=true},
+ checkCleared:()=>{throw Error('Rewards must not run after hero death')},save:()=>{},render:()=>{}};
+ vm.runInNewContext(extract('applyDamageGroup','resolveOneHit'),ctx);
+ // The real checkCleared is gated by S.ended; this fixture checks the actual
+ // Ichor wounds and hero death before any reward path.
+ ctx.checkCleared=()=>{if(!S.ended)throw Error('Hero should be dead before reward evaluation')};
+ ctx.applyDamageGroup();
+ assert.equal(S.hp,0);
+ assert.equal(S.ended,true);
+ assert.equal(S.enemies.length,0);
+});

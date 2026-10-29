@@ -44,6 +44,7 @@
  <div class="footer"><span>Unofficial, non-commercial original prototype inspired by the exploration and horror-dungeon-crawl genre, including Shadows of Brimstone. This is <b>not</b> an official or rules-identical digital edition and uses no published artwork, cards, or adventures.</span><span>Autosaves in this browser. No account or internet required.</span></div>
 </div>
 <button type="button" id="journalTab" class="journal-tab" aria-controls="journalDrawer" aria-expanded="false" aria-label="Open field journal">Journal ◀</button><div id="journalBackdrop" class="journal-backdrop" hidden></div><aside id="journalDrawer" class="journal-drawer" role="dialog" aria-modal="true" aria-label="Field journal" aria-hidden="true"><div class="journal-drawer-head"><div class="sectionhead">Field journal</div><button type="button" class="btn" id="journalClose" aria-label="Close field journal">Close ✕</button></div><div class="loglist" id="logList" aria-live="polite"></div></aside><div class="overlay" id="overlay"><div class="modal" id="modal"></div></div>
+<script src="rules/threat-engine.js"></script>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id), canvas=$('map'),ctx=canvas.getContext('2d');
@@ -271,84 +272,83 @@ TYPES.Goliath={...TYPES.boss,name:'Goliath',hp:38,exp:100};
 TYPES.Harbinger={...TYPES.boss,name:'Harbinger',hp:38,exp:100};
 TYPES['Targa Pylon']={...TYPES.wraith,name:'Targa Pylon',steps:0};
 function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='swamp'?['swamp']:['city','swamp'];return sets.flatMap(k=>ORIGINAL_THREAT_DECKS[k][tier].flatMap(([copies,card])=>Array(copies).fill(null).map(()=>({card,set:k}))));}
-function threatGroupsFromCard(card,tier,depth=0){
- if(depth>5)throw Error('Threat recursion exceeded');
- const groups=[];
- const add=(type,n)=>{if(n>0)groups.push({type,n})};
- // Card composition parser: first expand nested threats, then parse printed enemies.
- const nested=card.match(/(\d+) (Low|Medium) Threat Cards?/gi)||[];
- for(const part of nested){const m=part.match(/(\d+) (Low|Medium|Elite|Threat)/i);let n=+m[1],kind=m[2].toLowerCase();if(kind==='elite'||kind==='threat')throw Error('Unresolved original '+kind+' threat subdraw: '+card);for(let i=0;i<n;i++)groups.push(...drawOriginalThreatGroups(kind,depth+1));}
- // Nested subdraws were already resolved above; never resolve singular cards twice.
- // A generic Threat Card means a High Threat card; Elite is not a synonym
- // for an arbitrary High Threat and must fail closed until its deck is modelled.
- if(/(?:^|[^a-z])Elite Threat Cards?/i.test(card))throw Error('Elite Threat subdraw requires a separate verified Elite deck');
- const generic=card.match(/(?:^|[^a-z])(\\d+) Threat Cards?/gi)||[];
- for(const part of generic){const count=Number(part.match(/\\d+/)[0]);for(let i=0;i<count;i++)groups.push(...drawOriginalThreatGroups('high',depth+1))}
- const named=[['Night Terrors?','Night Terror'],['Stranglers?','Strangler'],['Void Spiders?','Void Spider'],['Tentacles?','Tentacle'],['Hellbats?','Hellbat'],['Hungry Dead','Hungry Dead'],['Corpse Piles?','Corpse Pile'],['Slashers?','Slasher'],['Goliath','Goliath'],['Harbinger','Harbinger']];
- for(const [pattern,type] of named){const re=new RegExp('(D3|PP|P|\\d+)\\s+'+pattern,'gi');let m;while((m=re.exec(card))!==null){const qty=m[1]==='D3'?1+rnd(3):m[1]==='PP'?die()+die():m[1]==='P'?die():+m[1];add(type,qty)}}
- if(!groups.length)throw Error('Threat card has no resolved enemies: '+card);
- return groups;
-}
-function drawOriginalThreatGroups(tier,depth){if(tier==='low'){const pool=originalLowThreatPool(S.coreThreatSet||'combined');return pool[rnd(pool.length)].groups.map(g=>({...g}))}const pool=originalThreatPool(tier,S.coreThreatSet||'combined');const c=pool[rnd(pool.length)];return threatGroupsFromCard(c.card,tier,depth)}
-function drawThreat(r,tier='low'){
- if(tier==='low')return drawLowThreat(r);
- const key=tier+'ThreatDeck';
- if(!S[key]?.length)S[key]=shuffleDeck(originalThreatPool(tier,S.coreThreatSet||'combined'));
- const candidate=S[key][S[key].length-1];let groups;
- try{groups=r.pendingThreatGroups&&r.pendingThreatTier===tier?r.pendingThreatGroups:threatGroupsFromCard(candidate.card,tier)}
- catch(e){r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat '+candidate.card+' needs unsupported rule: '+e.message+'. Card held.','hit');return 0}
- r.pendingThreatGroups=groups.map(g=>({...g}));
- const required=groups.reduce((n,g)=>n+g.n,0);
- const free=spawnSpaces(r).length;
- if(free<required){r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat '+candidate.card+' requires '+required+' spaces; '+free+' available. Card held.','hit');return 0}
- const placed=[];
- for(const g of groups)for(let i=0;i<g.n;i++){
-  if(!spawnEnemy(g.type,r)){
-   S.enemies=S.enemies.filter(e=>!placed.includes(e.id));
-   r.pendingThreat=true;r.pendingThreatTier=tier;log('Threat placement rolled back: '+candidate.card,'hit');return 0;
-  }
-  placed.push(S.nextEnemy-1);
+// The physical Peril die is 3,3,4,4,5,6. Never substitute a D6.
+const threatEngine=globalThis.DarkstoneThreatEngine;
+if(!threatEngine)throw Error('Threat engine did not load');
+function threatDeckKey(tier){return tier==='low'?'lowThreatDeck':tier+'ThreatDeck'}
+function ensureThreatDeck(tier){
+ if(S.threatDeckVersion!==7){S.lowThreatDeck=[];S.mediumThreatDeck=[];S.highThreatDeck=[];S.epicThreatDeck=[];S.threatDeckVersion=7}
+ const key=threatDeckKey(tier);
+ if(!S[key]?.length){
+  const cards=tier==='low'?revisedLowThreatPool(S.coreThreatSet||'combined'):originalThreatPool(tier,S.coreThreatSet||'combined');
+  if(!cards.length)throw Error('No '+tier+' core Threat cards');
+  S[key]=shuffleDeck(cards.map(c=>({...c})));
  }
- S[key].pop();r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatGroups=null;
- r.fightThreats=(r.fightThreats||0)+1;
- log(tier.toUpperCase()+' original card: '+candidate.card+' ('+candidate.set+'); '+groups.map(g=>g.n+' '+g.type).join(', ')+'. Stats and Posse Size provisional.','hit');
- return placed.length;
+ return S[key];
 }
-// Each card is a complete Fight threat. Do not silently award a Fight
-// for a partial spawn: reserve the card and retry when placement is possible.
-function drawLowThreat(r){
- if(S.threatDeckVersion!==6){S.lowThreatDeck=[];S.threatDeckVersion=6}
- if(!S.lowThreatDeck?.length)S.lowThreatDeck=shuffleDeck(revisedLowThreatPool(S.coreThreatSet||'combined').map(t=>({card:t.card,groups:t.groups.map(g=>({...g}))})));
- const threat=r.pendingLowThreat||S.lowThreatDeck.pop();
- const groups=r.pendingLowThreatGroups||threat.groups.map(g=>{const parts=threat.card.split(/\\s*(?:&|,)\\s*/);const part=parts.find(p=>p.toLowerCase().includes(g.type.toLowerCase()));const token=part?.trim().split(/\\s+/)[0];return {...g,n:token==='PP'?die()+die():token==='P'?die():token==='D3'?1+rnd(3):g.n}});
- r.pendingLowThreatGroups=groups;
- r.pendingLowThreat=threat;
- const total=groups.reduce((n,g)=>n+g.n,0);
- const free=spawnSpaces(r);
- if(free.length<total){
-  r.pendingThreat=true;r.pendingThreatTier='low';
-  log('Threat '+threat.card+' requires '+total+' enemy spaces; '+free.length+' available. Card returned; encounter unresolved.','hit');
+function drawDeckCard(tier){return ensureThreatDeck(tier).pop()}
+function drawThreat(r,tier='low'){
+ if(!S||!r)throw Error('Missing encounter state');
+ if(!['low','medium','high','epic'].includes(tier))throw Error('Unsupported Threat tier '+tier);
+ // Preserve a card already drawn by a previous version of the game.
+ if(tier==='low'&&r.pendingLowThreat&&!r.pendingThreatCard){
+  r.pendingThreatCard=r.pendingLowThreat;
+  r.pendingThreatGroups=r.pendingLowThreatGroups||null;
+ }
+ if(r.pendingThreatTier&&r.pendingThreatTier!==tier){log('Encounter tier changed while unresolved; original card retained.','hit');tier=r.pendingThreatTier}
+ const candidate=r.pendingThreatCard||drawDeckCard(tier);
+ r.pendingThreatCard=candidate;
+ let groups=r.pendingThreatGroups;
+ if(!groups){
+  const snapshot={};
+  for(const t of ['low','medium','high','epic'])snapshot[threatDeckKey(t)]=S[threatDeckKey(t)]?JSON.parse(JSON.stringify(S[threatDeckKey(t)])):null;
+  try{
+   groups=threatEngine.resolveCard(candidate.card,{
+    rng:rnd,currentTier:'low',draw:nextTier=>drawDeckCard(nextTier)
+   });
+   // Elite Charts are enemy-specific. Do not silently use fabricated abilities.
+   const unknownElite=groups.find(g=>g.elite&&!(TYPES[g.type]?.eliteChart?.length===6));
+   if(unknownElite)throw Error('Elite chart unverified for '+unknownElite.type);
+  }catch(e){
+   for(const [key,value] of Object.entries(snapshot))S[key]=value;
+   r.pendingThreat=true;r.pendingThreatTier=tier;
+   r.pendingThreatError=e.message;
+   log('Threat '+candidate.card+' unresolved: '+e.message+'. No substitute enemies placed.','hit');
+   return 0;
+  }
+  r.pendingThreatGroups=groups.map(g=>({...g}));
+ }
+ const required=groups.reduce((n,g)=>n+g.n,0),available=spawnSpaces(r).length;
+ if(available<required){
+  r.pendingThreat=true;r.pendingThreatTier=tier;
+  r.pendingThreatError='Insufficient connected map spaces';
+  log('Threat '+candidate.card+' requires '+required+' spaces; '+available+' connected spaces available. Encounter held, not discarded.','hit');
   return 0;
  }
- r.pendingThreat=false;r.pendingThreatTier=null;
- const placed=[];
- for(const group of groups)for(let i=0;i<group.n;i++){
-  const e=spawnEnemy(group.type,r);
-  if(!e){
-   S.enemies=S.enemies.filter(x=>!placed.includes(x.id));
-   r.pendingThreat=true;r.pendingThreatTier='low';
-   log('Threat placement rolled back: '+threat.card+'.','hit');return 0;
+ const placed=[],startId=S.nextEnemy;
+ for(const g of [...groups].sort((x,y)=>TYPES[x.type].initiative-TYPES[y.type].initiative)){
+  for(let i=0;i<g.n;i++){
+   if(!spawnEnemy(g.type,r)){
+    S.enemies=S.enemies.filter(e=>!placed.includes(e.id));S.nextEnemy=startId;
+    r.pendingThreat=true;r.pendingThreatTier=tier;r.pendingThreatError='Enemy placement failed';
+    log('Threat '+candidate.card+' placement rolled back.','hit');return 0;
+   }
+   const e=S.enemies[S.enemies.length-1];
+   if(g.elite)e.elite=g.elite;
+   placed.push(e.id);
   }
-  placed.push(S.nextEnemy-1);
  }
+ r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatError=null;
+ r.pendingThreatCard=null;r.pendingThreatGroups=null;
  r.pendingLowThreat=null;r.pendingLowThreatGroups=null;
  r.fightThreats=(r.fightThreats||0)+1;
- log('Revised core Low Threat: '+threat.card+'; '+groups.map(g=>g.n+' '+TYPES[g.type].name+(CORE_ENEMY_PROVENANCE[g.type]?.verified?' [verified]':' [provisional]')).join(', ')+'.','hit');
- return total;
+ log(tier.toUpperCase()+' core Threat: '+candidate.card+'; '+groups.map(g=>g.n+' '+g.type+(g.elite?' (Elite '+g.elite+')':'')).join(', ')+'.','hit');
+ return placed.length;
 }
+function drawLowThreat(r){return drawThreat(r,'low')}
 function enterRoom(r){if(r.explored)return;r.seen=true;r.explored=true;S.cleared++;resolveExplorationToken(r);ensureOpenFrontier(r);log(`Uncovered ${r.name}. The air tastes of iron.`,'info');let count=r.kind==='boss'?1:r.firstJunction?0:r.shape==='corridor'?0:['encounter','darkness','depth'].includes(r.token?.event)?0:1+rnd(r.kind==='normal'?3:2);if(r.kind==='boss'){
   beginFinalEncounter(r)
- }else if(count){count=drawThreat(r,S.depth>=12?'epic':S.depth>=8?'high':S.depth>=5?'medium':'low')}
+ }else if(count){count=drawThreat(r,'low')}
  if(S.enemies.some(e=>roomAt(e.x,e.y)===r))log(`${count+(r.kind==='boss'?1:0)} hostile shapes stir in the chamber.`,'hit');
  if(r.kind!=='boss'&&r.token?.event==='encounter'){let events=[{title:'The Singing Vein',text:'A deep-blue crystal hums from a fracture in the rock. Its light draws the eye — and something deeper.',options:[{title:'Extract the crystal',detail:'Gain darkstone; risk sanity.',effect:'vein'},{title:'Seal the crack',detail:'Recover sanity; no treasure.',effect:'seal'}]},{title:'Abandoned Supply Cart',text:'A rusted cart stands upright in the dark. A bloodstained canvas covers its contents.',options:[{title:'Search the cargo',detail:'Claim supplies, with a chance of an ambush.',effect:'cart'},{title:'Leave it undisturbed',detail:'Gain grit and move on.',effect:'ignore'}]},{title:'The Collapsed Gallery',text:'Loose stones cover the only intact survey marker. A faint voice asks you to follow it.',options:[{title:'Dig out the survey marker',detail:'Chance for coins or injury.',effect:'dig'},{title:'Follow the voice',detail:'Test your nerve.',effect:'voice'}]}];let event=events[rnd(events.length)];S.pendingEvent={...event};eventModal(event)}
  checkCleared(r);save()}
@@ -569,7 +569,7 @@ document.addEventListener('keydown',e=>{if(!S||S.ended||!$('overlay').classList.
 let journalOpen=false;const journalTab=$('journalTab'),journalDrawer=$('journalDrawer'),journalBackdrop=$('journalBackdrop');function setJournalOpen(open){journalOpen=open;journalDrawer.classList.toggle('open',open);journalDrawer.setAttribute('aria-hidden',String(!open));journalTab.setAttribute('aria-expanded',String(open));journalTab.hidden=open;journalBackdrop.hidden=!open;if(open)$('journalClose').focus();else journalTab.focus()};journalTab.onclick=()=>setJournalOpen(true);$('journalClose').onclick=()=>setJournalOpen(false);journalBackdrop.onclick=()=>setJournalOpen(false);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&journalOpen){e.preventDefault();setJournalOpen(false)}});let journalTouchX=null;journalDrawer.addEventListener('touchstart',e=>{journalTouchX=e.touches[0]?.clientX??null},{passive:true});journalDrawer.addEventListener('touchend',e=>{if(journalTouchX!==null&&e.changedTouches[0].clientX-journalTouchX>90)setJournalOpen(false);journalTouchX=null},{passive:true});
 window.addEventListener('resize',resizeCanvas);
 window.addEventListener('error',e=>{let el=document.getElementById('startupRecovery');if(el){el.style.display='block';el.textContent='Game error: '+(e.message||'unknown')+' — try Recovery Mode.'}});
-document.documentElement.dataset.build='threat-tiers-20261028';
+document.documentElement.dataset.build='peril-threat-resolver-20261029';
 let recoveryMode=new URLSearchParams(location.search).has('recovery');
 let old=recoveryMode?null:safeRead();if(recoveryMode){let el=document.getElementById("startupRecovery");el.style.display="block";el.innerHTML="Recovery Mode: existing save is preserved until you start a new expedition. <a style=\"color:#f3c785\" href=\"./\">Return to saved game</a>";}if(old?.profile){selected=old.profile.hero||'marshal';difficulty=old.mode||'standard';if(!old.ended){S=old;pendingAttack=S.savedPendingAttack||null;render();if(S.mutationReviewPending)mutationReviewModal();else if(S.finalEncounter&&!S.finalEncounter.started)showGrowingDread();else if(S.pendingEvent)eventModal(S.pendingEvent);else closeModal()}else{S=old;resultsModal('Your previous expedition has ended. Visit town to continue.')}}else setup();requestAnimationFrame(resizeCanvas);
 })();

@@ -343,6 +343,12 @@ function effectiveEnemyDefense(e){
 function enemyCritIgnoresDefense(hit,e){return hit===6&&!TYPES[e.type].immuneCrit}
 function effectiveEnemyEscape(e){return eliteHas(e.type,'hypnotic-gaze')?6:TYPES[e.type].escape}
 function enemyMaxHp(type){const t=TYPES[type];return t.hp+(t.hpPerHero||0)}
+// Read-only rule-audit hook for browser regression tests and provenance checks.
+globalThis.DarkstoneRuleAudit=Object.freeze({
+ getEdition:()=>S?.coreEdition||null,
+ getEnemyType:name=>TYPES[name]?JSON.parse(JSON.stringify(TYPES[name])):null,
+ getVerifiedRecord:(edition,name)=>enemyRecords.get(edition,name)
+});
 
 function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='swamp'?['swamp']:['city','swamp'];return sets.flatMap(k=>ORIGINAL_THREAT_DECKS[k][tier].flatMap(([copies,card])=>Array(copies).fill(null).map(()=>({card,set:k}))));}
 // The physical Peril die is 3,3,4,4,5,6. Never substitute a D6.

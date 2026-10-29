@@ -21,3 +21,10 @@ test('action spent is visible in status, not silently disabled',()=>{let c=harne
 test('previously revealed neighbor is not offered again',()=>{let c=harness({seenNeighbor:true});assert.equal(c.doorwayRoom(),null)});
 test('portal geometry shared with cross-room movement',()=>{assert.match(html,/portalLane\(from,dir,fx,fy\)&&portalLane\(to,OPPOSITE_DOOR\[dir\],tx,ty\)/)});
 test('button and action handler share doorwayStatus',()=>{assert.match(html,/const doorState=doorwayStatus\(\)/);assert.match(html,/function lookThroughDoor\(\)\{const state=doorwayStatus\(\)/)});
+
+test('dead-end recovery reconnects existing unseen map tiles only after trying undrawn neighbors',()=>{
+ const fn=extract('function ensureOpenFrontier(){','function createProfile(');
+ assert.match(fn,/for\(const allowExisting of \[false,true\]\)/);
+ assert.match(fn,/neighbor\.doors\.push\(reverse\)/);
+ assert.match(fn,/roomExits\(r\)\.includes\(dir\)/);
+});

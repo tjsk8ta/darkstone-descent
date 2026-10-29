@@ -1,0 +1,377 @@
+{
+  "schemaVersion": 1,
+  "generatedOn": "2026-10-29",
+  "scope": "2014 original and 2020 revised normal-side Enemy Record Sheets for both original core sets",
+  "inventory": {
+    "original": {
+      "city": [
+        "Void Spider",
+        "Strangler",
+        "Tentacle",
+        "Targa Pylon",
+        "Night Terror",
+        "Goliath"
+      ],
+      "swamp": [
+        "Hellbat",
+        "Hungry Dead",
+        "Corpse Pile",
+        "Tentacle",
+        "Slasher",
+        "Harbinger"
+      ]
+    },
+    "revised": {
+      "city": [
+        "Void Spider",
+        "Strangler",
+        "Tentacle",
+        "Targa Pylon",
+        "Night Terror",
+        "Goliath"
+      ],
+      "swamp": [
+        "Hellbat",
+        "Hungry Dead",
+        "Corpse Pile",
+        "Tentacle",
+        "Slasher",
+        "Harbinger"
+      ]
+    }
+  },
+  "requiredUniqueEnemyTypes": [
+    "Void Spider",
+    "Strangler",
+    "Tentacle",
+    "Targa Pylon",
+    "Night Terror",
+    "Goliath",
+    "Hellbat",
+    "Hungry Dead",
+    "Corpse Pile",
+    "Slasher",
+    "Harbinger"
+  ],
+  "requiredEditionTypeCombinations": 22,
+  "editionRecords": {
+    "original": {
+      "Void Spider": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/375750948185",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Strangler": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/375750948185",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Tentacle": {
+        "status": "full",
+        "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit",
+          "combat",
+          "damage",
+          "def",
+          "hp",
+          "exp",
+          "smash"
+        ],
+        "eliteChartEntriesVerified": 6,
+        "abilitiesVerified": [
+          "SMASH: melee rolls of 6 bypass Hero Defense"
+        ],
+        "fullGameplayAccepted": false
+      },
+      "Targa Pylon": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/375750948185",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "hit"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Night Terror": {
+        "status": "full",
+        "source": "https://www.scribd.com/document/771872867/SoB-VF-Monstre-Fiche-Terreur-nocturne",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit",
+          "combat",
+          "damage",
+          "def",
+          "hp",
+          "exp",
+          "xpPerWound",
+          "terror"
+        ],
+        "eliteChartEntriesVerified": 6,
+        "abilitiesVerified": [
+          "Terror (2)"
+        ],
+        "fullGameplayAccepted": false
+      },
+      "Goliath": {
+        "status": "full",
+        "source": "https://www.ebay.com/itm/375750948185",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit",
+          "combat",
+          "damage",
+          "def",
+          "hp",
+          "exp",
+          "xpPerWound",
+          "unspeakableTerror",
+          "attackRange",
+          "immuneCrit"
+        ],
+        "eliteChartEntriesVerified": 6,
+        "abilitiesVerified": [
+          "Flailing Tentacles: attacks every Hero within 3 spaces, with 3 attack dice",
+          "Unspeakable Terror (3)",
+          "Immune to Critical Hits"
+        ],
+        "fullGameplayAccepted": false
+      },
+      "Hellbat": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Hungry Dead": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Corpse Pile": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Slasher": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Harbinger": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      }
+    },
+    "revised": {
+      "Void Spider": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Strangler": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Tentacle": {
+        "status": "full",
+        "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit",
+          "combat",
+          "damage",
+          "def",
+          "hp",
+          "exp",
+          "smash"
+        ],
+        "eliteChartEntriesVerified": 6,
+        "abilitiesVerified": [
+          "SMASH: melee rolls of 6 bypass Hero Defense"
+        ],
+        "fullGameplayAccepted": false
+      },
+      "Targa Pylon": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Night Terror": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Goliath": {
+        "status": "missing",
+        "source": null,
+        "verifiedFields": [],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Hellbat": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/376978662614",
+        "verifiedFields": [
+          "initiative",
+          "steps"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Hungry Dead": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/376978662614",
+        "verifiedFields": [
+          "initiative",
+          "steps"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Corpse Pile": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/376978662614",
+        "verifiedFields": [
+          "initiative",
+          "steps"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Slasher": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/376978662614",
+        "verifiedFields": [
+          "initiative",
+          "steps"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [],
+        "fullGameplayAccepted": false
+      },
+      "Harbinger": {
+        "status": "partial",
+        "source": "https://www.ebay.com/itm/376978662614",
+        "verifiedFields": [
+          "initiative",
+          "steps",
+          "escape",
+          "hit",
+          "combat",
+          "damage",
+          "def",
+          "hp",
+          "hpPerHero",
+          "exp",
+          "xpPerWound",
+          "unspeakableTerror",
+          "immuneCrit"
+        ],
+        "eliteChartEntriesVerified": 0,
+        "abilitiesVerified": [
+          "Unspeakable Terror (3)",
+          "Flight",
+          "Immune to Critical Hits",
+          "Bringer of Death D6 table (details require full readable card)"
+        ],
+        "fullGameplayAccepted": false
+      }
+    }
+  },
+  "acceptance": {
+    "allSheetsSourceVerified": false,
+    "allStatsImplemented": false,
+    "allNormalAbilitiesImplemented": false,
+    "allEliteChartsVerified": false,
+    "allEliteAbilitiesImplemented": false,
+    "fullEndToEndTestsPassed": false,
+    "deployedAndVerified": false
+  },
+  "notes": [
+    "11 distinct enemy types per edition; Tentacles appears in both City and Swamp boxes.",
+    "Source-photo-derived fields are isolated in rules/enemy-records.js. A missing field is not verified.",
+    "The existing prototype still contains unverified fallback stats; they must be eliminated or validated before completion.",
+    "Original Goliath/Night Terror/Tentacle have transcribed normal-side stats and six Elite entries; full end-to-end gameplay acceptance remains pending.",
+    "Revised Harbinger and four other Swamp types have partial visible data; source images overlap and do not expose every stat and Elite chart."
+  ],
+  "remainingSourceAcquisition": [
+    "Original Swamp: complete Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries.",
+    "Original City: unobstructed Strangler, Void Spider and Targa Pylon normal-side sheets and six Elite entries.",
+    "Revised City: unobstructed Goliath, Night Terror, Strangler, Void Spider and Targa Pylon normal-side sheets and six Elite entries.",
+    "Revised Swamp: unobstructed Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries."
+  ],
+  "testEvidence": {
+    "verifiedEnemyRecordUnitTests": 6,
+    "verifiedEnemyCombatUnitTests": 3,
+    "verifiedEnemyXPUnitTests": 4,
+    "allPassInIsolatedExecution": true,
+    "playwrightTestsAdded": 2,
+    "playwrightExecutionVerified": false
+  },
+  "summary": {
+    "full": 4,
+    "partial": 8,
+    "missing": 10
+  }
+}

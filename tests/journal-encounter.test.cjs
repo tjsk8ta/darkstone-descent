@@ -9,8 +9,14 @@ test('encounter card, resolved models, placements, unresolved results and fight 
  }
  assert.ok(html.includes('S.log=S.log.slice(0,250)'),'journal retention should preserve 250 records');
 });
-test('Tentacle Elite chart uses the verified Brutal Suckers name and effect',()=>{
- assert.ok(html.includes("id:'brutal-suckers',name:'Brutal Suckers'"));
- assert.ok(html.includes("eliteHas(e.type,'brutal-suckers')"));
- assert.ok(!html.includes("'bitter-success'"));
+test('Tentacle Elite #4 uses source-specific display names and shared verified mechanics',()=>{
+ const records=require('../rules/enemy-records.js');
+ const city=records.get('revised','Tentacle','city');
+ const swamp=records.get('revised','Tentacle','swamp');
+ assert.equal(city.eliteChart[3].name,'Brutal Suckers');
+ assert.equal(swamp.eliteChart[3].name,'Bitter Success');
+ assert.equal(city.eliteChart[3].id,'tentacle-bonus-damage');
+ assert.equal(swamp.eliteChart[3].id,'tentacle-bonus-damage');
+ assert.equal(city.eliteChart[3].effect,swamp.eliteChart[3].effect);
+ assert.ok(html.includes("eliteHas(e.type,'tentacle-bonus-damage')"));
 });

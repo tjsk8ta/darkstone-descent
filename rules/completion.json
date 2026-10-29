@@ -213,13 +213,14 @@
         "pending-card persistence",
         "atomic enemy placement",
         "initiative-order checkerboard placement",
-        "connected entrance-tile overflow"
+        "connected entrance-tile overflow",
+        "nested Threat loot counts exclude parent cards without enemies",
+        "physical miniature limits and free Elite conversion on shortages for verified core figure counts"
       ],
       "outstanding": [
         "verify every revised card face against physical components",
         "OtherWorld Threats and Wandering Enemy rules",
         "full Elite effects",
-        "model-count shortages grant Elite",
         "ambush and special placement"
       ]
     },
@@ -232,15 +233,17 @@
         "Escape tests",
         "single-target grouped damage rolls and Grit rerolls",
         "Tentacle Smash",
-        "Tentacle Elite effects"
+        "Tentacle Elite effects",
+        "Revive Token restores full Health/Sanity and recovers one Grit",
+        "Fear/Terror/Unspeakable Terror generic proximity and Willpower resolver (individual enemy values still unverified)"
       ],
       "outstanding": [
         "complete innate abilities for 10 other core enemies",
-        "Fear/Terror/Unspeakable Terror per enemy and timing",
         "Enemy Armor and ranged attacks",
         "Large enemy displacement",
         "verified per-wound XP for XL enemies",
-        "all hero class combat and gear effects"
+        "all hero class combat and gear effects",
+        "verified per-enemy Fear/Terror/Unspeakable Terror values and special timing exceptions"
       ]
     },
     "exploration": {
@@ -268,13 +271,13 @@
       "status": "partial",
       "unit": "57 distinct original/revised Threat-card titles successfully resolved in deterministic in-run checks; Node regression suite added",
       "browser": "Chromium desktop/mobile smoke tests added to GitHub Actions; full end-to-end and scenario acceptance outstanding",
-      "ci": "Verify current workflow runs before claiming green"
+      "ci": "Node unit and Chromium desktop/mobile tests are configured in GitHub Actions; last confirmed green run b3ee82f9, latest run pending"
     },
     "deployment": {
       "status": "unverified",
       "repository": "https://github.com/tjsk8ta/darkstone-descent",
       "site": "https://tjsk8ta.github.io/darkstone-descent/",
-      "notes": "GitHub Pages workflow exists; confirm success for the latest commit and run a live-browser smoke test."
+      "notes": "GitHub Pages workflow runs on every push; latest deployed SHA must match HEAD before marking verified."
     }
   },
   "blockers": [
@@ -290,8 +293,8 @@
     }
   ],
   "nextActions": [
+    "Complete browser end-to-end regression coverage for enemy placement, multi-target attacks, Elite effects, saved encounters and recovery.",
     "Verify and transcribe original and revised normal-side Enemy Record Sheets and Elite charts for every remaining core enemy; implement abilities and unit tests.",
-    "Implement physical model caps and source-grounded Elite conversion on shortage.",
     "Add OtherWorld Threat handling, ambush placement and complete enemy special abilities.",
     "Replace prototype heroes, map geometry, mission and reward subsystems with verified rules.",
     "Run CI unit and Chromium smoke tests, inspect failures, and independently confirm latest GitHub Pages deployment.",

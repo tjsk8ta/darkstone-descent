@@ -75,5 +75,16 @@
     "contradictoryTentacleEliteAbilityName": 2
   },
   "mandatoryNextAction": "Acquire actual sheet faces and implement verified statistics and Elite charts; avoid unrelated features",
-  "sourceOfTruth": "reference/enemy-record-sheets.json"
+  "sourceOfTruth": "reference/enemy-record-sheets.json",
+  "lastEvidence": {
+    "source": "Official revised City and Swamps rulebooks page 22",
+    "finding": "Tentacles Elite chart entry 4 is labelled Brutal Suckers (City) and Bitter Success (Swamps); both +2 Damage",
+    "implemented": "Set-specific name selection in drawThreat",
+    "checks": "Inline script syntax passed; 24 sheet ledger entries, 2 verified, 22 unverified",
+    "unresolved": "Actual faces for 22 remaining set-edition entries unavailable from inspected official PDF pages; no fabrication",
+    "sourceUrls": [
+      "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf",
+      "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf"
+    ]
+  }
 }

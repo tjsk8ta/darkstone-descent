@@ -15,16 +15,17 @@ test('two Low Threat cards resolve once each',()=>{
  assert.equal(calls,2);
  assert.deepEqual(result.groups.map(g=>g.type),['Tentacle','Tentacle']);
 });
-test('nested generic Threat draws inherit their own tier',()=>{
+test('nested generic Threat draws always use the Posse tier',()=>{
  const calls=[];
- const result=engine.resolveEncounter('1 Medium Threat Card',{rng:fixed,currentTier:'high',draw:tier=>{
+ const result=engine.resolveEncounter('1 Medium Threat Card',{rng:fixed,currentTier:'low',draw:tier=>{
  calls.push(tier);return calls.length===1?{card:'1 Threat Card'}:{card:'1 Slasher'};
  }});
- assert.deepEqual(calls,['medium','medium']);
+ assert.deepEqual(calls,['medium','low']);
  assert.equal(result.groups[0].type,'Slasher');
 });
-test('Elite subdraws fail closed without a verified Elite deck',()=>{
- assert.throws(()=>engine.resolveEncounter('2 Elite Threat Cards',{rng:fixed,draw:()=>({card:'1 Slasher'})}),/Elite Threat deck/);
+test('Elite subdraws mark all enemies Elite, leaving chart verification to the placement gate',()=>{
+ const result=engine.resolveEncounter('2 Elite Threat Cards',{rng:fixed,currentTier:'low',draw:()=>({card:'1 Slasher'})});
+ assert.deepEqual(result.groups.map(g=>g.elite),[1,1]);
 });
 test('unrecognised enemies fail closed',()=>{
  assert.throws(()=>engine.resolveEncounter('1 Invented Beast',{rng:fixed,draw:()=>null}),/Unverified enemy/);

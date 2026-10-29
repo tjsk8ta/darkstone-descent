@@ -47,7 +47,7 @@ test('original Goliath performs three verified melee attack dice against a solo 
   state.nextEnemy=901;state.enemyActed=[];
   localStorage.setItem(key,JSON.stringify(state));
  });
- await page.reload();
+ await page.goto('/');
  await page.evaluate(()=>Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(2);return arr}}));
  await page.locator('#endBtn').click();
  const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3')));

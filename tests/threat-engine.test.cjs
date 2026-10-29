@@ -66,7 +66,7 @@ test('Every recorded Mines Threat-card title resolves without silent omissions',
 test('Browser loads shared engine and no longer scales solo Threat tier by depth',()=>{
  assert.match(html,/<script src="rules\/threat-engine\.js"><\/script>/);
  assert.match(html,/count=drawThreat\(r,'low'\)/);
- assert.match(html,/threatEngine\.resolveCard\(/);
+ assert.match(html,/threatEngine\.resolveEncounter\(/);
 });
 
 test('Loot counts actual enemy-bearing Threat cards, not empty parents',()=>{

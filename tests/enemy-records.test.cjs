@@ -10,6 +10,7 @@ test('edition records distinguish original Goliath from revised Harbinger',()=>{
  assert.equal(g.stats.attackRange,3);
  assert.equal(g.stats.combat,3);
  assert.equal(g.stats.immuneCrit,true);
+ assert.equal(g.stats.xpPerWound,5);
  assert.equal(g.eliteChart.length,6);
  const h=records.get('revised','Harbinger');
  assert.equal(h.stats.initiative,4);
@@ -17,6 +18,8 @@ test('edition records distinguish original Goliath from revised Harbinger',()=>{
  assert.equal(h.stats.hpPerHero,3);
  assert.equal(h.stats.steps,12);
  assert.equal(h.stats.unspeakableTerror,3);
+ assert.equal(h.stats.flight,true);
+ assert.equal(h.stats.xpPerWound,5);
  assert.equal(h.complete,false,'partial photograph must not be called a complete sheet');
 });
 test('original Night Terror has source-grounded 2014 normal-side values and six Elite entries',()=>{

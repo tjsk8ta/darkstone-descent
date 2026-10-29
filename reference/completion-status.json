@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "project": "Darkstone Descent",
+  "completion": false,
+  "acceptance": {
+    "coreEnemySheets": {
+      "passed": false,
+      "reason": "Most original/revised normal-side enemy statistics lack independently verified primary-source record sheets"
+    },
+    "enemyAbilities": {
+      "passed": false,
+      "reason": "Several enemy-specific normal-side rules and interactions remain provisional"
+    },
+    "eliteCharts": {
+      "passed": false,
+      "reason": "All requested enemy-specific Elite charts not yet source-verified and implemented"
+    },
+    "threatDecks": {
+      "passed": false,
+      "reason": "Threat deck parser exists but card inventories, model caps and nested encounters need exhaustive validation"
+    },
+    "gameRules": {
+      "passed": false,
+      "reason": "Some Depth, Darkness, mutation, item and enemy effects are unverified or incomplete"
+    },
+    "automatedTests": {
+      "passed": false,
+      "reason": "Unit and browser tests exist but comprehensive encounter/combat regression coverage and CI results are not yet verified"
+    },
+    "deployment": {
+      "passed": false,
+      "reason": "Cannot certify final GitHub Pages build before other acceptance criteria pass"
+    }
+  },
+  "policy": "Only set completion=true after every acceptance item passes with evidence. Continue substantive implementation; do not confuse commits with acceptance.",
+  "sources": [
+    "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf",
+    "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf"
+  ]
+}

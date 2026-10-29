@@ -86,7 +86,15 @@ const brutal=Object.freeze({
    ]
   }
  },
- revised:{}
+ revised:{
+  'Corpse Pile':{
+   source:'https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp',
+   confidence:'2020 physical red Brutal face; card readable at front but full Elite and spawn rules not legible',
+   complete:false,face:'brutal',
+   stats:{size:'large',initiative:0,steps:0,escape:1,combat:0,damage:0,def:0,hp:10,immobile:true,fear:2},
+   mechanics:['Immobile','Fear (2)','Fast Spawner (precise D6 and placement details unverified)']
+  }
+ }
 });
 function getFace(edition,name,set='city',face='normal'){
  if(face==='normal')return get(edition,name,set);
@@ -96,7 +104,7 @@ function getFace(edition,name,set='city',face='normal'){
 }
 function applyFace(edition,name,base={},set='city',face='normal'){
  const record=getFace(edition,name,set,face);
- if(!record)throw Error('Unverified '+edition+' '+face+' Enemy Record Sheet: '+name);
+ if(!record||!record.complete)throw Error('Unverified or incomplete '+edition+' '+face+' Enemy Record Sheet: '+name);
  return {...base,...record.stats,eliteChart:record.eliteChart?.map(x=>({...x})),
   recordSource:record.source,recordConfidence:record.confidence,recordComplete:record.complete,
   recordFace:face};

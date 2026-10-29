@@ -91,7 +91,7 @@ const ADDITIONAL_CORE_ENEMIES={
 };
 for(const [name,stats] of Object.entries(ADDITIONAL_CORE_ENEMIES))TYPES[name]={name,...stats};
 const CORE_ENEMY_PROVENANCE={
- 'Tentacle':{edition:'Revised 2020 normal',verified:true,source:'https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf'},
+ 'Tentacle':{edition:'Original 2014 and Revised 2020 normal',verified:true,source:'https://ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf#page=20 ; https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22'},
  ...Object.fromEntries([...Object.keys(CORE_ENEMY_PROTOTYPES),...Object.keys(ADDITIONAL_CORE_ENEMIES)].filter(n=>n!=='Tentacle').map(n=>[n,{edition:'unverified normal-side statistics',verified:false}]))
 };
 const ROOM_NAMES=['Forsaken Shaft','Miner’s Rest','Bone Gallery','Sulphur Fissure','The Old Tunnels','Black Lantern Hall','Fallen Gallery','The Crystal Vein','Abandoned Depot','Screaming Passage','The Red Chamber','Sunken Shrine','Ironwork Ruin','The Echo Vault','Buried Hall'];

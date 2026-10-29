@@ -72,12 +72,12 @@
       "edition": "original",
       "set": "city",
       "enemy": "Tentacle",
-      "status": "needs-card-face",
-      "source": null,
-      "statisticsVerified": false,
-      "abilitiesVerified": false,
-      "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "status": "verified-official-2014-rulebook-card-image",
+      "source": "https://ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf#page=20",
+      "statisticsVerified": true,
+      "abilitiesVerified": true,
+      "eliteChartVerified": true,
+      "notes": "Publisher 2014 original rulebook printed p.20 displays complete green Tentacles normal face: stats, Smash and all six Elite abilities. Same card example applies to the two original core sets; this does not verify the red Brutal face.",
       "brutalFace": {
         "status": "partial-overlapped-photo",
         "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
@@ -88,7 +88,8 @@
         "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
         "gameplayIntegrated": false
       },
-      "gameplayIntegrated": false
+      "gameplayIntegrated": true,
+      "implementation": "rules/enemy-records.js get(original,Tentacle)"
     },
     {
       "edition": "original",
@@ -204,12 +205,12 @@
       "edition": "original",
       "set": "swamp",
       "enemy": "Tentacle",
-      "status": "needs-card-face",
-      "source": null,
-      "statisticsVerified": false,
-      "abilitiesVerified": false,
-      "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "status": "verified-official-2014-rulebook-card-image",
+      "source": "https://ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf#page=20",
+      "statisticsVerified": true,
+      "abilitiesVerified": true,
+      "eliteChartVerified": true,
+      "notes": "Publisher 2014 original rulebook printed p.20 displays complete green Tentacles normal face: stats, Smash and all six Elite abilities. Same card example applies to the two original core sets; this does not verify the red Brutal face.",
       "brutalFace": {
         "status": "not-acquired",
         "source": null,
@@ -220,7 +221,8 @@
         "notes": "No readable red card face acquired.",
         "gameplayIntegrated": false
       },
-      "gameplayIntegrated": false
+      "gameplayIntegrated": true,
+      "implementation": "rules/enemy-records.js get(original,Tentacle)"
     },
     {
       "edition": "original",

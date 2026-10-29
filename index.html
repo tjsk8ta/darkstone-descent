@@ -667,7 +667,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}
  // No automatic Horror Hits on melee strikes: Fear/Terror are separate start-of-Activation effects.
- S.hp=Math.max(0,S.hp-physical);S.sanity=Math.max(0,S.sanity-horror);if(physical>0&&eliteHas(e.type,'entangle')){S.entangledUntilTurn=S.turn+1;log('Entangle: movement prohibited on the next Activation.','hit')}
+ S.hp=Math.max(0,S.hp-physical);S.sanity=Math.max(0,S.sanity-horror);if(physical>0&&eliteHas(e.type,'entangle')){S.entangledUntilTurn=Math.max(S.entangledUntilTurn||0,S.turn+(when==='before'?0:1));log('Entangle: movement prohibited on the next Hero Activation.','hit')}
  log(`${t.name} (Init ${effectiveEnemyInitiative(e)}) attacks: to-hit <span class="dice">[${rs.join(' ')}]</span>${defRolls.length?`, Defense [${defRolls.join(' ')}]`:''}${armorRolls.length?`, Armor [${armorRolls.join(' ')}]`:''}${willRolls.length?`, Willpower [${willRolls.join(' ')}]`:''}; ${physical} Wounds, ${horror} Sanity.`,physical||horror?'hit':'info');
  }} checkSurvival()}
 function checkSurvival(){

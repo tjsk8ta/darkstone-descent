@@ -306,21 +306,25 @@ const LOOT_REWARDS=[
  {name:'Grit recovery',type:'grit',value:1},{name:'Gold stash',type:'coins',value:30}
 ];
 const SCAVENGE_REWARDS=[
- {name:'Bandages',type:'bandages',value:1},{name:'Whiskey',type:'whiskey',value:1},
- {name:'Dynamite',type:'bombs',value:1},{name:'Dark Stone shard',type:'stone',value:1},
- {name:'Coins',type:'coins',value:16},{name:'Empty rubble',type:'none',value:0},
- {name:'Dust',type:'none',value:0},{name:'Horrifying remains',type:'sanity',value:-1},
- {name:'Jagged debris',type:'hp',value:-1},{name:'Supplies',type:'bandages',value:1},
- {name:'Gold dust',type:'coins',value:8},{name:'Grit',type:'grit',value:1}
+ {name:'Nothing Here',type:'none',value:0},{name:'Nothing Here',type:'none',value:0},
+ {name:'Nothing Here',type:'none',value:0},{name:'Nothing Here',type:'none',value:0},
+ {name:'Hideous Discovery',type:'sanity',value:-1},{name:'Hideous Discovery',type:'sanity',value:-1},
+ {name:'Small Find',type:'coins',value:16},{name:'Small Find',type:'coins',value:16},
+ {name:'Chilling Dread',type:'sanity',value:-1},{name:'Emerging Darkness',type:'none',value:0},
+ {name:'Something Shiny',type:'stone',value:1},{name:'Useful Discovery',type:'bandages',value:1}
 ];
+// Names and counts match the original core inventory. Effects above are
+// provisional substitutes, not authenticated text of the printed cards.
+
 function drawReward(kind){
  const deckKey=kind==='loot'?'lootDeck':'scavengeDeck',pool=kind==='loot'?LOOT_REWARDS:SCAVENGE_REWARDS;
  // Loot and Scavenge have no persistent discard: reshuffle before each draw.
  S[deckKey]=shuffleDeck(pool.map(x=>({...x})));
  const reward=S[deckKey].pop();
+ if(kind==='scavenge'&&reward.name==='Emerging Darkness')resolveDarknessCard();
  if(reward.type==='grit')S.grit=Math.min(4,S.grit+reward.value);
  else if(reward.type!=='none')S[reward.type]=(S[reward.type]||0)+reward.value;
- log((kind==='loot'?'Loot':'Scavenge')+' draw: '+reward.name+'.','good');
+ log((kind==='loot'?'Loot':'Scavenge')+' draw: '+reward.name+(kind==='scavenge'?' (original card name; effect provisional)':'')+'.','good');
  return reward;
 }
 function resolveFightRewards(r){

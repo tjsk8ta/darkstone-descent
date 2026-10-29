@@ -55,7 +55,7 @@ const revised={
  'Tentacle':{...original.Tentacle,source:OFFICIAL_TENTACLE,confidence:'publisher 2020 normal-side rulebook example'},
  'Harbinger':{
   source:REVISED_SWAMP,confidence:'readable normal-side 2020 physical card photograph; elite chart too small to verify',complete:false,
-  stats:{initiative:4,steps:12,escape:3,hit:4,combat:3,damage:4,def:3,hp:14,hpPerHero:3,exp:10,xpPerWound:5,unspeakableTerror:3,immuneCrit:true},
+  stats:{initiative:4,steps:12,escape:3,hit:4,combat:3,damage:4,def:3,hp:14,hpPerHero:3,exp:10,xpPerWound:5,unspeakableTerror:3,immuneCrit:true,flight:true},
   mechanics:['Unspeakable Terror (3)','Flight','Immune to Critical Hits','Bringer of Death D6 table (details require full readable card)']},
  'Corpse Pile':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:0,steps:0}},
  'Hungry Dead':{source:REVISED_SWAMP,confidence:'visible header and movement only',complete:false,stats:{initiative:1,steps:2}},

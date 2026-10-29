@@ -1,0 +1,11 @@
+'use strict';
+const fs=require('node:fs');
+const path=require('node:path');
+const read=p=>JSON.parse(fs.readFileSync(path.join(__dirname,'..',p),'utf8'));
+const e=read('reference/execution-gates.json');
+const s=read('reference/completion-status.json');
+const r=read('rules/completion.json');
+const a=read('reference/enemy-sheet-audit.json');
+const records=Object.values(a.editionRecords).flatMap(x=>Object.values(x));
+const accepted=records.length===22&&records.every(x=>x.status==='full'&&x.fullGameplayAccepted===true&&x.eliteChartEntriesVerified===6)&&Object.values(a.acceptance).every(Boolean)&&Object.values(s.acceptance).every(x=>x.passed===true)&&Object.values(r.gates).every(x=>x.status==='verified')&&r.blockers.length===0&&s.lastVerified.playwrightExecutionVerified===true&&e.gates.every(x=>x.passed===true)&&e.completion===true&&s.completion===true&&r.complete===true;
+if(!accepted){console.error('Completion criteria not satisfied. Release certification denied.');process.exitCode=1}else console.log('Recorded completion criteria satisfied.');

@@ -70,8 +70,8 @@ test('applying a record does not mutate base stats or silently transfer another 
 test('game loads enemy record data and applies edition on new run and restored saves',()=>{
  const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
  assert.match(html,/<script src="rules\/enemy-records\.js"><\/script>/);
- assert.match(html,/applyEnemyEdition\(S\.coreEdition\)/);
- assert.match(html,/applyEnemyEdition\(S\.coreEdition\|\|'revised'\)/);
+ assert.match(html,/applyEnemyEdition\(S\.coreEdition,S\.coreThreatSet\)/);
+ assert.match(html,/applyEnemyEdition\(S\.coreEdition\|\|'revised',S\.coreThreatSet\|\|'combined'\)/);
  assert.match(html,/enemyMaxHp\(type\)/);
  assert.match(html,/enemyCritIgnoresDefense\(d\.hit,e\)/);
 });

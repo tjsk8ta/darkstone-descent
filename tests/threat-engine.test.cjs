@@ -68,3 +68,10 @@ test('Browser loads shared engine and no longer scales solo Threat tier by depth
  assert.match(html,/count=drawThreat\(r,'low'\)/);
  assert.match(html,/threatEngine\.resolveCard\(/);
 });
+
+test('Loot counts actual enemy-bearing Threat cards, not empty parents',()=>{
+ assert.equal(engine.resolveEncounter('P Tentacles',{rng:()=>0,draw}).lootThreats,1);
+ assert.equal(engine.resolveEncounter('2 Low Threat Cards',{rng:()=>0,draw}).lootThreats,2);
+ assert.equal(engine.resolveEncounter('1 Night Terror & 1 Low Threat Card',{rng:()=>0,draw}).lootThreats,2);
+ assert.equal(engine.resolveEncounter('2 Elite Threat Cards',{rng:()=>0,draw}).lootThreats,2);
+});

@@ -19,8 +19,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -39,8 +41,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -59,8 +63,10 @@
         "abilitiesVerified": true,
         "eliteChartVerified": true,
         "implementation": "rules/enemy-records.js getFace(original,Void Spider,city,brutal)",
-        "notes": "Unobstructed red Brutal face; all stats, Void Venom, and six Elite abilities legible."
-      }
+        "notes": "Unobstructed red Brutal face; all stats, Void Venom, and six Elite abilities legible. Data-layer implementation only; not yet selectable in gameplay.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -79,8 +85,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -99,8 +107,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -119,8 +129,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -139,8 +151,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -159,8 +173,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -179,8 +195,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -199,8 +217,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -219,8 +239,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "original",
@@ -239,8 +261,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -259,8 +283,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -279,8 +305,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -299,8 +327,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -323,8 +353,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -343,8 +375,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -363,8 +397,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "No readable red card face acquired."
-      }
+        "notes": "No readable red card face acquired.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -383,8 +419,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -403,8 +441,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -423,8 +463,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -447,8 +489,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -467,8 +511,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     },
     {
       "edition": "revised",
@@ -487,8 +533,10 @@
         "abilitiesVerified": false,
         "eliteChartVerified": false,
         "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
-      }
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
+        "gameplayIntegrated": false
+      },
+      "gameplayIntegrated": false
     }
   ],
   "doNotInfer": true,

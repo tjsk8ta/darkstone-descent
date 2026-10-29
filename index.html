@@ -678,7 +678,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(e.type==='Corpse Pile'&&S.enemies.filter(v=>v.type==='Hungry Dead'&&v.home===e.home).length<12){
   const home=S.rooms[e.home];if(home&&spawnEnemy('Hungry Dead',home))log('Corpse Pile raises a Hungry Dead (provisional spawn rate).','hit');
  }
- if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,!eliteHas(e.type,'eruption'));if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));const destination=route.slice(0,steps).reverse().find(p=>!occupied(p.x,p.y));if(destination){e.x=destination.x;e.y=destination.y}}}
+ if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,!eliteHas(e.type,'eruption'));if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));const destination=route.slice(0,steps).reverse().find(p=>!(p.x===S.x&&p.y===S.y)&&!occupied(p.x,p.y));if(destination){e.x=destination.x;e.y=destination.y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
  if(distance<=1&&t.combat!==0){let rs=roll((t.combat||(e.type==='boss'?2:1))+(eliteHas(e.type,'lashing-strike')?1:0)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
  for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let smash=t.smash&&hits[hitIndex]===6;let d=smash?null:die();defRolls.push(smash?'SMASH':d);if(smash||d<C.defense){for(let j=0;j<t.damage+(eliteHas(e.type,'brutal-suckers')?2:0);j++){

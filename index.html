@@ -496,6 +496,9 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
+ if(e.type==='Corpse Pile'&&S.enemies.filter(v=>v.type==='Hungry Dead'&&v.home===e.home).length<12){
+  const home=S.rooms[e.home];if(home&&spawnEnemy('Hungry Dead',home))log('Corpse Pile raises a Hungry Dead (provisional spawn rate).','hit');
+ }
  if(distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
  if(distance<=1&&t.combat!==0){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];

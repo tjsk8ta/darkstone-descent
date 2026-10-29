@@ -16,7 +16,7 @@ test('look through door requires hero to stand on actual boundary half-space',()
 test('searching consumes the movement phase and prevents another search',()=>{
  assert.match(html,/S\.searchUsedTurn=S\.turn;S\.actionUsed=true;S\.move=0;S\.profile\.exp\+=5/);
  assert.match(html,/S\.searchUsedTurn=S\.turn;S\.actionUsed=true;S\.move=0;let rs=roll\(3\)/);
- assert.match(html,/if\(S\.searchUsedTurn===S\.turn\)/);
+ assert.match(html,/if\(S\.searchUsedTurn===S\.turn\|\|S\.actionUsed\)/);
 });
 test('event choices are recorded at reveal, with concise result and numeric enemy delta',()=>{
  assert.match(html,/log\('EVENT: '\+event\.title/);

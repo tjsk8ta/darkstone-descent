@@ -448,8 +448,8 @@
     "playwrightExecutionVerified": false,
     "verifiedEnemySheetMatrixTests": 2,
     "verifiedThreatInventoryTests": 3,
-    "all19PassInIsolatedExecution": false,
-    "all20PassInIsolatedExecution": false
+    "all19PassInIsolatedExecution": true,
+    "all20PassInIsolatedExecution": true
   },
   "summary": {
     "full": 4,

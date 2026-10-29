@@ -55,3 +55,13 @@ test('the row above the passage end does not incorrectly qualify',()=>{
  const result=doorwayHarness({hero:[0,1],doors:['W'],edgeFloor:(x,y)=>x===0&&y===1});
  assert.equal(result,null);
 });
+
+test('older T-Junction save without west exit still recognises hero on west end',()=>{
+ const result=doorwayHarness({hero:[0,3],doors:['S','E'],edgeFloor:(x,y)=>x===0&&y===3});
+ assert.equal(result.undrawn,true);
+ assert.equal(result.dir,'W');
+});
+test('unseen pre-generated neighbor does not suppress visible T-Junction exit',()=>{
+ const result=doorwayHarness({hero:[8,3],doors:['S','E','W'],edgeFloor:(x,y)=>x===8&&y===3,neighbor:{x:3,y:2,seen:false,doors:['W']}});
+ assert.equal(result.dir,'E');
+});

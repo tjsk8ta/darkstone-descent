@@ -56,7 +56,7 @@ const CORE_ENEMY_PROTOTYPES={
  'Night Terror':{initiative:4,escape:4,hp:12,def:1,damage:3,hit:4,steps:2,exp:24,sane:1,glyph:'♜',color:'#a17dba'},
  'Strangler':{initiative:5,escape:4,hp:5,def:0,damage:2,hit:4,steps:2,exp:12,sane:0,glyph:'♟',color:'#a88d70'},
  'Void Spider':{initiative:6,escape:4,hp:4,def:0,damage:2,hit:5,steps:3,exp:10,sane:0,glyph:'✣',color:'#b77a99'},
- 'Tentacle':{initiative:3,escape:5,hp:6,def:1,damage:2,hit:4,steps:1,exp:13,sane:0,glyph:'☷',color:'#9b88bc'},
+ 'Tentacle':{initiative:2,escape:4,hp:4,def:2,damage:3,hit:4,steps:6,combat:3,smash:true,exp:30,sane:0,glyph:'☷',color:'#9b88bc'},
  'Hellbat':{initiative:6,escape:4,hp:3,def:0,damage:1,hit:5,steps:3,exp:8,sane:0,glyph:'✦',color:'#c47d65'},
  'Hungry Dead':{initiative:2,escape:3,hp:5,def:0,damage:2,hit:4,steps:1,exp:10,sane:0,glyph:'♟',color:'#8ca37e'},
  'Corpse Pile':{initiative:1,escape:5,hp:9,def:1,damage:2,hit:5,steps:0,exp:16,sane:1,glyph:'▣',color:'#a1a08a'},
@@ -410,8 +410,8 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
  if(distance>1){let route=path(e,{x:S.x,y:S.y},false,true);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));for(let i=0;i<steps;i++){e.x=route[i].x;e.y=route[i].y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
- if(distance<=1){let rs=roll(e.type==='boss'?2:1),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
- for(let _ of hits){let d=die();defRolls.push(d);if(d<C.defense){for(let j=0;j<t.damage;j++){
+ if(distance<=1){let rs=roll(t.combat||(e.type==='boss'?2:1)),hits=rs.filter(x=>x>=t.hit),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
+ for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let d=die();defRolls.push(d);if(d<C.defense||(t.smash&&hits[hitIndex]===6)){for(let j=0;j<t.damage;j++){
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}
  // Original enemy 'sane' values represent extra Horror Hits, each prevented by Willpower.

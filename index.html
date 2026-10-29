@@ -552,7 +552,7 @@ function recordFightThreats(n){
  S.activeFight.threats+=n;
 }
 function resolveFightRewards(r){
- if(S.enemies.length)return;
+ if(S.enemies.length||Object.values(S.rooms).some(room=>room.pendingThreat))return;
  const count=S.activeFight?.threats||(!r?.fightRewarded?r?.fightThreats||0:0);
  if(!count)return;
  S.activeFight=null;

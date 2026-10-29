@@ -732,10 +732,10 @@ function enemyActivationOrder(enemies){
 }
 function enemyPhase(when='after'){if(!S||S.ended)return;
  let C=CLASSES[S.profile.hero],own=C.initiative;
- let remaining=enemyActivationOrder(S.enemies.filter(e=>e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)));
+ let remaining=enemyActivationOrder(S.enemies.filter(e=>when==='ambush'?e.ambushPending===true:e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)));
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
- S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
+ if(when==='ambush'){e.ambushPending=false;log(TYPES[e.type].name+' #'+e.id+' resolves its immediate Ambush Attack (+2 Initiative for this attack).','hit')}else S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
  if(e.type==='Corpse Pile'&&!S.corpsePileRuleWarning){
   S.corpsePileRuleWarning=true;
   log('RULE VERIFICATION PENDING: Corpse Pile Fast Spawner frequency and placement are unverified. No invented automatic Hungry Dead spawn applied.','hit');
@@ -798,11 +798,11 @@ function resolveHarbingerBringerOfDeath(){
    const target=Math.min(effect.models,available);let spawned=0;
    for(let i=0;i<target;i++){
     if(!home||!spawnEnemy('Hellbat',home))break;
-    const bat=S.enemies[S.enemies.length-1];bat.spawnTurn=S.turn-1;spawned++;
+    const bat=S.enemies[S.enemies.length-1];bat.ambushPending=true;spawned++;
    }
    log('Bringer of Death ['+effect.roll+'] · Summon HellBats D6 ['+effect.models+']: '+spawned+' summoned'+(spawned<effect.models?'; insufficient physical models/placement.':'')+'.','hit');
    if(spawned<effect.models){advanceDarkness('Bringer of Death: insufficient HellBats');if(S.ended)break}
-   if(spawned){log('Summoned HellBats make an immediate Ambush Attack.','hit');enemyPhase('before')}
+   if(spawned){log('Summoned HellBats make an immediate Ambush Attack.','hit');enemyPhase('ambush')}
   }
  }
 }

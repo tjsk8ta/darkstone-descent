@@ -182,6 +182,7 @@ function startRound(){if(!S||S.ended||S.mutationReviewPending)return;
  checkSurvival();if(S.ended)return;
  // Enemies with initiative equal to or higher than the hero activate first (ties to enemies).
  enemyPhase('before');if(S.ended)return;
+ resolveHorrorHits();if(S.ended)return;
  pendingAttack=null;let v=die();S.movementDie=v;S.movementRerolled=false;log('New turn '+S.turn+': movement die ['+v+'].','info');S.moveMax=v+mutationMoveBonus()+(CLASSES[S.profile.hero].move||0);S.move=S.entangledUntilTurn>=S.turn?0:S.moveMax;if(!S.move&&S.entangledUntilTurn>=S.turn)log('Entangle: unable to move this Activation.','hit');S.actionUsed=false;S.powered=false;
  if(v===1){S.grit=Math.min(4,S.grit+1);log('Move <span class="dice">[1]</span>: recover 1 Grit.','good')}
  else log(`Movement <span class="dice">[${v}]</span>: ${S.move} spaces available.`);
@@ -620,6 +621,28 @@ function selectMapCell(x,y){if(!S||!visibleAt(x,y))return;selectedMapCell={x,y};
 function startDynamiteAim(){if(!S||S.ended||S.actionUsed||pendingAttack||S.bombs<1)return;dynamiteAim=!dynamiteAim;if(dynamiteAim)selectedMapCell=null;log(dynamiteAim?'Dynamite: tap any highlighted floor space in range '+dynamiteRange()+' (Strength +3). Tap Dynamite again to cancel.':'Dynamite aiming cancelled.','info');render()}
 function throwDynamite(x,y){if(!dynamiteAim||!validDynamiteTarget(x,y)){log('Choose a visible floor space within throwing range.','info');render();return}dynamiteAim=false;selectedMapCell=null;S.actionUsed=true;S.bombs--;let hitDie=die(),threshold=CLASSES[S.profile.hero].hit,landX=x,landY=y;log('Dynamite targeted at ('+x+','+y+'): To Hit ['+hitDie+'] vs '+threshold+'+.','info');if(hitDie<threshold){let count=1+rnd(3),dirs=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];log('Miss! Dynamite bounces '+count+' time(s).','hit');for(let i=0;i<count;i++){let d=1+rnd(8),nx=landX+dirs[d-1][0],ny=landY+dirs[d-1][1];if(cellAt(nx,ny)){landX=nx;landY=ny;log('Bounce '+(i+1)+': D8 ['+d+'] to ('+nx+','+ny+').','info')}else log('Bounce '+(i+1)+': D8 ['+d+'] blocked by wall.','info')}}else log('Dynamite hits the selected space.','good');log('Explosion at ('+landX+','+landY+'); adjacent spaces affected. Defense ignored.','hit');let targets=[...S.enemies].filter(e=>Math.max(Math.abs(e.x-landX),Math.abs(e.y-landY))<=1);if(Math.max(Math.abs(S.x-landX),Math.abs(S.y-landY))<=1){let d=die();S.hp=Math.max(0,S.hp-d);log('Hero caught in blast: D6 ['+d+'] Wounds (ignores Defense).','hit');if(S.hp<=0){finish(false,'The dynamite blast knocked out your hero.')}}for(let e of targets){let d=die();e.hp-=d;log(TYPES[e.type].name+' #'+e.id+': D6 ['+d+'] Wounds (ignores Defense).', 'hit');if(e.hp<=0){S.enemies=S.enemies.filter(v=>v.id!==e.id);S.profile.exp+=TYPES[e.type].exp;log(TYPES[e.type].name+' defeated by dynamite. +'+TYPES[e.type].exp+' XP.','good');checkCleared(roomAt(e.x,e.y))}}save();render()}
 function supply(type){if(!S||S.ended)return;if(type==='bandages'&&S.bandages>0){let h=die()+1;S.bandages--;S.hp=Math.min(S.maxHp,S.hp+h);log(`Bandage restores up to ${h} Wounds.`,'good')}else if(type==='whiskey'&&S.whiskey>0){let h=die()+1;S.whiskey--;S.sanity=Math.min(S.maxS,S.sanity+h);log(`Whiskey restores up to ${h} Sanity.`,'good')}else if(type==='bombs'&&S.bombs>0){startDynamiteAim();return}else log('No such supplies remain.');save();render()}
+// Fear/Terror/Unspeakable Terror use per-enemy printed values, not a
+// fabricated Sanity attack attached to every melee strike. The current
+// prototype has no independently verified non-Tentacle enemy Horror values.
+function resolveHorrorHits(){
+ if(!S?.enemies?.length||S.ended)return;
+ const heroRoom=roomCurrent(),C=CLASSES[S.profile.hero];
+ let total=0;
+ for(const e of S.enemies){
+  const t=TYPES[e.type],enemyRoom=roomAt(e.x,e.y);
+  const adjacent=man(S,e)<=1&&lineOfSight(S,e);
+  const same=heroRoom&&enemyRoom===heroRoom;
+  const nearby=heroRoom&&enemyRoom&&(Math.abs(heroRoom.x-enemyRoom.x)+Math.abs(heroRoom.y-enemyRoom.y)<=1);
+  if(adjacent)total+=t.fear||0;
+  if(same)total+=t.terror||0;
+  if(nearby)total+=t.unspeakableTerror||0;
+ }
+ if(!total)return;
+ const checks=roll(total),damage=checks.filter(x=>x<C.willpower).length;
+ S.sanity=Math.max(0,S.sanity-damage);
+ log('Horror Hits '+total+': Willpower ['+checks.join(' ')+']; '+damage+' Sanity Damage.','hit');
+ checkSurvival();
+}
 function enemyPhase(when='after'){if(!S||S.ended)return;
  let C=CLASSES[S.profile.hero],own=C.initiative;
  let remaining=S.enemies.filter(e=>e.spawnTurn!==S.turn&&(when==='before'?effectiveEnemyInitiative(e)>=own:effectiveEnemyInitiative(e)<own)).sort((a,b)=>effectiveEnemyInitiative(b)-effectiveEnemyInitiative(a));
@@ -635,8 +658,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let smash=t.smash&&hits[hitIndex]===6;let d=smash?null:die();defRolls.push(smash?'SMASH':d);if(smash||d<C.defense){for(let j=0;j<t.damage+(eliteHas(e.type,'brutal-suckers')?2:0);j++){
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}
- // Original enemy 'sane' values represent extra Horror Hits, each prevented by Willpower.
- if(t.sane){for(let i=0;i<t.sane;i++){let w=die();willRolls.push(w);if(w<C.willpower)horror++}}
+ // No automatic Horror Hits on melee strikes: Fear/Terror are separate start-of-Activation effects.
  S.hp=Math.max(0,S.hp-physical);S.sanity=Math.max(0,S.sanity-horror);if(physical>0&&eliteHas(e.type,'entangle')){S.entangledUntilTurn=S.turn+1;log('Entangle: movement prohibited on the next Activation.','hit')}
  log(`${t.name} (Init ${effectiveEnemyInitiative(e)}) attacks: to-hit <span class="dice">[${rs.join(' ')}]</span>${defRolls.length?`, Defense [${defRolls.join(' ')}]`:''}${armorRolls.length?`, Armor [${armorRolls.join(' ')}]`:''}${willRolls.length?`, Willpower [${willRolls.join(' ')}]`:''}; ${physical} Wounds, ${horror} Sanity.`,physical||horror?'hit':'info');
  }} checkSurvival()}

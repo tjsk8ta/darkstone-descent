@@ -4,7 +4,7 @@
   "version": "0.2.0",
   "description": "Browser-based Shadows of Brimstone-inspired solo game with verified threat dice and regression tests",
   "scripts": {
-    "test": "node --test tests/*.test.cjs",
+    "test": "node --test tests/*.test.cjs tests/*.test.js",
     "test:e2e": "playwright test"
   },
   "devDependencies": {

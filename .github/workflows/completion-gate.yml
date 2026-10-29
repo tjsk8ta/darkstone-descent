@@ -1,7 +1,5 @@
-name: Completion acceptance
+name: Completion acceptance (manual only)
 on:
-  push:
-  pull_request:
   workflow_dispatch:
 jobs:
   regression:
@@ -16,7 +14,6 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
   release-acceptance:
-    if: github.event_name == 'workflow_dispatch'
     needs: regression
     runs-on: ubuntu-latest
     steps:

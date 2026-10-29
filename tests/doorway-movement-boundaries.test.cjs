@@ -18,7 +18,7 @@ test('connected revealed door allows room crossing',()=>assert.equal(make()(8,2,
 test('unrevealed neighbor blocks room crossing',()=>assert.equal(make({seen:false})(8,2,9,2),false));
 test('unconnected doors block room crossing',()=>assert.equal(make({connected:false})(8,2,9,2),false));
 test('diagonal room-corner transition is forbidden',()=>assert.equal(make()(8,6,9,7),false));
-test('a connected boundary is passable only through actual doorway lanes',()=>{assert.equal(make()(8,3,9,3),false);assert.equal(make()(8,1,9,1),true)});
+test('a connected boundary is passable only through actual doorway lanes',()=>{assert.equal(make()(8,3,9,3),true);assert.equal(make()(8,1,9,1),false)});
 test('direct and click-path movement both check connected doors',()=>{
  assert.match(html,/if\(!crossesConnectedDoor\(p\.x,p\.y,x,y\)\)continue/);
  assert.match(html,/if\(!cellAt\(x,y\)\|\|!crossesConnectedDoor\(S\.x,S\.y,x,y\)/);

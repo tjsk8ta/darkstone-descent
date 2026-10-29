@@ -30,6 +30,6 @@ test('original and revised enemy sheets are not mutated by a previous edition lo
 
 test('2014 Tentacles card is anchored to the publisher original rulebook, not translation',()=>{
  const r=records.get('original','Tentacle','city');
- assert.match(r.source,/ffpgames\\.wordpress\\.com\\/wp-content\\/uploads\\/2014\\/07\\/sobs_rulebook_web_publish\\.pdf#page=20/);
+ assert.ok(r.source.includes('ffpgames.wordpress.com/wp-content/uploads/2014/07/sobs_rulebook_web_publish.pdf#page=20'));
  assert.match(r.confidence,/2014 publisher rulebook page 20/);
 });

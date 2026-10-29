@@ -64,3 +64,24 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await expect(page.locator('#mapEyebrow')).toContainText('0 enemies active');
  expect(errors).toEqual([]);
 });
+
+test('entering a revealed passage resolves exploration immediately without End Turn',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/');
+ await page.locator('#startGame').click();
+ await page.evaluate(()=>{
+  const key='darkstone_descent_tiles_v3',state=JSON.parse(localStorage.getItem(key));
+  state.x=2*9+8;state.y=2*7+3;state.move=5;state.moveMax=5;
+  state.rooms['2,2'].doors=['E'];
+  state.rooms['3,2']={x:3,y:2,shape:'corridor',name:'Unexplored Passage',kind:'normal',
+   doors:['W'],seen:true,explored:false,searched:false,clue:false,token:null,firstJunction:false,entryDir:'W'};
+  localStorage.setItem(key,JSON.stringify(state));
+ });
+ await page.reload();
+ await page.keyboard.press('ArrowRight');
+ const state=await page.evaluate(()=>JSON.parse(localStorage.getItem('darkstone_descent_tiles_v3')));
+ expect(state.x).toBe(27);
+ expect(state.rooms['3,2'].explored).toBe(true);
+ expect(state.turn).toBe(1);
+ expect(errors).toEqual([]);
+});

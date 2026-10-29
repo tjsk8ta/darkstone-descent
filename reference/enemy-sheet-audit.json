@@ -392,5 +392,28 @@
     "full": 4,
     "partial": 8,
     "missing": 10
+  },
+  "candidateTTSCardAssets": {
+    "sourceRepository": "https://github.com/ranaur/shadows-of-brimstone",
+    "sourceFile": "Resources/Props Images/@Processed/Shadows Of Brimstone - 314960561/urls",
+    "urls": [
+      "https://www.dropbox.com/s/0en03he2lxw6skr/harbinger.jpg?dl=1",
+      "https://www.dropbox.com/s/2ck3egv4x6u4rnz/nightterrors.jpg?dl=1",
+      "https://www.dropbox.com/s/6ddiuqz5lq6ozbp/hungrydeadreg.jpg?dl=1",
+      "https://www.dropbox.com/s/7bjvljuijmc324h/goliath.jpg?dl=1",
+      "https://www.dropbox.com/s/b9gauv00gx1otnm/tentaclesreg.jpg?dl=1",
+      "https://www.dropbox.com/s/dpb9x49u98b4vi0/harbingerreg.jpg?dl=1",
+      "https://www.dropbox.com/s/g44tc92wpatjk26/hungrydead.jpg?dl=1",
+      "https://www.dropbox.com/s/gji2r6l6o5v5fkw/targapylons.jpg?dl=1",
+      "https://www.dropbox.com/s/lcg2dm7cvf05h8o/hellbats.jpg?dl=1",
+      "https://www.dropbox.com/s/o3939twckduy31d/voidspiders.jpg?dl=1",
+      "https://www.dropbox.com/s/o611pv2plfvxyls/stranglers.jpg?dl=1",
+      "https://www.dropbox.com/s/okkuoyrpcq4jo8f/hellbatsreg.jpg?dl=1",
+      "https://www.dropbox.com/s/rj5y3g4p7domizr/slashersreg.jpg?dl=1",
+      "https://www.dropbox.com/s/tka1swigrliry1s/tentacles.jpg?dl=1",
+      "https://www.dropbox.com/s/vum26waocgxulgh/corpsepile.jpg?dl=1",
+      "https://www.dropbox.com/s/yk5b17cbf1tbb2u/corpsepilereg.jpg?dl=1"
+    ],
+    "verification": "Links identified from TTS asset inventory only; not independently opened or confirmed to contain a readable record-sheet face. Do not mark source verified."
   }
 }

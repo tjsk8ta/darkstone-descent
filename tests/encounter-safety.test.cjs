@@ -23,3 +23,12 @@ test('movement cannot bypass encounter modal through directional keys or map cli
 test('room rewards and clues are withheld during any active Fight or unresolved Threat',()=>{
  assert.match(html,/function checkCleared\(r\)\{if\(!r\?\.seen\|\|r\.pendingThreat\|\|Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)\|\|S\.enemies\.length/);
 });
+
+test('unverified Corpse Pile Fast Spawner cannot create invented enemies',()=>{
+ assert.doesNotMatch(html,/if\(e\.type==='Corpse Pile'&&S\.enemies\.filter/);
+ assert.match(html,/Corpse Pile Fast Spawner frequency and placement are unverified/);
+});
+test('doorway exploration cannot bypass pending combat or encounter',()=>{
+ assert.match(html,/function lookThroughDoor\(\)\{if\(!S\|\|S\.ended\|\|pendingAttack\|\|S\.pendingEvent/);
+ assert.match(html,/Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)/);
+});

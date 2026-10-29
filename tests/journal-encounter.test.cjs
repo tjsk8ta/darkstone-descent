@@ -9,8 +9,8 @@ test('encounter card, resolved models, placements, unresolved results and fight 
  }
  assert.ok(html.includes('S.log=S.log.slice(0,250)'),'journal retention should preserve 250 records');
 });
-test('Tentacle Elite chart uses the verified Bitter Success name and effect',()=>{
- assert.ok(html.includes("id:'bitter-success',name:'Bitter Success'"));
- assert.ok(html.includes("eliteHas(e.type,'bitter-success')"));
- assert.ok(!html.includes("'brutal-suckers'"));
+test('Tentacle Elite chart uses the verified Brutal Suckers name and effect',()=>{
+ assert.ok(html.includes("id:'brutal-suckers',name:'Brutal Suckers'"));
+ assert.ok(html.includes("eliteHas(e.type,'brutal-suckers')"));
+ assert.ok(!html.includes("'bitter-success'"));
 });

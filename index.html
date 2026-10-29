@@ -771,7 +771,7 @@ function resolveHarbingerBringerOfDeath(){
      const d=die();defense.push(d);
      if(d<C.defense)for(let j=0;j<TYPES.Harbinger.damage;j++){
       const armourTarget=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7;
-      const ar=die();if(armourTarget<=6){armor.push(ar);if(ar>=armourTarget)continue}
+      if(armourTarget<=6){const ar=die();armor.push(ar);if(ar>=armourTarget)continue}
       physical++;
      }
     }

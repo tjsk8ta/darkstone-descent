@@ -75,3 +75,19 @@ test('game loads enemy record data and applies edition on new run and restored s
  assert.match(html,/enemyMaxHp\(type\)/);
  assert.match(html,/enemyCritIgnoresDefense\(d\.hit,e\)/);
 });
+
+test('2014 and revised Tentacle record-sheet provenance is reconciled for both core sets',()=>{
+ const register=JSON.parse(fs.readFileSync(require('node:path').join(__dirname,'../reference/enemy-record-sheets.json'),'utf8'));
+ for(const edition of ['original','revised'])for(const set of ['city','swamp']){
+  const entry=register.recordSheets.find(r=>r.edition===edition&&r.set===set&&r.enemy==='Tentacle');
+  assert.ok(entry,edition+' '+set+' Tentacle record missing');
+  assert.equal(entry.statisticsVerified,true);
+  assert.equal(entry.abilitiesVerified,true);
+  assert.equal(entry.eliteChartVerified,true);
+  assert.equal(entry.gameplayIntegrated,true);
+  const record=records.get(edition,'Tentacle',set);
+  assert.equal(record.complete,true);
+  assert.equal(record.eliteChart.length,6);
+  assert.equal(record.stats.smash,true);
+ }
+});

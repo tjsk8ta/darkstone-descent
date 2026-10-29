@@ -11,7 +11,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "original",
@@ -22,7 +31,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "original",
@@ -33,7 +51,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "verified-third-party-physical-card-photo",
+        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "statisticsVerified": true,
+        "abilitiesVerified": true,
+        "eliteChartVerified": true,
+        "implementation": "rules/enemy-records.js getFace(original,Void Spider,city,brutal)",
+        "notes": "Unobstructed red Brutal face; all stats, Void Venom, and six Elite abilities legible."
+      }
     },
     {
       "edition": "original",
@@ -44,7 +71,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "original",
@@ -55,7 +91,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "original",
@@ -66,7 +111,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "original",
@@ -77,7 +131,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "original",
@@ -88,7 +151,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "original",
@@ -99,7 +171,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "original",
@@ -110,7 +191,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "original",
@@ -121,7 +211,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "original",
@@ -132,7 +231,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "revised",
@@ -143,7 +251,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "revised",
@@ -154,7 +271,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "revised",
@@ -165,7 +291,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "revised",
@@ -180,6 +315,15 @@
       "editionDifference": {
         "eliteAbility4": "Brutal Suckers",
         "effect": "Tentacle Combat Hits +2 Damage"
+      },
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
       }
     },
     {
@@ -191,7 +335,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "revised",
@@ -202,7 +355,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "not-acquired",
+        "source": null,
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "No readable red card face acquired."
+      }
     },
     {
       "edition": "revised",
@@ -213,7 +375,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "revised",
@@ -224,7 +395,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "revised",
@@ -235,7 +415,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "revised",
@@ -250,6 +439,15 @@
       "editionDifference": {
         "eliteAbility4": "Bitter Success",
         "effect": "Tentacle Combat Hits +2 Damage"
+      },
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
       }
     },
     {
@@ -261,7 +459,16 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     },
     {
       "edition": "revised",
@@ -272,8 +479,21 @@
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image"
+      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "brutalFace": {
+        "status": "partial-overlapped-photo",
+        "source": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp",
+        "statisticsVerified": false,
+        "abilitiesVerified": false,
+        "eliteChartVerified": false,
+        "implementation": null,
+        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards."
+      }
     }
   ],
-  "doNotInfer": true
+  "doNotInfer": true,
+  "brutalFaceEvidence": {
+    "originalCityPhoto": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+    "revisedSwampPhoto": "https://i.ebayimg.com/images/g/8MgAAeSwWLhpmIwh/s-l1600.webp"
+  }
 }

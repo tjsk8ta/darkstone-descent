@@ -176,7 +176,11 @@
       "statisticsVerified": true,
       "abilitiesVerified": true,
       "eliteChartVerified": true,
-      "notes": "Publisher rulebook p22 prints complete normal-side Tentacles card and Elite chart"
+      "notes": "Publisher City revised rulebook p22 card reads Elite #4 Brutal Suckers. Publisher Swamps revised rulebook indexed image reads Elite #4 Bitter Success. Treat as set-specific variant; do not collapse these into one global ability name.",
+      "editionDifference": {
+        "eliteAbility4": "Brutal Suckers",
+        "effect": "Tentacle Combat Hits +2 Damage"
+      }
     },
     {
       "edition": "revised",
@@ -238,11 +242,15 @@
       "set": "swamp",
       "enemy": "Tentacle",
       "status": "verified-official-card-image",
-      "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22",
+      "source": "https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf#page=22",
       "statisticsVerified": true,
       "abilitiesVerified": true,
       "eliteChartVerified": true,
-      "notes": "Publisher rulebook p22 prints complete normal-side Tentacles card and Elite chart"
+      "notes": "Publisher City revised rulebook p22 card reads Elite #4 Brutal Suckers. Publisher Swamps revised rulebook indexed image reads Elite #4 Bitter Success. Treat as set-specific variant; do not collapse these into one global ability name.",
+      "editionDifference": {
+        "eliteAbility4": "Bitter Success",
+        "effect": "Tentacle Combat Hits +2 Damage"
+      }
     },
     {
       "edition": "revised",

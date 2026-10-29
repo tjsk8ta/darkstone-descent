@@ -412,9 +412,8 @@ function previewEliteAbilities(groups){
 }
 function drawThreat(r,tier='low'){
  if(!S||!r)throw Error('Missing encounter state');
- // The publisher's revised core rulebooks print different names for Tentacles Elite #4.
- // Preserve identical +2 Damage mechanics but display the selected set's actual card name.
- TYPES.Tentacle.eliteChart[3].name=(S.coreEdition==='revised'&&S.coreThreatSet==='swamp')?'Bitter Success':'Brutal Suckers';
+ // Edition/set-specific Elite labels are loaded by applyEnemyEdition.
+ // Never mutate the shared chart while resolving an encounter.
  if(!['low','medium','high','epic'].includes(tier))throw Error('Unsupported Threat tier '+tier);
  // Preserve a card already drawn by a previous version of the game.
  if(tier==='low'&&r.pendingLowThreat&&!r.pendingThreatCard){

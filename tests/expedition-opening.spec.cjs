@@ -50,3 +50,44 @@ test('legacy T-junction has accessible western passage and coherent walkable flo
  expect(state.door).toBe('W');
  expect(state.status.ready).toBe(true);
 });
+
+test('multi-chamber expedition preserves reachable frontier and encounters',async({page})=>{
+ const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('/');
+ const result=await page.evaluate(()=>{
+  makeRun(createProfile(Object.keys(CLASSES)[0]),'story');
+  const opened=[],blocked=[];
+  for(let step=0;step<8;step++){
+   if(S.pendingEvent){S.pendingEvent=null;closeModal()}
+   // Clear fights in this topology-focused test; separate combat tests own damage.
+   S.enemies=[];for(const r of Object.values(S.rooms)){r.pendingThreat=false;r.pendingThreatError=null}
+   const current=roomCurrent();
+   if(current?.seen&&!current.explored)enterRoom(current);
+   ensureOpenFrontier();
+   const exits=frontierCandidates();
+   if(!exits.length){blocked.push({step,room:roomCurrent()?.name});break}
+   const next=exits[0];
+   const square=PORTAL_LANES[next.dir].find(([x,y])=>
+    path({x:S.x,y:S.y},{x:next.room.x*W+x,y:next.room.y*H+y},false,false)!==null);
+   if(!square){blocked.push({step,reason:'unreachable portal'});break}
+   S.x=next.room.x*W+square[0];S.y=next.room.y*H+square[1];
+   S.actionUsed=false;S.searchUsedTurn=-1;
+   const revealed=doorwayRoom();
+   if(!revealed){blocked.push({step,reason:'doorway unavailable'});break}
+   lookThroughDoor();
+   const neighbor=S.rooms[id(next.room.x+D[next.dir][0],next.room.y+D[next.dir][1])];
+   if(!neighbor?.seen){blocked.push({step,reason:'room not revealed'});break}
+   const back=OPPOSITE_DOOR[next.dir];
+   const entry=PORTAL_LANES[back].find(([x,y])=>floorLocal(neighbor,x,y));
+   if(!entry){blocked.push({step,reason:'new tile has no reciprocal entrance'});break}
+   S.x=neighbor.x*W+entry[0];S.y=neighbor.y*H+entry[1];
+   enterRoom(neighbor);
+   opened.push({name:neighbor.name,shape:neighbor.shape,enemies:S.enemies.length,pending:!!neighbor.pendingThreat});
+  }
+  return {opened,blocked,logs:S.log.slice(0,10).map(x=>x.text)};
+ });
+ expect(errors).toEqual([]);
+ expect(result.blocked).toEqual([]);
+ expect(result.opened.length).toBe(8);
+ expect(result.opened.some(r=>r.shape==='chamber')).toBe(true);
+});

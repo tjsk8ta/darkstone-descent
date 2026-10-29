@@ -642,10 +642,10 @@ function doorwayRoom(){
   const [dx,dy]=D[dir],nx=r.x+dx,ny=r.y+dy;
   if(nx<0||ny<0||nx>=N||ny>=N)continue;
   const nr=S.rooms[id(nx,ny)];if(nr?.seen)continue;
-  const edge=dir==='N'?Array.from({length:W},(_,x)=>[x,0]):
-   dir==='S'?Array.from({length:W},(_,x)=>[x,H-1]):
-   dir==='E'?Array.from({length:H},(_,y)=>[W-1,y]):
-   Array.from({length:H},(_,y)=>[0,y]);
+  const edge=dir==='N'?[[4,0],[5,0]]:
+   dir==='S'?[[4,H-1],[5,H-1]]:
+   dir==='E'?[[W-1,1],[W-1,2]]:
+   [[0,1],[0,2]];
   const adjacent=edge.some(([x,y])=>floorLocal(r,x,y)&&
    Math.max(Math.abs(x-lx),Math.abs(y-ly))<=1);
   if(!adjacent)continue;

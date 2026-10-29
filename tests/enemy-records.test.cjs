@@ -43,7 +43,7 @@ test('Targa Pylon is ranged-only and Corpse Piles cannot make melee attacks',()=
  assert.equal(records.get('revised','Corpse Pile').stats.combat,0);
 });
 test('unverified fields never appear as verified record-sheet data',()=>{
- assert.deepEqual(records.verifiedFields('original','Strangler').sort(),['escape','hit','initiative','steps'].sort());
+ assert.deepEqual(records.verifiedFields('original','Strangler').sort(),['escape','hit','initiative','size','steps'].sort());
  assert.equal(records.get('original','Strangler').complete,false);
  assert.equal(records.get('revised','Night Terror'),null);
  assert.deepEqual(records.verifiedFields('revised','Corpse Pile').sort(),['combat','initiative','steps']);

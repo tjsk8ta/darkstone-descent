@@ -1,5 +1,7 @@
 name: Verify Darkstone rules engine
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 concurrency:
   group: verify-${{ github.ref }}
@@ -15,10 +17,8 @@ jobs:
       - run: npm ci || npm install
       - run: npm test
         id: unit_tests
-      - if: always()
-        run: npx playwright install --with-deps chromium
-      - if: always()
-        run: npm run test:e2e -- --reporter=line,html
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e -- --reporter=line,html
       - if: always()
         uses: actions/upload-artifact@v4
         with:

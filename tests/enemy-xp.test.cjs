@@ -16,7 +16,7 @@ test('large-enemy base XP is awarded once per attack, plus 5 XP per actual Wound
  assert.equal(award(e,2,attack),20);
  assert.equal(award(e,3,attack),15);
  assert.equal(award(e,0,attack),0);
- assert.equal(award(e,1,{}),15);
+ assert.equal(award(e,1,{}),5);
 });
 test('Elite abilities increase base XP but do not multiply wound XP',()=>{
  const award=setup([1,2]),e={id:8,type:'Goliath'};

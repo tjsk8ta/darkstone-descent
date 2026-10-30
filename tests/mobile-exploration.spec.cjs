@@ -24,7 +24,7 @@ test('initial T-Junction remains active, safe and traversable rather than ending
   localStorage.setItem(k,JSON.stringify(s));
  });
  await page.reload();
- await page.locator('#resumeGame').click();
+ await expect(page.locator('#mapTitle')).toContainText('Mine Entrance');
  await expect(page.locator('#exploreBtn')).toBeEnabled();
  await page.locator('#exploreBtn').click();
  await expect(page.locator('#mapEyebrow')).toContainText('enemies active');

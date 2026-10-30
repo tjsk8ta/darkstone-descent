@@ -50,6 +50,8 @@
 <script src="rules/enemy-records.js"></script>
 <script src="rules/save-guard.js"></script>
 <script src="rules/town-phase.js"></script>
+<script src="rules/hero-inventory.js"></script>
+<script src="rules/enemy-placement.js"></script>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id), canvas=$('map'),ctx=canvas.getContext('2d');
@@ -280,14 +282,14 @@ function ensureOpenFrontier(){
  }
  log('No reachable unexplored passage: mine topology requires recovery.','hit');
 }
-function createProfile(hero){return{hero,level:1,exp:0,coins:0,stone:0,upgrades:{health:0,armour:0,power:0},missions:0}}
+function createProfile(hero,freeToken='bandages'){const inventory=DarkstoneHeroInventory.create(freeToken);return{hero,level:1,exp:0,coins:0,stone:0,upgrades:{health:0,armour:0,power:0},missions:0,inventory,startingToken:freeToken}}
 function makeRun(profile,mode){if(new URLSearchParams(location.search).has('recovery')){const url=new URL(location.href);url.searchParams.delete('recovery');history.replaceState(null,'',url.pathname+url.search+url.hash)}$('startupRecovery').style.display='none';let C=CLASSES[profile.hero],maxHp=C.hp+profile.upgrades.health*3,maxS=C.sanity;
- selectedEnemyId=null;S={profile,mode,rooms:generateRooms(),x:4*W+4,y:5*H+5,hp:maxHp,sanity:maxS,maxHp,maxS,coins:0,stone:0,bandages:2,whiskey:1,bombs:1,revives:mode==='story'?3:mode==='hard'?1:2,maxGrit:2,grit:1,darkness:0,depth:0,turn:0,move:0,moveMax:0,actionUsed:false,powered:false,enemies:[],nextEnemy:1,clues:0,cleared:0,bossDefeated:false,ended:false,log:[],pendingEvent:null,modeScreen:null,bossRitual:false,depthEvents:0,growingDread:0,enemyActed:[],escapedValue:1,coreThreatSet:selectedSet,coreEdition:selectedEdition,brutalVoidSpiders:selectedEdition==='original'&&selectedBrutalVoidSpiders,threatDeckVersion:7};
+ selectedEnemyId=null;S={profile,mode,rooms:generateRooms(),x:4*W+4,y:5*H+5,hp:maxHp,sanity:maxS,maxHp,maxS,coins:0,stone:0,bandages:2+(profile.startingToken==='bandages'?1:0),whiskey:1+(profile.startingToken==='whiskey'?1:0),bombs:1+(profile.startingToken==='dynamite'?1:0),tonic:profile.startingToken==='tonic'?1:0,revives:mode==='story'?3:mode==='hard'?1:2,maxGrit:2,grit:1,darkness:0,depth:0,turn:0,move:0,moveMax:0,actionUsed:false,powered:false,enemies:[],nextEnemy:1,clues:0,cleared:0,bossDefeated:false,ended:false,log:[],pendingEvent:null,modeScreen:null,bossRitual:false,depthEvents:0,growingDread:0,enemyActed:[],escapedValue:1,coreThreatSet:selectedSet,coreEdition:selectedEdition,brutalVoidSpiders:selectedEdition==='original'&&selectedBrutalVoidSpiders,threatDeckVersion:7};
  applyEnemyEdition(S.coreEdition,S.coreThreatSet);log('Lantern lit. Core enemy record-sheet fields loaded for '+S.coreEdition+' edition; unverified fields remain provisional.','good');startRound();save();render();closeModal()}
 function openModal(html,mode){modalMode=mode;$('modal').innerHTML=html;$('overlay').classList.remove('hidden')}
 function closeModal(){if(saveFailure)return;$('overlay').classList.add('hidden')}
-function setup(){let saved=safeRead();let profile=saved?.profile||null;let choices=Object.entries(CLASSES).map(([k,c])=>`<button class="herochoice ${selected===k?'selected':''}" data-hero="${k}"><span class="sigil">${c.symbol}</span><strong>${c.name}</strong><small>${c.desc}</small></button>`).join('');openModal(`<div class="kicker">A descent into the unknown</div><h2>Choose your wanderer.</h2><p>A lone explorer. A shifting mine. A darkness that grows every turn. Survive the tunnels, uncover two clues to the Dark Stone deposit, and defeat the enemies guarding it.</p><div class="herochoices">${choices}</div><div class="setuprow"><label for="coreSet">Core set</label><select id="coreSet"><option value="combined" ${selectedSet==='combined'?'selected':''}>Both original core sets</option><option value="city" ${selectedSet==='city'?'selected':''}>City of the Ancients</option><option value="swamp" ${selectedSet==='swamp'?'selected':''}>Swamps of Death</option></select></div><div class="setuprow"><label for="coreEdition">Card edition</label><select id="coreEdition"><option value="revised" ${selectedEdition==='revised'?'selected':''}>Revised (2020)</option><option value="original" ${selectedEdition==='original'?'selected':''}>Original (2014)</option></select></div><div class="setuprow"><label for="brutalVoidSpiders">Original Brutal Void Spiders (verified card only)</label><input type="checkbox" id="brutalVoidSpiders" ${selectedBrutalVoidSpiders?'checked':''}></div><div class="setuprow"><label for="difficulty">Danger level</label><select id="difficulty"><option value="story" ${difficulty==='story'?'selected':''}>Story · 3 revives</option><option value="standard" ${difficulty==='standard'?'selected':''}>Standard · 2 revives</option><option value="hard" ${difficulty==='hard'?'selected':''}>Hard · 1 revive</option></select></div><div class="modalbuttons"><button class="btn gold" id="startGame">Begin expedition →</button>${saved&&!saved.ended?'<button class="btn" id="resumeGame">Resume saved expedition</button>':''}</div><p class="modalnote">Entrance and T-junction geometry adapted from community tile diagrams; additional tiles and scenarios are substitutes, not an official recreation. Autosaves in this browser.</p>`,'setup');
- document.querySelectorAll('.herochoice').forEach(b=>b.onclick=()=>{selected=b.dataset.hero;document.querySelectorAll('.herochoice').forEach(x=>x.classList.toggle('selected',x===b))});$('difficulty').onchange=e=>difficulty=e.target.value;$('coreSet').onchange=e=>selectedSet=e.target.value;$('coreEdition').onchange=e=>selectedEdition=e.target.value;$('brutalVoidSpiders').onchange=e=>selectedBrutalVoidSpiders=e.target.checked;$('startGame').onclick=()=>makeRun(createProfile(selected),difficulty);if($('resumeGame'))$('resumeGame').onclick=()=>{S=saved;applyEnemyEdition(S.coreEdition||'revised',S.coreThreatSet||'combined');pendingAttack=S.savedPendingAttack||null;closeModal();render()};}
+function setup(){let saved=safeRead();let profile=saved?.profile||null;let choices=Object.entries(CLASSES).map(([k,c])=>`<button class="herochoice ${selected===k?'selected':''}" data-hero="${k}"><span class="sigil">${c.symbol}</span><strong>${c.name}</strong><small>${c.desc}</small></button>`).join('');openModal(`<div class="kicker">A descent into the unknown</div><h2>Choose your wanderer.</h2><p>A lone explorer. A shifting mine. A darkness that grows every turn. Survive the tunnels, uncover two clues to the Dark Stone deposit, and defeat the enemies guarding it.</p><div class="herochoices">${choices}</div><div class="setuprow"><label for="coreSet">Core set</label><select id="coreSet"><option value="combined" ${selectedSet==='combined'?'selected':''}>Both original core sets</option><option value="city" ${selectedSet==='city'?'selected':''}>City of the Ancients</option><option value="swamp" ${selectedSet==='swamp'?'selected':''}>Swamps of Death</option></select></div><div class="setuprow"><label for="coreEdition">Card edition</label><select id="coreEdition"><option value="revised" ${selectedEdition==='revised'?'selected':''}>Revised (2020)</option><option value="original" ${selectedEdition==='original'?'selected':''}>Original (2014)</option></select></div><div class="setuprow"><label for="brutalVoidSpiders">Original Brutal Void Spiders (verified card only)</label><input type="checkbox" id="brutalVoidSpiders" ${selectedBrutalVoidSpiders?'checked':''}></div><div class="setuprow"><label for="startingToken">Free Side Bag token (revised rules, p. 7)</label><select id="startingToken"><option value="bandages">Bandages</option><option value="whiskey">Whiskey</option><option value="dynamite">Dynamite</option><option value="tonic">Tonic (effect not implemented)</option></select></div><div class="setuprow"><label for="difficulty">Danger level</label><select id="difficulty"><option value="story" ${difficulty==='story'?'selected':''}>Story · 3 revives</option><option value="standard" ${difficulty==='standard'?'selected':''}>Standard · 2 revives</option><option value="hard" ${difficulty==='hard'?'selected':''}>Hard · 1 revive</option></select></div><div class="modalbuttons"><button class="btn gold" id="startGame">Begin expedition →</button>${saved&&!saved.ended?'<button class="btn" id="resumeGame">Resume saved expedition</button>':''}</div><p class="modalnote">Entrance and T-junction geometry adapted from community tile diagrams; additional tiles and scenarios are substitutes, not an official recreation. Autosaves in this browser.</p>`,'setup');
+ document.querySelectorAll('.herochoice').forEach(b=>b.onclick=()=>{selected=b.dataset.hero;document.querySelectorAll('.herochoice').forEach(x=>x.classList.toggle('selected',x===b))});$('difficulty').onchange=e=>difficulty=e.target.value;$('coreSet').onchange=e=>selectedSet=e.target.value;$('coreEdition').onchange=e=>selectedEdition=e.target.value;$('brutalVoidSpiders').onchange=e=>selectedBrutalVoidSpiders=e.target.checked;$('startGame').onclick=()=>makeRun(createProfile(selected,$('startingToken').value),difficulty);if($('resumeGame'))$('resumeGame').onclick=()=>{S=saved;applyEnemyEdition(S.coreEdition||'revised',S.coreThreatSet||'combined');pendingAttack=S.savedPendingAttack||null;closeModal();render()};}
 function startRound(){if(!S||S.ended||S.mutationReviewPending)return;
  S.turn++;S.enemyActed=[];S.escapedValue=1;
  for(const e of S.enemies)if(eliteHas(e.type,'regeneration')){const before=e.hp;e.hp=Math.min(e.maxHp,e.hp+2);if(e.hp>before)log(TYPES[e.type].name+' #'+e.id+' regenerates '+(e.hp-before)+' Wounds.','hit')}
@@ -347,7 +349,7 @@ function finishFinalEncounter(){
  }
  const bonuses=f.bonuses||{hp:S.bossDreadHp||0,defense:S.bossDreadDefense||0};
  const placed=[],startId=S.nextEnemy;
- for(const type of types){
+ for(const type of DarkstoneEnemyPlacement.orderTypes(types,TYPES,shuffleDeck)){
   if(!spawnEnemy(type,r)){
    S.enemies=S.enemies.filter(e=>!placed.includes(e.id));S.nextEnemy=startId;
    log('Final encounter spawn failed and was rolled back. Setup remains pending.','hit');return
@@ -577,7 +579,7 @@ function drawThreat(r,tier='low'){
   log('Threat '+candidate.card+' unresolved: '+e.message,'hit');return 0;
  }
  const placed=[],startId=S.nextEnemy;
- for(const g of shuffleDeck([...groups]).sort((x,y)=>TYPES[x.type].initiative-TYPES[y.type].initiative)){
+ for(const g of DarkstoneEnemyPlacement.orderGroups(groups,TYPES,shuffleDeck)){
   for(let i=0;i<g.n;i++){
    if(!spawnEnemy(g.type,r)){
     S.enemies=S.enemies.filter(e=>!placed.includes(e.id));S.nextEnemy=startId;
@@ -629,7 +631,7 @@ function eventModal(evt){openModal(`<div class="kicker">Unforeseen encounter</di
 function eventEffect(e){let d=null;const rollEvent=()=>{if(d===null)d=die();return d};let before={hp:S.hp,sanity:S.sanity,stone:S.stone,bandages:S.bandages,coins:S.coins,grit:S.grit,enemies:S.enemies.length};let detail='';
 if(e==='vein'){let gained=1+rnd(2),test=rollEvent(),loss=test>=4?3:1;S.stone+=gained;S.sanity-=loss;detail='Extract crystal: gained '+gained+' Darkstone; risk roll D6 ['+test+'] ('+(test>=4?'4–6':'1–3')+') caused '+loss+' Sanity damage.'}
 else if(e==='seal'){S.sanity=Math.min(S.maxS,S.sanity+3);detail='Seal crack: recover up to 3 Sanity (capped at maximum).'}
-else if(e==='cart'){S.bandages++;S.coins+=7;let test=rollEvent();detail='Search cargo: +1 Bandage, +7 Coins. Ambush D6 ['+test+'] — '+(test<=2?'enemy triggered.':'no enemy.');if(test<=2){let r=roomCurrent(),n=S.enemies.length;spawnEnemy('spider',r);detail+=' '+(S.enemies.length>n?'A Cinder Crawler spawned.':'No available spawn space; no enemy spawned.')}}
+else if(e==='cart'){S.bandages++;S.coins+=7;let test=rollEvent();detail='Search cargo: +1 Bandage, +7 Coins. Ambush D6 ['+test+'] — '+(test<=2?'enemy triggered.':'no enemy.');if(test<=2){let r=roomCurrent(),n=S.enemies.length;spawnEnemy('spider',r,{ambush:true});detail+=' '+(S.enemies.length>n?'A Cinder Crawler spawned.':'No available spawn space; no enemy spawned.')}}
 else if(e==='ignore'){S.grit=Math.min(4,S.grit+1);detail='Leave cart undisturbed: gain up to 1 Grit (maximum 4).'}
 else if(e==='dig'){let test=rollEvent();if(test>=3){S.coins+=14;detail='Dig marker: D6 ['+test+'] success; +14 Coins.'}else{S.hp-=3;detail='Dig marker: D6 ['+test+'] failure; -3 Health.'}}
 else if(e==='voice'){let test=rollEvent();if(test>=4){S.stone++;S.sanity=Math.min(S.maxS,S.sanity+2);detail='Follow voice: D6 ['+test+'] success; +1 Darkstone and up to +2 Sanity.'}else{S.sanity-=3;detail='Follow voice: D6 ['+test+'] failure; -3 Sanity.'}}
@@ -674,10 +676,10 @@ function spawnSpaces(r){
  }
  return spaces;
 }
-function spawnEnemy(type,r){
+function spawnEnemy(type,r,options={}){
  const t=TYPES[type];
  if(!t){log('Unknown enemy type '+type+'; cannot spawn.','hit');return false}
- const locs=spawnSpaces(r);
+ const locs=options.ambush?DarkstoneEnemyPlacement.ambushSpaces(S,cellAt,roomAt,r):spawnSpaces(r);
  if(!locs.length){log('No connected space for '+type+'; placement deferred.','hit');return false}
  const p=locs[0],boost=S.mode==='hard'?1:0;
  if(!t.recordComplete){

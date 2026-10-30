@@ -12,8 +12,8 @@ const OFFICIAL_TENTACLE_CITY='https://www.flyingfrog.net/shadowsofbrimstone/pdf/
 const OFFICIAL_TENTACLE_SWAMP='https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf#page=22';
 const original={
  'Goliath':{
-  source:ORIGINAL_CITY,confidence:'readable original 2014 physical card photograph',complete:true,
-  stats:{size:'extra-large',initiative:2,steps:6,escape:4,hit:3,combat:3,damage:3,def:3,hp:24,exp:10,xpPerWound:5,unspeakableTerror:3,attackRange:3,immuneCrit:true},
+  source:ORIGINAL_CITY,corroboratingSource:'https://3.bp.blogspot.com/-uQlPW7PTpTk/VBtJhWjN2rI/AAAAAAAAEKI/H9AGg8xqpIg/s1600/33.jpg',confidence:'2014 physical normal-side card: health 12 +5 per Hero, not flat 24; other stats cross-checked with original photo',complete:true,
+  stats:{size:'extra-large',initiative:2,steps:6,escape:4,hit:3,combat:3,damage:3,def:3,hp:12,hpPerHero:5,exp:10,xpPerWound:5,unspeakableTerror:3,attackRange:3,immuneCrit:true},
   mechanics:['Flailing Tentacles: attacks every Hero within 3 spaces, with 3 attack dice','Unspeakable Terror (3)','Immune to Critical Hits'],
   eliteChart:[
    {id:'crushing-blows',name:'Crushing Blows',effect:'+1 melee Damage'},
@@ -28,10 +28,10 @@ const original={
   stats:{size:'large',initiative:3,steps:5,escape:3,hit:5,combat:4,damage:4,def:3,hp:12,exp:10,xpPerWound:5,terror:2},
   mechanics:['Terror (2)'],
   eliteChart:[
-   {id:'hypnotic-gaze',name:'Hypnotic Gaze',effect:'Escape 6+'},
-   {id:'walking-nightmare',name:'Walking Nightmare',effect:'Replace Terror (2) with Unspeakable Terror (2)'},
-   {id:'brute',name:'Brute',effect:'+6 Health'},
-   {id:'mind-drain',name:'Mind Drain',effect:'Combat and Horror Hits deal +2 Damage'},
+   {id:'hypnotic-gaze',name:'Transfixing Stare',effect:'Escape 6+'},
+   {id:'walking-nightmare',name:'Gibbering Nightmare',effect:'Replace Terror (2) with Unspeakable Terror (2)'},
+   {id:'brute',name:'Brutes',effect:'+6 Health'},
+   {id:'mind-drain',name:'Soul Drain',effect:'Combat and Horror Hits deal +2 Damage'},
    {id:'regeneration',name:'Regeneration (2)',effect:'Heal 2 Wounds at start of each turn'},
    {id:'hunter',name:'Hunter',effect:'Melee To Hit 4+'}
   ]},

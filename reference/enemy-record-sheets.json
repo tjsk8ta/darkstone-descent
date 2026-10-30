@@ -6,12 +6,12 @@
       "edition": "original",
       "set": "city",
       "enemy": "Night Terror",
-      "status": "needs-card-face",
-      "source": null,
+      "status": "partial-2014-physical-normal-photo",
+      "source": "https://i.ebayimg.com/images/g/~O8AAOSwXNBnIZEl/s-l1200.png",
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "notes": "Original 2014 green card inspected in eBay photo and September 2014 solo play photo; printed Elite names differ from translated French record. Not all lower card fields fully visible; remain incomplete for full face acceptance.",
       "brutalFace": {
         "status": "partial-overlapped-photo",
         "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
@@ -22,7 +22,16 @@
         "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
         "gameplayIntegrated": false
       },
-      "gameplayIntegrated": false
+      "gameplayIntegrated": false,
+      "additionalSource": "https://3.bp.blogspot.com/-uQlPW7PTpTk/VBtJhWjN2rI/AAAAAAAAEKI/H9AGg8xqpIg/s1600/33.jpg",
+      "verifiedFields": [
+        "elite1=Transfixing Stare",
+        "elite2=Gibbering Nightmare",
+        "elite3=Brutes",
+        "elite4=Soul Drain",
+        "elite5=Regeneration",
+        "elite6=Hunter"
+      ]
     },
     {
       "edition": "original",
@@ -95,12 +104,12 @@
       "edition": "original",
       "set": "city",
       "enemy": "Goliath",
-      "status": "needs-card-face",
-      "source": null,
+      "status": "partial-2014-physical-normal-photo",
+      "source": "https://i.ebayimg.com/images/g/~O8AAOSwXNBnIZEl/s-l1200.png",
       "statisticsVerified": false,
       "abilitiesVerified": false,
       "eliteChartVerified": false,
-      "notes": "Inventory listing alone does not verify record sheet; obtain and inspect actual green-side image",
+      "notes": "Actual green original 2014 Goliath photographed in eBay and September 2014 solo play. Health is 12 plus 5 per Hero, not flat 24; complete lower chart and full normal face remain partly obscured, so full 48-face acceptance NOT met.",
       "brutalFace": {
         "status": "partial-overlapped-photo",
         "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
@@ -111,7 +120,20 @@
         "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
         "gameplayIntegrated": false
       },
-      "gameplayIntegrated": false
+      "gameplayIntegrated": false,
+      "additionalSource": "https://3.bp.blogspot.com/-uQlPW7PTpTk/VBtJhWjN2rI/AAAAAAAAEKI/H9AGg8xqpIg/s1600/33.jpg",
+      "verifiedFields": [
+        "healthBase=12",
+        "healthPerHero=5",
+        "initiative=2",
+        "move=6",
+        "escape=4",
+        "meleeToHit=3",
+        "damage=3",
+        "defense=3",
+        "flailingTentaclesReach=3",
+        "immuneCriticalHits"
+      ]
     },
     {
       "edition": "original",

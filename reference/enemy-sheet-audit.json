@@ -150,7 +150,23 @@
         ],
         "fullGameplayAccepted": false,
         "sourceTier": "third_party_translation_scan",
-        "publisherSourceVerified": false
+        "publisherSourceVerified": false,
+        "physicalNormalPhoto": {
+          "source": "https://i.ebayimg.com/images/g/~O8AAOSwXNBnIZEl/s-l1200.png",
+          "corroboration": "https://3.bp.blogspot.com/-uQlPW7PTpTk/VBtJhWjN2rI/AAAAAAAAEKI/H9AGg8xqpIg/s1600/33.jpg",
+          "face": "normal-green",
+          "edition": "original-2014",
+          "visibility": "partial-overlapped",
+          "acceptedFor48FaceGate": false,
+          "verifiedFields": [
+            "elite1=Transfixing Stare",
+            "elite2=Gibbering Nightmare",
+            "elite3=Brutes",
+            "elite4=Soul Drain",
+            "elite5=Regeneration",
+            "elite6=Hunter"
+          ]
+        }
       },
       "Goliath": {
         "status": "full",
@@ -179,7 +195,25 @@
         ],
         "fullGameplayAccepted": false,
         "sourceTier": "third_party_photograph",
-        "publisherSourceVerified": false
+        "publisherSourceVerified": false,
+        "physicalNormalPhoto": {
+          "source": "https://i.ebayimg.com/images/g/~O8AAOSwXNBnIZEl/s-l1200.png",
+          "corroboration": "https://3.bp.blogspot.com/-uQlPW7PTpTk/VBtJhWjN2rI/AAAAAAAAEKI/H9AGg8xqpIg/s1600/33.jpg",
+          "face": "normal-green",
+          "edition": "original-2014",
+          "visibility": "partial-overlapped",
+          "acceptedFor48FaceGate": false,
+          "verifiedFields": [
+            "hp=12",
+            "hpPerHero=5",
+            "initiative=2",
+            "steps=6",
+            "escape=4",
+            "hit=3",
+            "damage=3",
+            "defense=3"
+          ]
+        }
       },
       "Hellbat": {
         "status": "missing",
@@ -432,7 +466,8 @@
     "Verified size categories have been recorded; large/extra-large multi-space footprints are not yet fully implemented or tested.",
     "Of four fully transcribed unique edition/type combinations, only revised Tentacle is directly publisher-sourced; original Tentacle and Night Terror rely on translated original-era card images, while original Goliath relies on a physical-card photograph.",
     "The two revised Tentacle record sheets are not identical: City Elite #4 is Brutal Suckers, Swamps Elite #4 is Bitter Success. Both give +2 Combat Hit Damage. Combined-set encounter provenance remains a pending implementation detail.",
-    "Original 2014 Tentacle sheet is evidenced by an original-era French card translation, cross-checked against the 2020 publisher example; do not misclassify the original as directly publisher-sourced."
+    "Original 2014 Tentacle sheet is evidenced by an original-era French card translation, cross-checked against the 2020 publisher example; do not misclassify the original as directly publisher-sourced.",
+    "2026-10-30: inspected actual original 2014 green physical Goliath and Night Terror photos; original Goliath Health 12 +5 per Hero corrected. Partial overlap prevents complete 48-face acceptance. Previous GitHub Actions verify run failed; browser acceptance pending."
   ],
   "remainingSourceAcquisition": [
     "Original Swamp: complete Harbinger, Hellbat, Hungry Dead, Corpse Pile and Slasher normal-side sheets and six Elite entries.",
@@ -479,5 +514,6 @@
       "https://www.dropbox.com/s/yk5b17cbf1tbb2u/corpsepilereg.jpg?dl=1"
     ],
     "verification": "Links identified from TTS asset inventory only; not independently opened or confirmed to contain a readable record-sheet face. Do not mark source verified."
-  }
+  },
+  "lastPhysicalFaceReview": "2026-10-30"
 }

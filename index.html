@@ -593,6 +593,7 @@ function drawThreat(r,tier='low'){
  for(const e of S.enemies){const bonus=eliteHas(e.type,'brute')?6:0,delta=bonus-(e.eliteHealthBonus||0);if(delta){e.hp+=delta;e.maxHp+=delta;e.eliteHealthBonus=bonus}}
  if(r.fightRewarded){r.fightRewarded=false;r.fightThreats=0}
  r.pendingThreat=false;r.pendingThreatTier=null;r.pendingThreatError=null;
+ // Clear the unresolved card only after all models and Elite effects commit.
  r.pendingThreatCard=null;r.pendingThreatGroups=null;
  r.pendingLowThreat=null;r.pendingLowThreatGroups=null;
  const threatLoot=r.pendingThreatLoot||1;r.fightThreats=(r.fightThreats||0)+threatLoot;recordFightThreats(threatLoot);r.pendingThreatLoot=null;

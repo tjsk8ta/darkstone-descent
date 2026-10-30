@@ -29,6 +29,8 @@ test('unverified Corpse Pile Fast Spawner cannot create invented enemies',()=>{
  assert.match(html,/Corpse Pile Fast Spawner frequency and placement are unverified/);
 });
 test('doorway exploration cannot bypass pending combat or encounter',()=>{
- assert.match(html,/function lookThroughDoor\(\)\{if\(!S\|\|S\.ended\|\|pendingAttack\|\|S\.pendingEvent/);
+ assert.match(html,/function lookThroughDoor\(\)\{const state=doorwayStatus\(\);if\(!state\.ready\)/);
+ assert.match(html,/function doorwayStatus\(\)[\s\S]*?if\(pendingAttack\)/);
+ assert.match(html,/function doorwayStatus\(\)[\s\S]*?if\(S\.pendingEvent\)/);
  assert.match(html,/Object\.values\(S\.rooms\)\.some\(room=>room\.pendingThreat\)/);
 });

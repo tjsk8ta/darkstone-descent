@@ -194,7 +194,7 @@ function doorwayStatus(){
  if(pendingAttack)return {ready:false,reason:'Finish the attack'};
  if(S.pendingEvent)return {ready:false,reason:'Resolve the event'};
  if(S.finalEncounter&&!S.finalEncounter.started)return {ready:false,reason:'Resolve the final encounter'};
- if(!$('overlay').classList.contains('hidden'))return {ready:false,reason:'Close the active dialog'};
+ if(saveFailure)return {ready:false,reason:'Save integrity lock'};
  if(Object.values(S.rooms).some(room=>room.pendingThreat))return {ready:false,reason:'Resolve the outstanding Threat'};
  if(S.enemies.length)return {ready:false,reason:'Defeat active enemies'};
  if(S.actionUsed||S.searchUsedTurn===S.turn)return {ready:false,reason:'Search/action already used this turn'};

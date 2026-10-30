@@ -12,7 +12,7 @@ function extract(name,next){
 const source=extract('applyModelLimits','previewEliteAbilities');
 const TYPES={'Tentacle':{modelCap:6},'Void Spider':{modelCap:12},'Night Terror':{modelCap:3}};
 function limits(groups,existing=[],set='city'){
- const S={enemies:existing.map(type=>({type})),coreThreatSet:set};
+ const S={enemies:existing.map(type=>({type})),coreThreatSet:set,turn:1,modelShortageEliteTurns:{}};
  return new Function('S','TYPES',source+';return applyModelLimits;')(S,TYPES)(groups);
 }
 test('Miniature shortages cap physical models and grant one group Elite',()=>{

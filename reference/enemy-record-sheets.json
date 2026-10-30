@@ -13,14 +13,16 @@
       "eliteChartVerified": false,
       "notes": "Original 2014 green card inspected in eBay photo and September 2014 solo play photo; printed Elite names differ from translated French record. Not all lower card fields fully visible; remain incomplete for full face acceptance.",
       "brutalFace": {
-        "status": "partial-overlapped-photo",
-        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
-        "statisticsVerified": false,
-        "abilitiesVerified": false,
-        "eliteChartVerified": false,
-        "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
-        "gameplayIntegrated": false
+        "status": "translated-complete-physical-occluded",
+        "source": "https://www.scribd.com/document/771872867/SoB-VF-Monstre-Fiche-Terreur-nocturne",
+        "statisticsVerified": true,
+        "abilitiesVerified": true,
+        "eliteChartVerified": true,
+        "implementation": "rules/enemy-records.js original Night Terror red face (disabled pending physical verification)",
+        "notes": "French translation reproduces complete 2014 red face: initiative 4, Terror 2, Mind Drain 3, Claws double hits, 20 Health, six Elite effects. Physical English red card remains occluded; not accepted for release.",
+        "gameplayIntegrated": false,
+        "evidenceKind": "translated-recreation",
+        "inspectedFace": true
       },
       "gameplayIntegrated": false,
       "additionalSource": "https://3.bp.blogspot.com/-uQlPW7PTpTk/VBtJhWjN2rI/AAAAAAAAEKI/H9AGg8xqpIg/s1600/33.jpg",
@@ -73,7 +75,9 @@
         "eliteChartVerified": true,
         "implementation": "rules/enemy-records.js applyFace(original,Void Spider,city,brutal); index.html optional original Brutal Void Spider mode, Elite attacks and venom",
         "notes": "Red Brutal face verified from physical photograph. Optional original-edition gameplay selection now applies verified statistics and six Elite chart entries. Hardened Shells, Vicious Bite, Rapid Climbing, Severing Bite, Acidic Ichor, Void Venom and Drop From Above activation implemented; full browser end-to-end acceptance still outstanding.",
-        "gameplayIntegrated": true
+        "gameplayIntegrated": true,
+        "evidenceKind": "physical-original-card",
+        "inspectedFace": true
       },
       "gameplayIntegrated": false
     },
@@ -88,17 +92,21 @@
       "eliteChartVerified": true,
       "notes": "Publisher 2014 original rulebook printed p.20 displays complete green Tentacles normal face: stats, Smash and all six Elite abilities. Same card example applies to the two original core sets; this does not verify the red Brutal face.",
       "brutalFace": {
-        "status": "partial-overlapped-photo",
-        "source": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
-        "statisticsVerified": false,
-        "abilitiesVerified": false,
-        "eliteChartVerified": false,
-        "implementation": null,
-        "notes": "Red card face visible but lower statistics or Elite text obscured by overlapping cards.",
-        "gameplayIntegrated": false
+        "status": "translated-complete-physical-occluded",
+        "source": "https://www.scribd.com/document/771872866/SoB-VF-Monstre-Fiche-Tentacule",
+        "statisticsVerified": true,
+        "abilitiesVerified": true,
+        "eliteChartVerified": true,
+        "implementation": "rules/enemy-records.js original Tentacle red face (disabled pending physical verification)",
+        "notes": "French translation reproduces full 2014 red face: initiative 3, 5 Damage, 3 Defense, 5 Health, 45 XP, six Elite effects including Void Hydra. Not an independently verified unobscured physical English red face; release gate must reject.",
+        "gameplayIntegrated": false,
+        "evidenceKind": "translated-recreation",
+        "inspectedFace": true
       },
       "gameplayIntegrated": true,
-      "implementation": "rules/enemy-records.js get(original,Tentacle)"
+      "implementation": "rules/enemy-records.js get(original,Tentacle)",
+      "evidenceKind": "publisher-rulebook-card-image",
+      "inspectedFace": true
     },
     {
       "edition": "original",
@@ -234,17 +242,21 @@
       "eliteChartVerified": true,
       "notes": "Publisher 2014 original rulebook printed p.20 displays complete green Tentacles normal face: stats, Smash and all six Elite abilities. Same card example applies to the two original core sets; this does not verify the red Brutal face.",
       "brutalFace": {
-        "status": "not-acquired",
-        "source": null,
-        "statisticsVerified": false,
-        "abilitiesVerified": false,
-        "eliteChartVerified": false,
-        "implementation": null,
-        "notes": "No readable red card face acquired.",
-        "gameplayIntegrated": false
+        "status": "translated-complete-physical-occluded",
+        "source": "https://www.scribd.com/document/771872866/SoB-VF-Monstre-Fiche-Tentacule",
+        "statisticsVerified": true,
+        "abilitiesVerified": true,
+        "eliteChartVerified": true,
+        "implementation": "rules/enemy-records.js original Tentacle red face (disabled pending physical verification)",
+        "notes": "French translation reproduces full 2014 red face: initiative 3, 5 Damage, 3 Defense, 5 Health, 45 XP, six Elite effects including Void Hydra. Not an independently verified unobscured physical English red face; release gate must reject.",
+        "gameplayIntegrated": false,
+        "evidenceKind": "translated-recreation",
+        "inspectedFace": true
       },
       "gameplayIntegrated": true,
-      "implementation": "rules/enemy-records.js get(original,Tentacle)"
+      "implementation": "rules/enemy-records.js get(original,Tentacle)",
+      "evidenceKind": "publisher-rulebook-card-image",
+      "inspectedFace": true
     },
     {
       "edition": "original",
@@ -381,7 +393,9 @@
         "gameplayIntegrated": false
       },
       "gameplayIntegrated": true,
-      "implementation": "rules/enemy-records.js get(revised,Tentacle,city); index.html applyEnemyEdition"
+      "implementation": "rules/enemy-records.js get(revised,Tentacle,city); index.html applyEnemyEdition",
+      "evidenceKind": "publisher-rulebook-card-image",
+      "inspectedFace": true
     },
     {
       "edition": "revised",
@@ -530,7 +544,9 @@
         "gameplayIntegrated": false
       },
       "gameplayIntegrated": true,
-      "implementation": "rules/enemy-records.js get(revised,Tentacle,swamp); index.html applyEnemyEdition"
+      "implementation": "rules/enemy-records.js get(revised,Tentacle,swamp); index.html applyEnemyEdition",
+      "evidenceKind": "publisher-rulebook-card-image",
+      "inspectedFace": true
     },
     {
       "edition": "revised",

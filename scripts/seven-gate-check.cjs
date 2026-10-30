@@ -21,7 +21,7 @@ if(results[0].pass){
   if(!['original','revised'].includes(f.edition)||!['city','swamp'].includes(f.set))fail(1,'Invalid edition/set: '+key);
   for(const [face,record] of [['normal',f],['brutal',f.brutalFace]]){
    if(!record){fail(2,'Missing '+face+' face: '+key);continue}
-   const verified=record.statisticsVerified===true&&record.abilitiesVerified===true&&record.eliteChartVerified===true;
+   const verified=record.statisticsVerified===true&&record.abilitiesVerified===true&&record.eliteChartVerified===true&&record.inspectedFace===true&&['physical-original-card','publisher-rulebook-card-image'].includes(record.evidenceKind);
    if(!verified){fail(2,key+' '+face+' unverified ('+(record.status||'no status')+')');continue}
    if(!/^https:\/\//.test(record.source||''))fail(2,key+' '+face+' lacks inspected source URL');
    if(/listing-only|unviewed|partial|occluded|unreadable/i.test((record.status||'')+' '+(record.notes||'')))fail(2,key+' '+face+' marked verified despite unresolved visibility');
@@ -51,7 +51,7 @@ if(results[0].pass){
  if(results.slice(0,5).some(g=>!g.pass))fail(6,'Stop not authorised: preceding acceptance gates remain open');
  if(results.slice(0,6).some(g=>!g.pass))fail(7,'Completion notification prohibited; continue work or record precise external blocker');
  if(status.completion===true&&results.some(g=>!g.pass))fail(7,'Premature completion status');
- const output={releaseAccepted:results.every(x=>x.pass),sourceDigest:fingerprint,gateResults:results,unverifiedFaces:faces.reduce((n,f)=>n+Number(!(f.statisticsVerified&&f.abilitiesVerified&&f.eliteChartVerified))+Number(!(f.brutalFace?.statisticsVerified&&f.brutalFace?.abilitiesVerified&&f.brutalFace?.eliteChartVerified)),0)};
+ const output={releaseAccepted:results.every(x=>x.pass),sourceDigest:fingerprint,gateResults:results,unverifiedFaces:faces.reduce((n,f)=>n+Number(!(f.statisticsVerified&&f.abilitiesVerified&&f.eliteChartVerified&&f.inspectedFace&&['physical-original-card','publisher-rulebook-card-image'].includes(f.evidenceKind)))+Number(!(f.brutalFace?.statisticsVerified&&f.brutalFace?.abilitiesVerified&&f.brutalFace?.eliteChartVerified&&f.brutalFace?.inspectedFace&&['physical-original-card','publisher-rulebook-card-image'].includes(f.brutalFace?.evidenceKind))),0)};
  if(process.argv.includes('--json'))process.stdout.write(JSON.stringify(output,null,2)+'\n');
  else for(const g of results)process.stdout.write('GATE '+g.id+' '+(g.pass?'PASS':'BLOCKED')+' '+(g.pass?'':g.blockers.length+' issue(s): '+g.blockers.slice(0,4).join(' | '))+'\n');
  if(process.argv.includes('--release')&&!output.releaseAccepted)process.exitCode=1;

@@ -40,3 +40,14 @@ test('corruption of all copies cannot be misrepresented as a resumed run',()=>{
  const s=storage();s.setItem(KEY,'not json');s.setItem(KEY+guard.SUFFIX,'[]');
  const recovered=guard.read(s,KEY);assert.equal(recovered.state,null);assert.match(recovered.problem,/No valid/);
 });
+
+test('explicit recovery promotes backup without destroying it',()=>{
+ const s=storage();guard.write(s,KEY,state(1));guard.write(s,KEY,state(2));
+ s.setItem(KEY,'{broken');const restored=guard.recover(s,KEY);
+ assert.equal(restored.turn,1);assert.equal(guard.read(s,KEY).source,'primary');
+ assert.equal(JSON.parse(s.getItem(KEY+guard.SUFFIX)).turn,1);
+});
+test('recovery refuses when both checkpoints are invalid',()=>{
+ const s=storage();s.setItem(KEY,'bad');s.setItem(KEY+guard.SUFFIX,'bad');
+ assert.throws(()=>guard.recover(s,KEY),/No valid expedition/);
+});

@@ -35,6 +35,10 @@ jobs:
 
       - name: Fail verification if either test suite failed
         if: always()
+        env:
+          UNIT_OUTCOME: ${{ steps.unit_tests.outcome }}
+          BROWSER_OUTCOME: ${{ steps.browser_tests.outcome }}
         run: |
-          test '${{ steps.unit_tests.outcome }}' = 'success'
-          test '${{ steps.browser_tests.outcome }}' = 'success'
+          echo "Unit tests: $UNIT_OUTCOME; Chromium tests: $BROWSER_OUTCOME"
+          test "$UNIT_OUTCOME" = success
+          test "$BROWSER_OUTCOME" = success

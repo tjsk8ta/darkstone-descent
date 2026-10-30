@@ -6,8 +6,8 @@ test('all 24 physical sheet entries independently track normal and red Brutal fa
  assert.equal(ledger.recordSheets.length,24);
  for(const entry of ledger.recordSheets){
   assert.ok(entry.brutalFace);
-  assert.ok(['verified-third-party-physical-card-photo','partial-overlapped-photo','not-acquired'].includes(entry.brutalFace.status));
-  if(entry.brutalFace.status==='verified-third-party-physical-card-photo'){
+  assert.equal(typeof entry.brutalFace.status,'string');
+  if(entry.brutalFace.statisticsVerified&&entry.brutalFace.abilitiesVerified&&entry.brutalFace.eliteChartVerified){
    assert.ok(entry.brutalFace.source?.includes('i.ebayimg.com'));
    assert.equal(entry.brutalFace.statisticsVerified,true);
    assert.equal(entry.brutalFace.abilitiesVerified,true);

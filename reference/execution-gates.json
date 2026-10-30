@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "contract": "Darkstone Descent seven-gate execution and stop authorization",
+  "requiredFaces": 48,
+  "requiredSetEditionEntries": 24,
+  "gateOrder": [
+    "input",
+    "acquisition",
+    "implementation",
+    "independent-testing-and-deployment",
+    "self-correction",
+    "stop-authorization",
+    "notification"
+  ],
+  "testEvidence": {},
+  "recurringFailures": {
+    "short-run": {
+      "control": "Do not stop after commits; require all seven gates or concrete external limit",
+      "verification": "Audit every end-of-run against outstanding 48 faces, tests and source-digest evidence"
+    },
+    "links-only": {
+      "control": "Reject listing URLs as face verification; require inspected image and legible full card",
+      "verification": "Per-face statisticsVerified, abilitiesVerified, eliteChartVerified plus provenance"
+    },
+    "peripheral-work": {
+      "control": "Prioritise actual enemy record sheets and gameplay implementation",
+      "verification": "Compare new evidence and code with prior run; no peripheral-only closure"
+    },
+    "fabricated-rules": {
+      "control": "Fail closed for unknown or partial mechanics; preserve provisional flags",
+      "verification": "Every verified ability maps to an inspected card and runnable test"
+    },
+    "untested-deploy": {
+      "control": "Require independent CI and Playwright run URLs plus exact source digest",
+      "verification": "Check latest browser, mobile and Pages evidence before completion"
+    },
+    "door-regression": {
+      "control": "Test T-junction marker, adjacent lane and legacy save recovery",
+      "verification": "Mobile Chromium door scenario must pass against current source"
+    },
+    "journal-omission": {
+      "control": "Record threat card, models, positions, outcomes, rewards and unresolved blockers",
+      "verification": "Mobile Chromium journal scenario and saved log recovery must pass"
+    },
+    "premature-completion": {
+      "control": "Only --release checker may authorise completion",
+      "verification": "All 48 faces and all suite evidence must be green and source-matched"
+    }
+  },
+  "knownCurrentIssues": [
+    "Actual 2014/2020 normal and Brutal card faces incomplete",
+    "CI last independently observed 2026-10-29 run 40945715480 failed: 17/161 Node tests, 6/18 Chromium scenarios",
+    "Automatic GitHub Actions remain workflow_dispatch-only, preserving user request to disable automatic runs",
+    "Pages successful build 2026-10-30T03:46:30Z for 77482b9, not independent live-browser acceptance",
+    "Official core card source omissions and provisional enemy stats",
+    "Mobile T-junction doorway and journal regressions must be re-run on actual Chromium"
+  ],
+  "nextAction": "Acquire legible actual physical card faces and transcribe; fix failed unit/browser tests; run manual CI or local Chromium; verify Pages against exact source fingerprint",
+  "stopAuthorised": false
+}

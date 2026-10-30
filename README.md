@@ -39,7 +39,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-**The verification workflow is manual-only (`workflow_dispatch`)**: automatic GitHub Actions test runs on pushes remain disabled at the user's request. GitHub Pages deployments are separate and do not constitute test results. The full Node and Playwright suites must be run locally or explicitly invoked before claiming their acceptance. Tests cover original/revised Threat parsing, Peril dice, model limits, connected-tile placement, startup, combat and save recovery.
+**Automatic verification runs on every push to `main`**, and can also be started manually (`workflow_dispatch`). It runs Node unit tests followed by Chromium browser tests; failures stop the verification job and diagnostic artifacts are retained. GitHub Pages deployment is separate and is not evidence that tests passed. Tests cover original/revised Threat parsing, Peril dice, model limits, connected-tile placement, startup, combat and save recovery. GitHub account notification preferences are not changed by this workflow.
 
 ## Known incomplete areas
 

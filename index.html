@@ -111,7 +111,7 @@ function safeRead(){
    const el=$('startupRecovery');
    if(el){el.style.display='block';el.textContent=result.problem+' Play is restored only from a validated checkpoint.'}
   }
-  return result.state;
+  return result.source==='backup'?saveGuard.recover(localStorage,KEY):result.state;
  }catch(e){
   saveRecoveryProblem='Cannot read browser storage: '+e.message;
   const el=$('startupRecovery');

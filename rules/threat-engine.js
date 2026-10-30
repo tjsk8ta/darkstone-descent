@@ -27,7 +27,7 @@ function resolveEncounter(card,options={}){
   const nested=/^(?:(Low|Med(?:ium)?|High|Elite)\s+)?Threat\s+Cards?$/i.exec(target);
   if(nested){
    const n=quantity(token,rng),qual=nested[1]?.toLowerCase();
-   const tier=qual==='low'?'low':qual?.startsWith('med')?'medium':qual==='high'?'high':qual==='elite'?currentTier:'low';
+   const tier=qual==='low'?'low':qual?.startsWith('med')?'medium':qual==='high'?'high':currentTier;
    // Elite is a modifier to the Posse's ordinary Threat draw, not a separate deck.
    // An unverified enemy Elite Chart is rejected later by the game placement gate.
    const elite=qual==='elite';

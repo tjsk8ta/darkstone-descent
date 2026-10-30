@@ -12,7 +12,7 @@ function part(startName,endName){
 function scenario(doorOpen){
  const rooms={'0,0':{x:0,y:0,seen:true,doors:['E']},'1,0':{x:1,y:0,seen:true,doors:['W']}};
  const PORTAL_LANES={E:[[8,2],[8,3]],W:[[0,2],[0,3]]};
- const ctx={S:{x:8,y:2,enemies:[],rooms},W:9,H:7,floorLocal:()=>true,
+ const ctx={S:{x:8,y:2,enemies:[],rooms},W:9,H:7,OPPOSITE_DOOR:{N:'S',S:'N',E:'W',W:'E'},floorLocal:()=>true,
   portalLane:(r,d,x,y)=>(r.doors||[]).includes(d)&&PORTAL_LANES[d].some(([a,b])=>a===x&&b===y),
   roomAt:(x,y)=>rooms[Math.floor(x/9)+','+Math.floor(y/7)]||null,
   adjoiningDoorConnected:()=>doorOpen,

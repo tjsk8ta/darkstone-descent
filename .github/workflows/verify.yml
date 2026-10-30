@@ -17,8 +17,11 @@ jobs:
       - run: npm ci || npm install
       - run: npm test
         id: unit_tests
+        continue-on-error: true
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e -- --reporter=line,html
+        id: browser_tests
+        continue-on-error: true
       - if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -27,3 +30,9 @@ jobs:
             playwright-report/
             test-results/
           if-no-files-found: ignore
+
+      - name: Fail verification if either test suite failed
+        if: always()
+        run: |
+          test '${{ steps.unit_tests.outcome }}' = 'success'
+          test '${{ steps.browser_tests.outcome }}' = 'success'

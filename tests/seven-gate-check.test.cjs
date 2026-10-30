@@ -35,3 +35,15 @@ test('CI and deployment evidence must match actual source digest',()=>{
  if(!gates.testEvidence?.chromiumMobileDoor||!gates.testEvidence?.pages)
   assert.equal(result.gateResults[3].pass,false);
 });
+
+test('translated card recreations cannot satisfy the 48 inspected physical faces',()=>{
+ const ledger=require('../reference/enemy-record-sheets.json');
+ const translated=ledger.recordSheets.filter(x=>x.brutalFace?.evidenceKind==='translated-recreation');
+ assert.ok(translated.length>=2);
+ for(const x of translated){
+  assert.equal(x.brutalFace.statisticsVerified,true);
+  assert.equal(x.brutalFace.inspectedFace,true);
+  assert.notEqual(x.brutalFace.evidenceKind,'physical-original-card');
+ }
+ const {result}=run();assert.equal(result.gateResults[1].pass,false);
+});

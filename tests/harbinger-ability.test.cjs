@@ -40,7 +40,8 @@ test('summoned Hellbats receive immediate ambush activation and respect miniatur
  const r=run([3,3],{hellbats:4});
  assert.equal(r.S.enemies.filter(x=>x.type==='Hellbat').length,6);
  assert.equal(r.ambush,1);assert.equal(r.darkness,1);
- assert.equal(r.S.enemies.at(-1).spawnTurn,3);
+ assert.equal(r.S.enemies.at(-1).spawnTurn,4);
+ assert.equal(r.S.enemies.at(-1).ambushPending,true);
 });
 test('live game invokes Bringer of Death at end of each revised Harbinger turn',()=>{
  assert.ok(html.includes('<script src="rules/harbinger-ability.js"></script>'));

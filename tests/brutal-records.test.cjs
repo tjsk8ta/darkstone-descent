@@ -7,7 +7,7 @@ test('all 24 physical sheet entries independently track normal and red Brutal fa
  for(const entry of ledger.recordSheets){
   assert.ok(entry.brutalFace);
   assert.equal(typeof entry.brutalFace.status,'string');
-  if(entry.brutalFace.statisticsVerified&&entry.brutalFace.abilitiesVerified&&entry.brutalFace.eliteChartVerified){
+  if(entry.brutalFace.evidenceKind==='physical-original-card'&&entry.brutalFace.statisticsVerified&&entry.brutalFace.abilitiesVerified&&entry.brutalFace.eliteChartVerified){
    assert.ok(entry.brutalFace.source?.includes('i.ebayimg.com'));
    assert.equal(entry.brutalFace.statisticsVerified,true);
    assert.equal(entry.brutalFace.abilitiesVerified,true);

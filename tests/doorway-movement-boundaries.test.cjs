@@ -9,7 +9,8 @@ const end=html.indexOf('function occupied(',start);
 assert.ok(start>=0&&end>start);
 function make({seen=true,connected=true,diagonal=false}={}){
  const rooms={'0,0':{x:0,y:0,doors:['E']},'1,0':{x:1,y:0,seen,doors:['W']},'1,1':{x:1,y:1,seen,doors:['N']}};
- const context={roomAt:(x,y)=>rooms[Math.floor(x/9)+','+Math.floor(y/7)]||null,adjoiningDoorConnected:()=>connected,W:9,H:7,floorLocal:()=>true};
+ const PORTAL_LANES={N:[[4,0],[5,0]],S:[[4,6],[5,6]],E:[[8,2],[8,3]],W:[[0,2],[0,3]]};
+ const context={portalLane:(r,d,x,y)=>(r.doors||[]).includes(d)&&PORTAL_LANES[d].some(([a,b])=>a===x&&b===y),roomAt:(x,y)=>rooms[Math.floor(x/9)+','+Math.floor(y/7)]||null,adjoiningDoorConnected:()=>connected,W:9,H:7,floorLocal:()=>true};
  vm.runInNewContext(html.slice(start,end),context);
  return context.crossesConnectedDoor;
 }

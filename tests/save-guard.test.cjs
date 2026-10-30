@@ -51,3 +51,24 @@ test('recovery refuses when both checkpoints are invalid',()=>{
  const s=storage();s.setItem(KEY,'bad');s.setItem(KEY+guard.SUFFIX,'bad');
  assert.throws(()=>guard.recover(s,KEY),/No valid expedition/);
 });
+
+test('damaged primary requires explicit recovery before new turn can save',()=>{
+ const s=storage();guard.write(s,KEY,state(1));guard.write(s,KEY,state(2));
+ s.setItem(KEY,'{corrupted');
+ const backup=s.getItem(KEY+guard.SUFFIX);
+ assert.throws(()=>guard.write(s,KEY,state(3)),/recover the verified checkpoint/);
+ assert.equal(s.getItem(KEY),'{corrupted');
+ assert.equal(s.getItem(KEY+guard.SUFFIX),backup);
+ guard.recover(s,KEY);
+ assert.equal(guard.read(s,KEY).state.turn,1);
+ guard.write(s,KEY,state(2));
+ assert.equal(guard.read(s,KEY).state.turn,2);
+});
+test('missing primary with existing backup requires explicit recovery',()=>{
+ const s=storage();guard.write(s,KEY,state(1));guard.write(s,KEY,state(2));
+ s.raw.delete(KEY);
+ assert.throws(()=>guard.write(s,KEY,state(3)),/recover the verified checkpoint/);
+ assert.equal(guard.read(s,KEY).source,'backup');
+ guard.recover(s,KEY);
+ assert.equal(guard.read(s,KEY).source,'primary');
+});

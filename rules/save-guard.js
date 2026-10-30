@@ -1,0 +1,42 @@
+/* Durable, browser-local expedition saves with one previous valid checkpoint.
+ * Preserve the legacy primary key for existing players; never advance after
+ * a failed write or readback. No network or account is involved. */
+(function(root){
+'use strict';
+const SUFFIX='__previous_valid_v1';
+function valid(state){
+ return !!(state&&typeof state==='object'&&!Array.isArray(state)&&
+  state.profile&&typeof state.profile.hero==='string'&&state.profile.hero.length>0&&
+  state.rooms&&typeof state.rooms==='object'&&!Array.isArray(state.rooms)&&
+  Object.keys(state.rooms).length>0&&Array.isArray(state.enemies)&&
+  Number.isInteger(state.turn)&&state.turn>=0&&
+  Number.isFinite(state.x)&&Number.isFinite(state.y));
+}
+function parse(raw){
+ if(typeof raw!=='string'||!raw.length)return null;
+ try{const state=JSON.parse(raw);return valid(state)?state:null}
+ catch{return null}
+}
+function read(storage,key){
+ const primary=storage.getItem(key),state=parse(primary);
+ if(state)return {state,source:'primary',problem:null};
+ const previous=storage.getItem(key+SUFFIX),backup=parse(previous);
+ if(backup)return {state:backup,source:'backup',problem:primary?'Primary save is invalid; recovered the previous valid checkpoint.':null};
+ return {state:null,source:null,problem:primary||previous?'No valid save checkpoint remains.':null};
+}
+function write(storage,key,state){
+ if(!valid(state))throw Error('Invalid expedition snapshot; refusing to overwrite the save');
+ const encoded=JSON.stringify(state);
+ const current=storage.getItem(key);
+ if(current&&current!==encoded&&parse(current)){
+  storage.setItem(key+SUFFIX,current);
+  if(storage.getItem(key+SUFFIX)!==current)throw Error('Save backup readback mismatch');
+ }
+ storage.setItem(key,encoded);
+ if(storage.getItem(key)!==encoded)throw Error('Save readback mismatch');
+ return true;
+}
+const api=Object.freeze({SUFFIX,valid,parse,read,write});
+root.DarkstoneSaveGuard=api;
+if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof globalThis!=='undefined'?globalThis:this);

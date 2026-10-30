@@ -6,7 +6,8 @@ const records=require('../rules/enemy-records.js');
 test('edition records distinguish original Goliath from revised Harbinger',()=>{
  const g=records.get('original','Goliath');
  assert.equal(g.stats.initiative,2);
- assert.equal(g.stats.hp,24);
+ assert.equal(g.stats.hp,12);
+ assert.equal(g.stats.hpPerHero,5);
  assert.equal(g.stats.attackRange,3);
  assert.equal(g.stats.combat,3);
  assert.equal(g.stats.immuneCrit,true);

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "asOf": "2026-10-29",
+  "asOf": "2026-10-30",
   "complete": false,
   "policy": "Complete may become true only when every required gate is verified, tests pass, and GitHub Pages is confirmed deployed. Never treat a commit as completion.",
   "publisherSources": [
@@ -138,7 +138,8 @@
           "source": [],
           "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
         }
-      }
+      },
+      "newPhysicalEvidence": "2014 Goliath normal photo shows Health 12 +5 per Hero; Night Terror original Elite names verified against photographed 2014 card. Remaining 43/48 edition-set faces not fully verified."
     },
     "otherworldVariants": {
       "status": "incomplete",
@@ -279,14 +280,14 @@
     "tests": {
       "status": "partial",
       "unit": "57 distinct original/revised Threat-card titles successfully resolved in deterministic in-run checks; Node regression suite added",
-      "browser": "Chromium desktop/mobile startup, save recovery, journal, turn controls and sequential multi-target critical-hit test added; latest CI result pending",
-      "ci": "GitHub Actions runs Node unit and Chromium E2E suites; latest HEAD not yet verified green"
+      "browser": "Localhost-only integration hooks added for actual game closure; mobile half-space and auto-resume tests corrected; current HEAD browser acceptance not executed.",
+      "ci": "Last independently inspected manual Verify Darkstone rules engine run 40945715480 (2026-10-29) failed: 144/161 unit tests, 12/18 Playwright scenarios. Multiple stale harness failures corrected on 2026-10-30; no new passing CI for HEAD, so acceptance remains blocked."
     },
     "deployment": {
       "status": "unverified",
       "repository": "https://github.com/tjsk8ta/darkstone-descent",
       "site": "https://tjsk8ta.github.io/darkstone-descent/",
-      "notes": "GitHub Pages build is queued for latest HEAD; must confirm success and live-browser load before marking verified."
+      "notes": "GitHub Pages build success at 2026-10-30T03:46:30Z for prior 77482b9, but current HEAD and actual live mobile browser not verified."
     }
   },
   "blockers": [
@@ -302,12 +303,10 @@
     }
   ],
   "nextActions": [
-    "Verify CI for the latest commit, fix any remaining Chromium multi-target test failure, and confirm GitHub Pages deployment.",
-    "Complete browser end-to-end regression coverage for enemy placement, multi-target attacks, Elite effects, saved encounters and recovery.",
-    "Verify and transcribe original and revised normal-side Enemy Record Sheets and Elite charts for every remaining core enemy; implement abilities and unit tests.",
-    "Add OtherWorld Threat handling, ambush placement and complete enemy special abilities.",
-    "Replace prototype heroes, map geometry, mission and reward subsystems with verified rules.",
-    "Run CI unit and Chromium smoke tests, inspect failures, and independently confirm latest GitHub Pages deployment.",
-    "Do not set complete=true until every gate is verified."
+    "Acquire and inspect remaining actual normal/Brutal faces; log all statistics, six Elite entries and full source provenance, not just listing URLs.",
+    "Run current HEAD npm unit and Playwright mobile/desktop tests; fix any failures before claiming acceptance.",
+    "Verify current GitHub Pages deployment and live mobile T-junction door and persistent Field Journal.",
+    "Replace all provisional enemy, threat, mission, hero and map rules with independently verified mechanics.",
+    "Keep seven-gate checker fail closed and withhold completion notifications until all evidence passes."
   ]
 }

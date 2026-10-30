@@ -6,7 +6,7 @@ function harness({hero=[0,3],doors=['S','E','W'],actionUsed=false,searchUsedTurn
  const r={x:4,y:4,shape:'tee',name:'T-Junction',firstJunction:true,doors,explored:true};
  const S={x:4*9+hero[0],y:4*7+hero[1],rooms:{'4,4':r},turn:3,actionUsed,searchUsedTurn,enemies:[],ended:false};
  if(seenNeighbor){S.rooms['3,4']={seen:true};S.rooms['5,4']={seen:true};S.rooms['4,5']={seen:true};}
- const ctx={S,W:9,H:7,N:9,D:{N:[0,-1],E:[1,0],S:[0,1],W:[-1,0]},pendingAttack:null,
+ const ctx={S,saveFailure:null,W:9,H:7,N:9,D:{N:[0,-1],E:[1,0],S:[0,1],W:[-1,0]},pendingAttack:null,
   id:(x,y)=>x+','+y,roomCurrent:()=>r,floorLocal:()=>true,$:()=>({classList:{contains:()=>true}})};
  vm.createContext(ctx);
  vm.runInContext(extract('const PORTAL_LANES=','const MAP_CARD_POOL='),ctx);

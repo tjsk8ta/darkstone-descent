@@ -26,6 +26,8 @@ function read(storage,key){
 }
 function write(storage,key,state){
  if(!valid(state))throw Error('Invalid expedition snapshot; refusing to overwrite the save');
+ // If the primary is damaged, preserve the last valid backup. Do not rotate
+ // corrupt bytes into the recovery slot, or erase the only recoverable state.
  const encoded=JSON.stringify(state);
  const current=storage.getItem(key);
  if(current&&current!==encoded&&parse(current)){
@@ -36,7 +38,20 @@ function write(storage,key,state){
  if(storage.getItem(key)!==encoded)throw Error('Save readback mismatch');
  return true;
 }
-const api=Object.freeze({SUFFIX,valid,parse,read,write});
+
+// Recovery is an explicit promotion, not a normal write. In particular, do not
+// replace a valid backup with a corrupted primary during recovery.
+function recover(storage,key){
+ const result=read(storage,key);
+ if(!result.state)throw Error('No valid expedition checkpoint available for recovery');
+ if(result.source==='backup'){
+  const encoded=JSON.stringify(result.state);
+  storage.setItem(key,encoded);
+  if(storage.getItem(key)!==encoded)throw Error('Recovered checkpoint readback mismatch');
+ }
+ return result.state;
+}
+const api=Object.freeze({SUFFIX,valid,parse,read,write,recover});
 root.DarkstoneSaveGuard=api;
 if(typeof module!=='undefined'&&module.exports)module.exports=api;
 })(typeof globalThis!=='undefined'?globalThis:this);

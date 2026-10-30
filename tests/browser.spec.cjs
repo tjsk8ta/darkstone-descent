@@ -49,8 +49,8 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await expect(page.locator('#attackBtn')).toBeEnabled();
  await page.evaluate(()=>{window.__attackEvents=[];document.querySelector('#attackBtn').addEventListener('click',()=>window.__attackEvents.push('click'))});
  await page.locator('#attackBtn').scrollIntoViewIfNeeded();
- const attackHitTest=await page.evaluate(()=>{const b=document.querySelector('#attackBtn'),r=b.getBoundingClientRect();return b.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))});
- expect(attackHitTest).toBe(true,'Attack button must not be covered by overflow from disabled Explore button');
+ const attackHitTest=await page.evaluate(()=>{const b=document.querySelector('#attackBtn'),r=b.getBoundingClientRect(),x=r.x+r.width/2,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);return {ok:b.contains(hit),hit:hit?.outerHTML?.slice(0,300),rect:{x:r.x,y:r.y,width:r.width,height:r.height},viewport:{width:innerWidth,height:innerHeight},overlay:document.querySelector('#overlay')?.className}});
+ expect(attackHitTest.ok,JSON.stringify(attackHitTest)).toBe(true);
  await page.locator('#attackBtn').click();
  expect(await page.evaluate(()=>window.__attackEvents)).toContain('click');
  await expect(page.locator('[data-toggle-grit]')).toHaveCount(2);

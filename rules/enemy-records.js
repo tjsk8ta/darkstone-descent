@@ -70,6 +70,37 @@ const editions=Object.freeze({original,revised});
  * This is NOT the normal green face, nor the revised edition. */
 const brutal=Object.freeze({
  original:{
+  // French fan translation prints BOTH green and red 2014 faces side-by-side.
+  // Transcribed numerical facts are secondary evidence, NOT an inspected
+  // unobscured English physical red card; deliberately not gameplay-enabled.
+  'Tentacle':{
+   source:'https://www.scribd.com/document/771872866/SoB-VF-Monstre-Fiche-Tentacule',
+   confidence:'complete translated 2014 red face; independent physical card confirmation outstanding',
+   complete:false,face:'brutal',evidenceKind:'translated-recreation',
+   stats:{size:'medium',initiative:3,steps:6,escape:4,hit:4,combat:3,damage:5,def:3,hp:5,exp:45,smash:true},
+   mechanics:['Smash: melee To Hit rolls of 6 bypass Hero Defense'],
+   eliteChart:[
+    {id:'entangle',name:'Entangle',effect:'Wounded Hero cannot move on next Activation'},
+    {id:'eruption',name:'Eruption',effect:'Move through models; change targets each turn'},
+    {id:'lashing-strike',name:'Lashing Strike',effect:'+1 Combat'},
+    {id:'void-visions',name:'Visions of the Void',effect:'Wounded Hero suffers D6 Horror Hits'},
+    {id:'grasp',name:'Grasp',effect:'Wounded Hero moved to a random empty adjacent square'},
+    {id:'void-hydra',name:'Void Hydra',effect:'On death roll D8; on 1–2 replace with one Tentacle and place another adjacent'}
+   ]},
+  'Night Terror':{
+   source:ORIGINAL_NIGHT,
+   confidence:'complete translated 2014 red face; independent physical card confirmation outstanding',
+   complete:false,face:'brutal',evidenceKind:'translated-recreation',
+   stats:{size:'large',initiative:4,steps:5,escape:5,hit:5,combat:4,damage:4,def:3,hp:20,exp:20,xpPerWound:5,terror:2,mindDrain:3,clawsDoubleHits:true},
+   mechanics:['Terror (2)','Mind Drain: each Horror Hit causes 3 Sanity Damage','Claws: each Combat Hit counts as two Hits'],
+   eliteChart:[
+    {id:'hunter',name:'Hunter',effect:'Melee To Hit 4+'},
+    {id:'walking-nightmare',name:'Walking Nightmare',effect:'Replace Terror (2) with Unspeakable Terror (2)'},
+    {id:'regeneration',name:'Regeneration (2)',effect:'Heal 2 Wounds at start of each turn'},
+    {id:'thick-hide',name:'Thick Hide',effect:'+1 Defense'},
+    {id:'powerful',name:'Powerful',effect:'Move wounded Hero 2 spaces in random direction'},
+    {id:'swift-to-five',name:'Swift',effect:'Initiative becomes 5'}
+   ]},
   'Void Spider':{
    source:'https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp',
    confidence:'readable 2014 physical red Brutal face photograph',

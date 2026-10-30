@@ -139,7 +139,8 @@
           "notes": "Current statistics are explicitly provisional. Original and revised record-sheet faces have not been independently obtained or verified."
         }
       },
-      "newPhysicalEvidence": "2014 Goliath normal photo shows Health 12 +5 per Hero; Night Terror original Elite names verified against photographed 2014 card. Remaining 43/48 edition-set faces not fully verified."
+      "newPhysicalEvidence": "2014 Goliath normal photo shows Health 12 +5 per Hero; Night Terror original Elite names verified against photographed 2014 card. Remaining 43/48 edition-set faces not fully verified.",
+      "additionalSecondaryEvidence": "Original 2014 French bilingual-style side-by-side green/red translations of Tentacle and Night Terror fully transcribed for numeric stats and all six Brutal Elite entries, but physically unobscured original English red cards not acquired. These remain disabled and do not satisfy 48 physical-face gate."
     },
     "otherworldVariants": {
       "status": "incomplete",
@@ -251,7 +252,8 @@
         "verified per-wound XP for XL enemies",
         "all hero class combat and gear effects",
         "verified per-enemy Fear/Terror/Unspeakable Terror values and special timing exceptions"
-      ]
+      ],
+      "newImplemented": "Source-translated Brutal Night Terror Mind Drain (3 Sanity per failed Horror Hit), Claws (two hits per Combat hit), Thick Hide (+1 Defense), and Swift (Initiative becomes 5) wired into core combat but physically unverified Brutal face remains disabled."
     },
     "exploration": {
       "status": "partial",
@@ -281,13 +283,13 @@
       "status": "partial",
       "unit": "57 distinct original/revised Threat-card titles successfully resolved in deterministic in-run checks; Node regression suite added",
       "browser": "Localhost-only integration hooks added for actual game closure; mobile half-space and auto-resume tests corrected; current HEAD browser acceptance not executed.",
-      "ci": "Last independently inspected manual Verify Darkstone rules engine run 40945715480 (2026-10-29) failed: 144/161 unit tests, 12/18 Playwright scenarios. Multiple stale harness failures corrected on 2026-10-30; no new passing CI for HEAD, so acceptance remains blocked."
+      "ci": "Latest independent 2026-10-29 manual CI run failed 17/161 unit tests and 6/18 Chromium tests; several failing test harnesses corrected, localhost-only real closure integration hooks added; no new current HEAD npm/Playwright CI run completed."
     },
     "deployment": {
       "status": "unverified",
       "repository": "https://github.com/tjsk8ta/darkstone-descent",
       "site": "https://tjsk8ta.github.io/darkstone-descent/",
-      "notes": "GitHub Pages build success at 2026-10-30T03:46:30Z for prior 77482b9, but current HEAD and actual live mobile browser not verified."
+      "notes": "Pages build pending for recent HEAD at last inspection; actual live mobile browser not independently verified."
     }
   },
   "blockers": [

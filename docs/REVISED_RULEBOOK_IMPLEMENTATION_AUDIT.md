@@ -50,3 +50,81 @@ Status: OPEN. Initial evidence-based baseline, 2026-10-30. Not a claim of comple
 3. Implement an end-to-end expedition acceptance path (door -> reveal -> token -> Threat -> enemy placement -> combat -> loot -> save/reload), using official evidence for each transition.
 4. Audit revised combat mechanics, particularly dual wield, rerolls, damage prevention and attack caps, against both publisher rulebooks and FAQ v2.01.
 5. Acquire and verify outstanding record sheets and card faces before coding guessed values.
+
+
+## Expanded revised-rulebook checklist — 2026-10-30 source discovery
+
+**Evidence caveat:** This is a systematic section-level backlog extracted from the revised City rulebook table of contents and checked against the Swamps rulebook's equivalent rule categories. It is not yet a page-by-page assertion that every mechanic has been implemented or tested. Items marked [ ] remain unaccepted, even if some prototype behavior exists. Reference: https://www.rulespal.com/shadows-of-brimstone-city-of-the-ancients/rulebook and https://www.rulespal.com/shadows-of-brimstone-swamps-of-death/rulebook (readable rulebook transcriptions; cross-check original Flying Frog PDFs before acceptance).
+
+### 1. Foundation, dice, cards and setup
+- [ ] D6/D3/D8/Peril rolls, independent dice, one reroll per die, Grit reroll spending and recovery at max Grit.
+- [ ] Keywords, icons, Remains in Play, card discard and reshuffle rules; separate draw/discard state per deck.
+- [ ] New Hero sequence: choose class; starting items; random Personal Item; choose Starting Upgrade; class-specific cards; Side Bag and free token; name; persist all choices.
+- [ ] Revised City U.S. Marshal, Saloon Girl, Gunslinger, Bandido record sheets; revised Swamp Indian Scout, Rancher, Preacher, Lawman sheets. Each requires base stats, starting equipment, three upgrades, class mechanics and skill trees.
+- [ ] Hero-count scaling, Threat deck construction, cooperative-versus-solo adaptations, Basic Game versus full rules, mission-specific setup.
+- [ ] Physical model counts, Hero/Enemy sheets, card inventory and tokens must be separately source-verified; a deck count is not a card effect.
+
+### 2. Turn structure, initiative, movement, search and exploration
+- [ ] Full turn phase sequence: Hold Back the Darkness, initiative-ordered activations, room exploration, end-of-turn and Fight-specific exceptions.
+- [ ] Hold Back the Darkness threshold, doubles, Darkness movement, Depth-track interactions, Blood Spatter, Growing Dread, Depth Event and end conditions.
+- [ ] Hero Move roll, natural 1 Grit recovery, extra Grit D6, movement points, walls, diagonals, valid >=half-spaces, puzzle connection counted as both tiles.
+- [ ] Old Lantern and Voices in the Dark, Searching versus attacking, one search/action restriction, Scavenge counts and markers.
+- [ ] Look Through Door: stand on half-space; draw Map Card; green-arrow entrance; rotate alternate entrances; discard failed first tile; after second failed placement cap door; depth and +5 XP; no searching during Fight.
+- [ ] Rooms versus passages, exploration token placement and reveal timing, Door/Gate symbols, Clue/Encounter/Attack/Growing Dread tokens, objective trigger and multiple outcomes.
+- [ ] Card-specific Encounter skill tests, hero selection, multiple simultaneous encounters, optional Advanced Encounter for unique rooms, world-specific Encounter decks.
+
+### 3. Enemy setup, Threat resolution and Fight
+- [ ] Attack token Threat tier, nested card draws, Peril counts, mixed Enemy Types, Epic Threats, model shortage, free Elite, duplicate Elite results.
+- [ ] Enemy placement in reverse Initiative order (slowest first), farthest-from-entrance checkerboard, valid doorway half-spaces, overflow onto connected tiles, large/XL bases and model blocking.
+- [ ] Ambush Attack placement and enemies appearing mid-turn; when they activate and whether they are allowed immediate attacks.
+- [ ] Enemy Type activation order, ties, target selection, staying on target, switching targets, occupied-path movement, immobile, ranged and extra-large rules.
+- [ ] Enemy To Hit, defense, wounds, Sanity damage, Fear/Terror/Unspeakable Terror and their timing; KO and enemy-specific innate effects.
+- [ ] Hero Escape tests, no Searching during Fight, attack action and Free Attacks, melee versus ranged, line of sight, adjacent enemy priority.
+- [ ] To Hit rolls, assigning hits across enemies, damage dice and modifiers, Defense versus criticals, Armor, wounds/XP per wound, death/kill rewards.
+- [ ] Revised Hero attack dice limit and dual-wield ranged weapons: verify exact restrictions against revised rulebook/FAQ, do not propagate unsupported critical-hit claims.
+- [ ] Catch Your Breath, KO recovery and Loot draws after Fight; ensure nested Threats count as one Fight and loot cap correct.
+
+### 4. Survival, inventory and conditions
+- [ ] Health, Sanity, Wounds, Horror/Terror Hits, Defense/Willpower, Armor/Spirit Armor, KO, Revive and healing.
+- [ ] Corruption resistance, Mutation roll and death, Dark Stone corruption between adventures, persistent injury and madness.
+- [ ] Status effects: Poison, Void Venom, duration, stacking and clearance; expand to every card/record-specific condition.
+- [ ] Gear/Artifacts: Hand slots, carrying weight, keyword restrictions, Clothing slots, limited-use items, Personal Items, Dark Stone symbols, trading, upgrades and Side Bag.
+- [ ] Loot/Scavenge/Artifact deck effects, money and Dark Stone acquisition, discard and reshuffle, item activation timing and persistent inventory.
+
+### 5. OtherWorlds, missions and campaign
+- [ ] Gate icons and end caps; Looking Through Gate, World Card draw, OtherWorld map deck and terrain, break in map, exploration token on other side.
+- [ ] Movement/line of sight through gates, adjacent tiles across worlds, world-specific Encounter/Depth/Ambush interactions.
+- [ ] World global rules, Targa Plateau/Pylons, Jargono and respective artifacts, threats, maps, enemies and missions.
+- [ ] Official Adventure Book missions, starting conditions, special tokens, objectives, clues, boss/Epic Threat and success/failure rewards; remove placeholder final guardian when official logic is verified.
+- [ ] End-of-adventure sequence, Dark Stone corruption, injuries/madness/death, town travel and town stay, start-of-next-adventure sequence.
+- [ ] Frontier Town locations and reference charts: town size, travel hazards, events, day limits, visits/actions, buying/selling, item availability, services, healing, resurrection and campaign economy. Adventure Book/reference charts are necessary sources.
+- [ ] Level-up XP thresholds, class skill trees, upgrades, restrictions and campaign persistence.
+
+### 6. Optional rules, edition differences, and release
+- [ ] Fixed Hero Move; Advanced Encounters; Below the Darkness; Hard-Core; Themed Threat Decks; Dangerous Dynamite — each separately selectable, never silently enabled.
+- [ ] Apply official FAQ v2.01 and token reference v1.01 with section-specific errata and source trace.
+- [ ] Edition-aware card effects, revised starting upgrades, enemy Elite/Brutal sheets and town locations; do not use original-era data as revised without confirmation.
+- [ ] Verify mobile UI, map/journal/door prompts, no unreachable spaces, pending choices, save/reload, and no state mutation after save failure.
+- [ ] Acceptance requires source provenance, executable rule-specific tests, multi-chamber Chromium play, latest-HEAD CI and Pages success. Keep completion=false until complete.
+
+## Online asset/source investigation
+
+| Material | Found online | Sufficiency | Next use |
+| --- | --- | --- | --- |
+| Revised City and Swamp rules | Official Flying Frog PDFs; readable RulesPal transcriptions | High for general mechanics; verify precise text against publisher | Build executable common-rule matrix |
+| FAQ and token descriptions | Publisher resources, FAQ v2.01 (2025-10-24), token reference v1.01 (2025-11-06) | High for FAQ/token definitions | Apply corrections and token semantics |
+| Mine map-card inventory | Revised City rulebook enumerates 18 Mine Map Cards, 1 Entrance, 8 Unique Room, 4 Standard Room, 6 Passage | Counts only, not every tile/card face | Build exact geometry ledger |
+| Physical map geometry | https://github.com/templebay33/brimstone_reference/blob/main/map_tiles.md | Useful fan transcription of Entrance and common passages, with some expansion rooms; incomplete City/Swamp unique rooms | Cross-check common passage geometry against original photos; do not mark publisher verified |
+| Core map/card inventory | BoardGameGeek core-set component inventories; community list of nearly everything | Useful names and counts, not effects | Reconcile physical card list and edition |
+| Card-face effects, Exploration tokens, Encounter text | Rulebooks explain the systems; individual complete core card-face sets not established from this search | Insufficient for exact card-by-card fidelity | Continue public authorized image/file searches; request photos later only for unresolved entries |
+| Hero/Enemy faces and Adventure Book charts | Official product descriptions and rulebook examples; incomplete physical record/card coverage | Insufficient for full implementation | Seek publisher Adventure Book PDFs, downloadable class sheets and permitted photos; mark missing entries |
+
+**Source discovery outcome:** Online resources are sufficient to implement a large amount of the core mechanics now. Missing card faces are *not* a reason to postpone turn sequence, geometry, enemy movement/placement, character creation, inventory architecture, town lifecycle or campaign state. Keep missing individual card/record values as explicit data gaps instead of invented official values.
+
+## Execution priority (correcting earlier overfocus on CI)
+1. First build the rule-engine foundations and tests for movement/placement, turn sequence and legal actions.
+2. Then complete Hero setup and item slots, with saved inventory and persistent upgrades.
+3. Implement town/travel/campaign phases from rulebook and Adventure Book sources.
+4. Expand verified map geometry, Exploration tokens, Encounters, Darkness, Loot and other card effects as authorized sources are found.
+5. Complete enemy record-sheet abilities, missions, OtherWorlds and long-tail optional rules; verify real browser expeditions.
+6. Treat CI reliability as a necessary quality gate, **not** the development objective. No repetitive documentation-only pushes without meaningful new evidence.

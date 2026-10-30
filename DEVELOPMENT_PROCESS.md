@@ -7,11 +7,12 @@ Read and preserve relevant user instructions, prior decisions, and their rationa
 **There is no target selection before rolling To Hit.** Press Attack when at least one enemy is within weapon range and line of sight. Roll all To Hit dice, allow permitted rerolls, and **then allocate individual successful hit dice among eligible enemies**. This is the only enemy target-selection stage. Hits may be split across multiple enemies. Critical-hit identity must be preserved. Roll damage for each assigned hit; apply Defense separately per noncritical hit; support allowed damage rerolls. Never automatically force all hits to an initial enemy. Movement arrows are replaced by contextual combat controls until resolution ends. No enemies in range/line of sight means no To Hit roll and no action spent.
 
 ## Known implementation defects / outstanding work
-- Current index.html still selects an enemy before To Hit. This violates the authoritative requirement. Remove it in the next combat fix; do not portray current combat as correct.
-- Current code auto-assigns hits to the initially selected enemy; this must be removed along with the initial-target dependency.
-- Review all hit-allocation transitions, enemy deaths mid-attack, rerolls, and target eligibility.
+- **Pre-roll target selection is no longer in the active Attack flow.** The live `attack()` handler rolls immediately when enemies are eligible; `resolvePendingAttack()` moves to successful-hit allocation and `beginDamageGroup()` accepts selected hit dice. Preserve this authoritative flow. Its existing browser regressions are committed but have **not** been independently run in Chromium in this session.
+- Damage grouping, simultaneous wounds, mid-attack enemy deaths and save/reload during pending attacks still require exhaustive actual-browser verification; do not mark accepted merely because source code or isolated tests exist.
+- **Map tap movement** now calls `moveTowards()` (while dynamite aiming retains the targeting interaction). A simulated DOM run of the real game script verified a one-square move and one movement point consumed; actual mobile Chromium remains unverified.
+- **Local-save readback** is guarded and has a previous-valid checkpoint. Six save-guard test cases were executed against the real module in a JavaScript isolate; browser storage/recovery needs real Chromium verification. If a save write fails, gameplay displays a blocking Save Integrity Lock with an explicit retry.
 - Mutation chart and some Growing Dread/Darkness effects are incomplete/prototype; do not claim complete rule fidelity.
-- Mobile sticky map and touch behavior have not been browser-tested.
+- Mobile sticky map and genuine touch gesture behavior have not been browser-tested.
 
 ## Required change workflow
 1. Read this file and inspect the current relevant source and state transitions.

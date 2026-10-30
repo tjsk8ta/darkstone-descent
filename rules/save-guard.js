@@ -30,6 +30,9 @@ function write(storage,key,state){
  // corrupt bytes into the recovery slot, or erase the only recoverable state.
  const encoded=JSON.stringify(state);
  const current=storage.getItem(key);
+ // Require explicit checkpoint recovery before overwriting corrupted or missing primary.
+ if(current!==null&&!parse(current))throw Error('Primary save is invalid; recover the verified checkpoint before saving');
+ if(current===null&&storage.getItem(key+SUFFIX)!==null)throw Error('Primary save is missing; recover the verified checkpoint before saving');
  if(current&&current!==encoded&&parse(current)){
   storage.setItem(key+SUFFIX,current);
   if(storage.getItem(key+SUFFIX)!==current)throw Error('Save backup readback mismatch');

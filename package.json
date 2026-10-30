@@ -5,7 +5,9 @@
   "description": "Browser-based Shadows of Brimstone-inspired solo game with verified threat dice and regression tests",
   "scripts": {
     "test": "node --test tests/*.test.cjs tests/*.test.js",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "audit:gates": "node scripts/seven-gate-check.cjs --json",
+    "test:release": "node scripts/seven-gate-check.cjs --release"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0"

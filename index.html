@@ -456,7 +456,7 @@ function applyEnemyEdition(edition,set='combined'){
 }
 function effectiveEnemyDefense(e){
  return TYPES[e.type].def+(e.dreadDefense||0)+(eliteHas(e.type,'writhing')?2:0)
-  +(eliteHas(e.type,'hardened-skin')?1:0)+(eliteHas(e.type,'hardened-shells')?2:0);
+  +(eliteHas(e.type,'hardened-skin')?1:0)+(eliteHas(e.type,'hardened-shells')?2:0)+(eliteHas(e.type,'thick-hide')?1:0);
 }
 function enemyCritIgnoresDefense(hit,e){return hit===6&&!TYPES[e.type].immuneCrit}
 function effectiveEnemyEscape(e){return eliteHas(e.type,'hypnotic-gaze')?6:TYPES[e.type].escape}
@@ -492,7 +492,7 @@ function eliteHas(type,ability){
  const chart=TYPES[type]?.eliteChart||[],active=S?.eliteAbilities?.[type]||[];
  return active.some(n=>chart[n-1]?.id===ability);
 }
-function effectiveEnemyInitiative(e){return TYPES[e.type].initiative+(eliteHas(e.type,'swift')?2:0)+(e.ambushInitiativeUntilTurn>=S?.turn?2:0)}
+function effectiveEnemyInitiative(e){return Math.max(TYPES[e.type].initiative+(eliteHas(e.type,'swift')?2:0),eliteHas(e.type,'swift-to-five')?5:0)+(e.ambushInitiativeUntilTurn>=S?.turn?2:0)}
 function applyModelLimits(groups){
  const result=groups.map(g=>({...g}));
  const types=[...new Set(result.map(g=>g.type))];
@@ -853,7 +853,7 @@ function resolveHorrorHits(){
   if(adjacent)count+=t.fear||0;
   if(same&&!eliteHas(e.type,'walking-nightmare'))count+=t.terror||0;
   if(nearby)count+=eliteHas(e.type,'screaming-souls')?5:eliteHas(e.type,'walking-nightmare')?2:(t.unspeakableTerror||0);
-  for(let i=0;i<count;i++)hits.push({enemy:e.type,damage:eliteHas(e.type,'mind-drain')?3:1});
+  for(let i=0;i<count;i++)hits.push({enemy:e.type,damage:t.mindDrain|| (eliteHas(e.type,'mind-drain')?3:1)});
  }
  if(!hits.length)return;
  const checks=roll(hits.length),damage=checks.reduce((n,v,i)=>n+(v<C.willpower?hits[i].damage:0),0);
@@ -883,6 +883,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(when!=='ambush'&&distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,!eliteHas(e.type,'eruption')&&!t.flight);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));const destination=enemyMovement.chooseDestination(route,steps,{x:S.x,y:S.y},p=>!!occupied(p.x,p.y));if(destination){e.x=destination.x;e.y=destination.y}}}
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
  if(distance<=(t.attackRange||1)&&t.combat!==0&&lineOfSight(e,S)){let dice=(eliteHas(e.type,'extra-arms')?4:(t.combat||(e.type==='boss'?2:1)))+(eliteHas(e.type,'rapid-climbing')?2:0);let rs=roll(dice+(eliteHas(e.type,'lashing-strike')?1:0)),hits=rs.filter(x=>x>=(eliteHas(e.type,'hunter')?4:eliteHas(e.type,'vicious-bite')?3:t.hit)),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
+ if(t.clawsDoubleHits)hits=hits.flatMap(v=>[v,v]);
  for(let hitIndex=0;hitIndex<hits.length;hitIndex++){let smash=(t.smash||eliteHas(e.type,'severing-bite'))&&hits[hitIndex]===6;let d=smash?null:die();defRolls.push(smash?'SMASH':d);if(smash||d<C.defense){for(let j=0;j<t.damage+(eliteHas(e.type,'tentacle-bonus-damage')?2:0)+(eliteHas(e.type,'crushing-blows')?1:0)+(eliteHas(e.type,'mind-drain')?2:0);j++){
     let armor=S.profile.upgrades.armour?Math.max(4,7-S.profile.upgrades.armour):7,ar=die();if(armor<=6){armorRolls.push(ar);if(ar>=armor)continue}physical++;
  }}}

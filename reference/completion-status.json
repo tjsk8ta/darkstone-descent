@@ -97,7 +97,15 @@
       "missing": 10,
       "total": 22
     },
-    "sourceCaveat": "Only revised City and Swamps Tentacle publisher card images directly verified; original-era translations/third-party photos support additional transcriptions but are not publisher-hosted."
+    "sourceCaveat": "Only revised City and Swamps Tentacle publisher card images directly verified; original-era translations/third-party photos support additional transcriptions but are not publisher-hosted.",
+    "sevenGateAudit": {
+      "date": "2026-10-30",
+      "physicalFaceCount": 5,
+      "requiredFaces": 48,
+      "releaseAccepted": false,
+      "unitAndBrowserCI": "last independently inspected manual run failed; current HEAD untested",
+      "pages": "current HEAD not independently live-browser verified"
+    }
   },
   "enemyRecordSheetSources": {
     "originalInventory": "https://pdfcoffee.com/sobgamecontentsv2bpdf-pdf-free.html",
@@ -126,5 +134,5 @@
     "status": "Inventories identified; individual normal-side card faces not yet acquired and transcribed for all enemies"
   },
   "enemySheetAuditPath": "reference/enemy-sheet-audit.json",
-  "lastRunDate": "2026-10-29"
+  "lastRunDate": "2026-10-30"
 }

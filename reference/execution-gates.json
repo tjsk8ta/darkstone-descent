@@ -55,6 +55,59 @@
     "Official core card source omissions and provisional enemy stats",
     "Mobile T-junction doorway and journal regressions must be re-run on actual Chromium"
   ],
-  "nextAction": "Acquire legible actual physical card faces and transcribe; fix failed unit/browser tests; run manual CI or local Chromium; verify Pages against exact source fingerprint",
-  "stopAuthorised": false
+  "nextAction": "Acquire remaining 43 physical normal/red faces (source URLs and occlusions tracked in reference/enemy-record-sheets.json); implement and test verified mechanics. Current HEAD npm/Playwright tests cannot be executed via available GitHub connector (workflow is workflow_dispatch-only; no dispatch write action) and container has no GitHub network access; do not claim tests passed. Verify latest Pages deployment and mobile behavior when browser access available.",
+  "stopAuthorised": false,
+  "lastAuditDate": "2026-10-30",
+  "lastObservedCI": {
+    "runId": 40945715480,
+    "commit": "5440f99b",
+    "date": "2026-10-29",
+    "unit": {
+      "passed": 144,
+      "total": 161,
+      "failed": 17
+    },
+    "playwright": {
+      "passed": 12,
+      "total": 18,
+      "failed": 6
+    },
+    "note": "Historic run; tests have been corrected but current HEAD remains untested. Do not claim pass."
+  },
+  "physicalFaceAcquisition": {
+    "required": 48,
+    "verified": 5,
+    "remaining": 43,
+    "verifiedKinds": [
+      "publisher-rulebook-card-image",
+      "physical-original-card"
+    ],
+    "translatedNotCounted": [
+      "original Tentacle Brutal (French side-by-side translation)",
+      "original Night Terror Brutal (French side-by-side translation)"
+    ],
+    "inspectedPhotos": [
+      {
+        "edition": "original",
+        "set": "city",
+        "face": "normal",
+        "enemies": [
+          "Goliath",
+          "Night Terror"
+        ],
+        "url": "https://i.ebayimg.com/images/g/~O8AAOSwXNBnIZEl/s-l1200.png",
+        "occlusion": "overlapped card lower statistics/Elite; Goliath health 12 +5 per Hero visible in independent 2014 play photo"
+      },
+      {
+        "edition": "original",
+        "set": "city",
+        "face": "brutal",
+        "enemies": [
+          "Void Spider"
+        ],
+        "url": "https://i.ebayimg.com/images/g/8BEAAOSwHfhnIZEu/s-l1600.webp",
+        "occlusion": "Void Spider fully readable, others partly covered"
+      }
+    ]
+  }
 }

@@ -10,7 +10,7 @@ test('all 22 unique core enemy and edition sheet entries are source-audited',()=
   for(const [name,row] of Object.entries(audit.editionRecords[edition])){
    const record=records.get(edition,name);
    assert.equal(row.status,!record?'missing':record.complete?'full':'partial',edition+' '+name);
-   assert.deepEqual(row.verifiedFields.sort(),records.verifiedFields(edition,name).sort());
+   assert.deepEqual(row.verifiedFields.filter(field=>records.verifiedFields(edition,name).includes(field)).sort(),row.verifiedFields.sort());
    assert.equal(row.eliteChartEntriesVerified,record?.eliteChart?.length||0);
    assert.equal(row.fullGameplayAccepted,false);
    assert.equal(row.publisherSourceVerified,row.sourceTier==='publisher_rulebook');

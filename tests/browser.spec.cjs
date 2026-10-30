@@ -48,6 +48,7 @@ test('two critical hits can be allocated sequentially across adjacent and distan
  await page.evaluate(()=>Object.defineProperty(window.crypto,'getRandomValues',{configurable:true,value(arr){arr.fill(5);return arr}}));
  await expect(page.locator('#attackBtn')).toBeEnabled();
  await page.evaluate(()=>{window.__attackEvents=[];document.querySelector('#attackBtn').addEventListener('click',()=>window.__attackEvents.push('click'))});
+ await page.locator('#attackBtn').scrollIntoViewIfNeeded();
  const attackHitTest=await page.evaluate(()=>{const b=document.querySelector('#attackBtn'),r=b.getBoundingClientRect();return b.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))});
  expect(attackHitTest).toBe(true,'Attack button must not be covered by overflow from disabled Explore button');
  await page.locator('#attackBtn').click();

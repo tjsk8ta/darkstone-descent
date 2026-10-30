@@ -867,7 +867,7 @@ function enemyActivationOrder(enemies){
  return initiatives.flatMap(initiative=>{
   const group=enemies.filter(e=>effectiveEnemyInitiative(e)===initiative);
   const types=shuffleDeck([...new Set(group.map(e=>e.type))]);
-  return types.flatMap(type=>group.filter(e=>e.type===type));
+  return types.flatMap(type=>group.filter(e=>e.type===type).sort((a,b)=>man(a,S)-man(b,S)));
  });
 }
 function eligibleEnemyActivations(enemies,when,turn,heroInitiative){return enemies.filter(e=>when==='ambush'?e.ambushPending===true:e.spawnTurn!==turn&&(when==='before'?effectiveEnemyInitiative(e)>=heroInitiative:effectiveEnemyInitiative(e)<heroInitiative))}

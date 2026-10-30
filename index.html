@@ -1046,6 +1046,15 @@ document.addEventListener('keydown',e=>{if(!S||S.ended||!$('overlay').classList.
 let journalOpen=false;const journalTab=$('journalTab'),journalDrawer=$('journalDrawer'),journalBackdrop=$('journalBackdrop');function setJournalOpen(open){journalOpen=open;journalDrawer.classList.toggle('open',open);journalDrawer.setAttribute('aria-hidden',String(!open));journalTab.setAttribute('aria-expanded',String(open));journalTab.hidden=open;journalBackdrop.hidden=!open;if(open)$('journalClose').focus();else journalTab.focus()};journalTab.onclick=()=>setJournalOpen(true);$('journalClose').onclick=()=>setJournalOpen(false);journalBackdrop.onclick=()=>setJournalOpen(false);document.addEventListener('keydown',e=>{if(e.key==='Escape'&&journalOpen){e.preventDefault();setJournalOpen(false)}});let journalTouchX=null;journalDrawer.addEventListener('touchstart',e=>{journalTouchX=e.touches[0]?.clientX??null},{passive:true});journalDrawer.addEventListener('touchend',e=>{if(journalTouchX!==null&&e.changedTouches[0].clientX-journalTouchX>90)setJournalOpen(false);journalTouchX=null},{passive:true});
 window.addEventListener('resize',resizeCanvas);
 window.addEventListener('error',e=>{let el=document.getElementById('startupRecovery');if(el){el.style.display='block';el.textContent='Game error: '+(e.message||'unknown')+' — try Recovery Mode.'}});
+// Browser acceptance tests need access to the actual closure, not a duplicated
+// rules simulation. Never expose mutable test hooks on public GitHub Pages.
+if(location.hostname==='localhost'||location.hostname==='127.0.0.1'){
+ Object.defineProperty(globalThis,'S',{configurable:true,get:()=>S,set:v=>{S=v}});
+ Object.assign(globalThis,{CLASSES,W,H,N,D,OPPOSITE_DOOR,PORTAL_LANES,makeRun,createProfile,
+  roomCurrent,doorwayRoom,doorwayStatus,lookThroughDoor,enterRoom,ensureOpenFrontier,
+  frontierCandidates,path,roomExits,cellAt,floorLocal,id,closeModal,render,save,
+  drawThreat,resolveExplorationToken});
+}
 document.documentElement.dataset.build='peril-threat-resolver-20261029';
 let recoveryMode=new URLSearchParams(location.search).has('recovery');
 let old=recoveryMode?null:safeRead();if(recoveryMode){let el=document.getElementById("startupRecovery");el.style.display="block";el.innerHTML="Recovery Mode: existing save is preserved until you start a new expedition. <a style=\"color:#f3c785\" href=\"./\">Return to saved game</a>";}if(old?.profile){selected=old.profile.hero||'marshal';difficulty=old.mode||'standard';selectedSet=old.coreThreatSet||'combined';selectedEdition=old.coreEdition||'revised';if(!old.ended){S=old;applyEnemyEdition(S.coreEdition||'revised',S.coreThreatSet||'combined');pendingAttack=S.savedPendingAttack||null;render();if(S.mutationReviewPending)mutationReviewModal();else if(S.finalEncounter&&!S.finalEncounter.started)showGrowingDread();else if(S.pendingEvent)eventModal(S.pendingEvent);else closeModal()}else{S=old;applyEnemyEdition(S.coreEdition||'revised',S.coreThreatSet||'combined');resultsModal('Your previous expedition has ended. Visit town to continue.')}}else setup();requestAnimationFrame(resizeCanvas);

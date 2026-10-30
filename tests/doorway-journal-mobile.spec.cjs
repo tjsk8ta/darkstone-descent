@@ -8,7 +8,7 @@ test('mobile T-junction blue doorway opens immediately and records the result in
   const key='darkstone_descent_tiles_v3',s=JSON.parse(localStorage.getItem(key));
   s.rooms['4,4']={x:4,y:4,shape:'tee',name:'T-Junction',kind:'normal',
    doors:['S','E','W'],seen:true,explored:true,searched:false,firstJunction:true};
-  s.x=4*9+7;s.y=4*7+2;s.actionUsed=false;s.enemies=[];s.move=5;s.moveMax=5;
+  s.x=4*9+8;s.y=4*7+2;s.actionUsed=false;s.enemies=[];s.move=5;s.moveMax=5;
   localStorage.setItem(key,JSON.stringify(s));
  });
  await page.goto('/');

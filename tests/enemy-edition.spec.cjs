@@ -11,7 +11,7 @@ test('original 2014 expedition loads the actual Goliath and Night Terror record 
   night:window.DarkstoneRuleAudit.getEnemyType('Night Terror')
  }));
  expect(result.edition).toBe('original');
- expect(result.goliath).toMatchObject({initiative:2,steps:6,escape:4,hit:3,combat:3,damage:3,def:3,hp:24,attackRange:3,immuneCrit:true,recordComplete:true});
+ expect(result.goliath).toMatchObject({initiative:2,steps:6,escape:4,hit:3,combat:3,damage:3,def:3,hp:12,hpPerHero:5,attackRange:3,immuneCrit:true,recordComplete:true});
  expect(result.goliath.eliteChart).toHaveLength(6);
  expect(result.night).toMatchObject({initiative:3,steps:5,escape:3,hit:5,combat:4,damage:4,def:3,hp:12,terror:2,recordComplete:true});
  expect(result.night.eliteChart).toHaveLength(6);

@@ -11,7 +11,7 @@ function scenario(dx,dy,escapeRoll){
  const room={seen:true,explored:true};
  const S={x:0,y:0,move:4,turn:1,ended:false,escapedValue:1,enemies:[e],pendingEvent:null};
  let rolls=0;
- const ctx={S,pendingAttack:null,$:()=>({classList:{contains:()=>true}}),
+ const ctx={S,saveFailure:null,pendingAttack:null,$:()=>({classList:{contains:()=>true}}),
   log:()=>{},render:()=>{},save:()=>{},cellAt:()=>true,crossesConnectedDoor:()=>true,
   occupied:()=>false,roomAt:()=>room,enterRoom:()=>{},effectiveEnemyEscape:()=>4,
   man:(a,b)=>Math.max(Math.abs(a.x-b.x),Math.abs(a.y-b.y)),

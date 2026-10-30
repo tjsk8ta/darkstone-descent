@@ -15,12 +15,12 @@ test('two Low Threat cards resolve once each',()=>{
  assert.equal(calls,2);
  assert.deepEqual(result.groups.map(g=>g.type),['Tentacle','Tentacle']);
 });
-test('nested generic Threat draws always use the Posse tier',()=>{
+test('nested generic Threat draws inherit the enclosing card tier',()=>{
  const calls=[];
  const result=engine.resolveEncounter('1 Medium Threat Card',{rng:fixed,currentTier:'low',draw:tier=>{
  calls.push(tier);return calls.length===1?{card:'1 Threat Card'}:{card:'1 Slasher'};
  }});
- assert.deepEqual(calls,['medium','low']);
+ assert.deepEqual(calls,['medium','medium']);
  assert.equal(result.groups[0].type,'Slasher');
 });
 test('Elite subdraws mark all enemies Elite, leaving chart verification to the placement gate',()=>{

@@ -1,6 +1,6 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path');
-function validate(q,c,workflow){
+function validate(q,c,workflow,expectedHead){
  const errors=[],bad=s=>errors.push(s);
  if(q?.schemaVersion!==1||c?.schemaVersion!==1)bad('schema mismatch');
  if(q?.plan!=='docs/FOCUS_LOCKED_SEVEN_GATE_IMPLEMENTATION_PLAN.md'||c?.plan!==q?.plan)bad('plan mismatch');
@@ -22,6 +22,7 @@ function validate(q,c,workflow){
  if(q?.phases?.filter(p=>p.status==='passed').some(p=>!c?.completedPhases?.includes(p.id)))bad('checkpoint missing passed phase');
  if(!Array.isArray(c?.evidence))bad('checkpoint evidence invalid');
  if(!/^[0-9a-f]{40}$/.test(c?.lastVerifiedHead||''))bad('checkpoint HEAD invalid');
+ if(expectedHead!==undefined&&c?.lastVerifiedHead!==expectedHead)bad('checkpoint HEAD divergence requires reconciliation');
  if(q?.constraints?.manualActions!==true||q?.constraints?.failClosed!==true||q?.constraints?.noPhaseSkipping!==true)bad('controls disabled');
  if(!/^\s*workflow_dispatch\s*:/m.test(workflow)||/^\s*(push|pull_request|schedule|workflow_run|repository_dispatch|workflow_call)\s*:/m.test(workflow))bad('automatic Actions trigger');
  return {accepted:errors.length===0,errors,activePhase:q?.activePhase};

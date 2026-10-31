@@ -691,7 +691,7 @@ function spawnEnemy(type,r,options={}){
  if(!t){log('Unknown enemy type '+type+'; cannot spawn.','hit');return false}
  const locs=options.ambush?DarkstoneEnemyPlacement.ambushSpaces(S,cellAt,roomAt,r):spawnSpaces(r);
  if(!locs.length){log('No connected space for '+type+'; placement deferred.','hit');return false}
- const size=t.baseSize==='extra-large'?'extra-large':'medium';const p=locs.find(p=>enemyTactics.cells(p,size).every(c=>cellAt(c.x,c.y)&&roomAt(c.x,c.y)?.seen&&!(S.x===c.x&&S.y===c.y)&&!occupied(c.x,c.y)));if(!p){log('No valid full footprint for '+type+'; placement deferred.','hit');return false}const boost=S.mode==='hard'?1:0;
+ const size=t.baseSize||'medium';const p=locs.find(p=>enemyTactics.cells(p,size).every(c=>cellAt(c.x,c.y)&&roomAt(c.x,c.y)?.seen&&!(S.x===c.x&&S.y===c.y)&&!occupied(c.x,c.y)));if(!p){log('No valid full footprint for '+type+'; placement deferred.','hit');return false}const boost=S.mode==='hard'?1:0;
  if(!t.recordComplete){
   S.unverifiedEnemyWarnings=S.unverifiedEnemyWarnings||{};
   if(!S.unverifiedEnemyWarnings[type]){
@@ -903,12 +903,12 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
   const ranged=Number.isInteger(t.attackRange)&&t.attackRange>1;
   const inRange=distance<=(t.attackRange||1)&&lineOfSight(e,S);
   if(!ranged||!inRange){
-   const footprint=t.baseSize==='extra-large'?'extra-large':t.baseSize==='large'?'large':'medium';
+   const footprint=e.baseSize||t.baseSize||'medium';
    const tactical=enemyTactics.chooseMove({
     enemy:{id:e.id,x:e.x,y:e.y,size:footprint},hero:{x:S.x,y:S.y},steps:t.steps,
     walkable:(x,y)=>!!cellAt(x,y)&&!!roomAt(x,y)?.seen,
     canStep:(a,b)=>crossesConnectedDoor(a.x,a.y,b.x,b.y),
-    occupants:S.enemies.filter(other=>other.id!==e.id).map(other=>({id:other.id,x:other.x,y:other.y,size:TYPES[other.type]?.baseSize||'medium'})),
+    occupants:S.enemies.filter(other=>other.id!==e.id).map(other=>({id:other.id,x:other.x,y:other.y,size:other.baseSize||TYPES[other.type]?.baseSize||'medium'})),
     allowDisplace:footprint!=='medium'
    });
    if(tactical?.destination){

@@ -40,8 +40,8 @@ test('enemy movement uses persisted size for moving enemy and blockers',()=>{
 
 const placementMatch=html.match(/function canPlaceEnemyFootprint\(p,size,ignoreEnemyId=null\)\{[^\n]*\}/);
 assert.ok(placementMatch,'Shared footprint placement validator must exist');
-function canPlace(anchor,size,{hero={x:99,y:99},enemies=[],walkable=()=>true,seen=()=>true,ignoreId=null}={}){
- const context={S:{...hero,enemies},enemyTactics:tactics,cellAt:walkable,roomAt:(x,y)=>({seen:seen(x,y)}),TYPES:{},occupied:(x,y)=>enemies.find(e=>tactics.cells(e,e.baseSize||'medium').some(p=>p.x===x&&p.y===y))};
+function canPlace(anchor,size,{hero={x:99,y:99},enemies=[],walkable=()=>true,seen=()=>true,connected=()=>true,ignoreId=null}={}){
+ const context={S:{...hero,enemies},enemyTactics:tactics,cellAt:walkable,roomAt:(x,y)=>({seen:seen(x,y)}),crossesConnectedDoor:(ax,ay,x,y)=>connected(ax,ay,x,y),TYPES:{},occupied:(x,y)=>enemies.find(e=>tactics.cells(e,e.baseSize||'medium').some(p=>p.x===x&&p.y===y))};
  vm.runInNewContext(placementMatch[0]+';globalThis.check=canPlaceEnemyFootprint;',context);
  return context.check(anchor,size,ignoreId);
 }
@@ -63,4 +63,9 @@ test('ambush reposition may overlap its own former footprint but not other model
  const self={id:1,type:'Goliath',x:4,y:4,baseSize:'extra-large'};
  assert.equal(canPlace({x:5,y:4},'extra-large',{enemies:[self],ignoreId:1}),true);
  assert.equal(canPlace({x:5,y:4},'extra-large',{enemies:[self,{id:2,type:'Tentacle',x:6,y:4,baseSize:'medium'}],ignoreId:1}),false);
+});
+
+test('multi-cell spawn cannot bridge disconnected rooms',()=>{
+ assert.equal(canPlace({x:4,y:4},'extra-large',{connected:(ax,ay,x,y)=>!(x===5&&y===4)}),false);
+ assert.equal(canPlace({x:4,y:4},'extra-large',{connected:()=>true}),true);
 });

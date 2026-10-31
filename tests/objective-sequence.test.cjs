@@ -8,6 +8,6 @@ test('Dread resolves LIFO, supports cancellation and records physical card',()=>
 test('Dread cannot silently skip card effects',()=>{
  const f=q.begin('0,0',1);assert.equal(q.ready(f),false);assert.throws(()=>q.reveal(f,''));q.reveal(f,'Physical card');assert.throws(()=>q.resolve(f,''));q.cancel(f);assert.equal(q.ready(f),true);
 });
-test('objective draws official Epic Threat, not a fabricated fixed boss',()=>{
- assert.match(html,/const placed=drawThreat\(r,'epic'\)/);assert.match(html,/EPIC THREAT UNRESOLVED/);assert.doesNotMatch(html,/DREAD_EFFECTS/);assert.doesNotMatch(html,/r\.finalEnemies=S\.coreThreatSet/);
+test('objective uses official 1–2 Hero High Threat substitution with voluntary Epic opt-in, not fixed boss',()=>{
+ assert.match(html,/DarkstoneObjectiveThreat\.tier\(1,!!S\.profile\.epicOptIn\)/);assert.match(html,/const placed=drawThreat\(r,tier\)/);assert.match(html,/THREAT UNRESOLVED/);assert.doesNotMatch(html,/DREAD_EFFECTS/);assert.doesNotMatch(html,/r\.finalEnemies=S\.coreThreatSet/);
 });

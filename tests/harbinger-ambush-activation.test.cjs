@@ -27,7 +27,7 @@ test('Ambush only activates explicitly pending enemies',()=>{
 test('summoned bats use Ambush phase without reclassifying spawn turn',()=>{
  assert.match(html,/bat\.ambushPending=true;spawned\+\+/);
  assert.match(html,/enemyPhase\('ambush'\)/);
- assert.match(html,/if\(when!=='ambush'&&distance>1&&t\.steps>0\)/);
+ assert.match(html,/if\(when!=='ambush'&&t\.steps>0\)/);
 });
 
 test('Ambush attack resolves without movement and does not spend regular activation',()=>{

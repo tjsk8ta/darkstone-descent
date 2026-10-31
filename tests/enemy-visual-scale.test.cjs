@@ -11,7 +11,7 @@ test('large creatures are visibly larger than small creatures',()=>{
  assert.ok(ctx.enemyVisualScale('Void Spider')>ctx.enemyVisualScale('Hellbat'));
 });
 test('unknown enemies fall back to normal size',()=>assert.equal(ctx.enemyVisualScale('unlisted'),1));
-test('silhouette scaling does not alter the one-cell movement and collision rules',()=>{
+test('silhouette scaling is separate from footprint-aware occupancy',()=>{
  assert.match(html,/const size=unit\*enemyVisualScale\(type\)/);
- assert.match(html,/function occupied\(x,y\)\{return S\.enemies\.find\(e=>e\.x===x&&e\.y===y\)\}/);
+ assert.match(html,/function occupied\(x,y\)\{return S\.enemies\.find\(e=>enemyTactics\.cells\(e,/);
 });

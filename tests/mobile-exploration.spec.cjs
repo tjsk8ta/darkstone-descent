@@ -16,11 +16,11 @@ test('mobile journal uses viewport width and full available height',async({page}
  await page.locator('#journalClose').click();
  await expect(page.locator('#journalDrawer')).toHaveAttribute('aria-hidden','true');
 });
-test('initial T-Junction remains active, safe and traversable rather than ending expedition',async({page})=>{
+test('standard mission reveals a random first tile without forced T-Junction',async({page})=>{
  await begin(page);
  await page.evaluate(()=>{
   const k='darkstone_descent_tiles_v3',s=JSON.parse(localStorage.getItem(k));
-  s.x=4*9+4;s.y=5*7;s.move=5;s.actionUsed=false;
+  s.x=4*9+4;s.y=5*7;s.move=5;s.actionUsed=false;s.mapDeck=[{name:'Mobile First Chamber',shape:'chamber'}];
   localStorage.setItem(k,JSON.stringify(s));
  });
  await page.reload();
@@ -30,8 +30,8 @@ test('initial T-Junction remains active, safe and traversable rather than ending
  await expect(page.locator('#mapEyebrow')).toContainText('enemies active');
  await page.evaluate(()=>{
   const k='darkstone_descent_tiles_v3',s=JSON.parse(localStorage.getItem(k));
-  if(s.ended)throw Error('Revealing the first junction must not end the expedition');
-  if(Object.keys(s.rooms).length!==2)throw Error('Expected entrance plus junction');
+  if(s.ended)throw Error('Revealing the first random tile must not end the expedition');
+  if(Object.keys(s.rooms).length!==2)throw Error('Expected entrance plus random first tile');if(!Object.values(s.rooms).some(r=>r.name==='Mobile First Chamber'&&!r.firstJunction))throw Error('Expected random chamber, not forced T-Junction');
   if(s.move!==0||!s.actionUsed)throw Error('Look through door must consume the Search');
  });
  await expect(page.locator('#searchBtn')).toBeDisabled();

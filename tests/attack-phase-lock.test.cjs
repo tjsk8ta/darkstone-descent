@@ -12,15 +12,15 @@ function isolate(name,next,context){
 }
 test('single-die Grit reroll only changes To Hit phase',()=>{
  for(const phase of ['toHit','assign','damage']){
-  const ctx={S:{grit:2},pendingAttack:{phase,rolls:[2],rerolled:[]},die:()=>6,log:()=>{},save:()=>{},render:()=>{}};
+  const ctx={S:{grit:2},pendingAttack:{phase,rolls:[2],rerolled:[]},heroToHitDie:()=>6,log:()=>{},save:()=>{},render:()=>{}};
   isolate('rerollAttackDie','lawmanReroll',ctx)(0);
   assert.equal(ctx.S.grit,phase==='toHit'?1:2);
   assert.equal(ctx.pendingAttack.rolls[0],phase==='toHit'?6:2);
  }
 });
-test('free Marshal reroll cannot alter confirmed or allocated hits',()=>{
+test('free Lawman reroll cannot alter confirmed or allocated hits',()=>{
  for(const phase of ['toHit','assign','damage']){
-  const ctx={S:{profile:{hero:'marshal'}},pendingAttack:{phase,rolls:[2],rerolled:[],lawmanUsed:false},gritDiceSelection:new Set(),die:()=>6,log:()=>{},save:()=>{},render:()=>{}};
+  const ctx={S:{profile:{hero:'lawman'}},pendingAttack:{phase,rolls:[2],rerolled:[],lawmanUsed:false},gritDiceSelection:new Set(),heroToHitDie:()=>6,log:()=>{},save:()=>{},render:()=>{}};
   isolate('lawmanReroll','gritRerollAttack',ctx)(0);
   assert.equal(ctx.pendingAttack.rolls[0],phase==='toHit'?6:2);
   assert.equal(ctx.pendingAttack.lawmanUsed,phase==='toHit');
@@ -28,7 +28,7 @@ test('free Marshal reroll cannot alter confirmed or allocated hits',()=>{
 });
 test('multi-die Grit reroll is locked after confirmation',()=>{
  for(const phase of ['toHit','assign','damage']){
-  const ctx={S:{grit:2},pendingAttack:{phase,rolls:[2,3],rerolled:[]},gritDiceSelection:new Set([0,1]),die:()=>6,log:()=>{},save:()=>{},render:()=>{}};
+  const ctx={S:{grit:2},pendingAttack:{phase,rolls:[2,3],rerolled:[]},gritDiceSelection:new Set([0,1]),heroToHitDie:()=>6,log:()=>{},save:()=>{},render:()=>{}};
   isolate('gritRerollAttack','rerollMovement',ctx)();
   assert.equal(ctx.S.grit,phase==='toHit'?1:2);
   assert.deepEqual(Array.from(ctx.pendingAttack.rolls),phase==='toHit'?[6,6]:[2,3]);

@@ -10,9 +10,9 @@ assert.ok(a>=0&&b>a);
 const code=html.slice(a,b);
 function scenario({enemyCount=1,remaining=[1],hp=1}={}){
  const enemy={id:1,type:'Tentacle',hp,maxHp:hp,home:'1,1'};
- const S={enemies:[enemy,...Array.from({length:enemyCount-1},(_,i)=>({id:i+2,type:'Tentacle',hp:5,home:'1,1'}))],profile:{exp:0},coins:0,rooms:{'1,1':{seen:true,rewarded:true}}};
+ const S={enemies:[enemy,...Array.from({length:enemyCount-1},(_,i)=>({id:i+2,type:'Tentacle',hp:5,home:'1,1'}))],profile:{hero:'marshal',exp:0},coins:0,rooms:{'1,1':{seen:true,rewarded:true}}};
  const pendingAttack={phase:'damage',damageGroup:{enemyId:1,dice:[{hit:5,hitIndex:0,roll:6}]},resolved:[],selectedHits:[]};
- const events=[],ctx={S,pendingAttack,TYPES:{Tentacle:{name:'Tentacles',exp:30,xpPerWound:0}},
+ const events=[],ctx={S,CLASSES:{marshal:{damageDieSides:6}},pendingAttack,TYPES:{Tentacle:{name:'Tentacles',exp:30,xpPerWound:0}},
  selectedEnemyId:null,gritDiceSelection:new Set(),damageModifier:()=>0,
  enemyCritIgnoresDefense:()=>false,effectiveEnemyDefense:()=>0,
  awardEnemyWoundXP:()=>0,remainingHitIndices:()=>remaining,eliteHas:()=>false,man:()=>9,die:()=>1,checkSurvival:()=>{},

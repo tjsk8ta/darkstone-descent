@@ -1,38 +1,26 @@
 'use strict';
 const {test,expect}=require('@playwright/test');
-test('complete opening: entrance, T-junction, first chamber and enemies',async({page})=>{
+test('official standard opening: random first chamber can resolve an enemy Threat',async({page})=>{
  const errors=[];page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
  const state=await page.evaluate(()=>{
-  const hero=Object.keys(CLASSES)[0];
-  makeRun(createProfile(hero),'story');
+  makeRun(createProfile(Object.keys(CLASSES)[0]),'story');
   const entry=roomCurrent();
-  S.x=entry.x*W+4;S.y=entry.y*H;
-  S.actionUsed=false;S.searchUsedTurn=-1;
-  const first=doorwayRoom();
-  if(!first)return {error:'Entrance north door inaccessible'};
-  lookThroughDoor();
-  const junction=Object.values(S.rooms).find(r=>r.firstJunction);
-  if(!junction?.seen)return {error:'T-Junction was not revealed'};
-  S.x=junction.x*W+4;S.y=junction.y*H+3;enterRoom(junction);
-  S.x=junction.x*W;S.y=junction.y*H+3;
-  S.actionUsed=false;S.searchUsedTurn=-1;
-  const west=doorwayRoom();
-  if(!west)return {error:'West T-Junction exit inaccessible',rooms:S.rooms};
+  S.x=entry.x*W+4;S.y=entry.y*H;S.actionUsed=false;S.searchUsedTurn=-1;
   S.mapDeck=[{name:'Test Chamber',shape:'chamber'}];
   S.explorationDeck=[{clue:false,exits:1,event:'attack'}];
+  if(!doorwayRoom())return {error:'Entrance doorway unavailable'};
   lookThroughDoor();
   const chamber=Object.values(S.rooms).find(r=>r.name==='Test Chamber');
-  if(!chamber?.seen)return {error:'Chamber not revealed'};
-  S.x=chamber.x*W+4;S.y=chamber.y*H+3;
-  enterRoom(chamber);
-  return {junction:junction.explored,chamber:chamber.explored,
-   enemies:S.enemies.length,pending:!!chamber.pendingThreat,pendingError:chamber.pendingThreatError,
+  if(!chamber?.seen)return {error:'Random first chamber not revealed'};
+  if(chamber.firstJunction)return {error:'Standard mission wrongly forces T-Junction'};
+  S.x=chamber.x*W+4;S.y=chamber.y*H+3;enterRoom(chamber);
+  return {chamber:chamber.explored,enemies:S.enemies.length,
+   pending:!!chamber.pendingThreat,pendingError:chamber.pendingThreatError,
    exits:roomExits(chamber),logs:S.log.slice(0,12).map(x=>x.text)};
  });
  expect(errors).toEqual([]);
  expect(state.error||'').toBe('');
- expect(state.junction).toBe(true);
  expect(state.chamber).toBe(true);
  expect(state.pendingError||'').toBe('');
  expect(state.enemies).toBeGreaterThan(0);

@@ -55,8 +55,8 @@ test('venom penalty is reflected in all To Hit surfaces including dynamite',()=>
 
 test('Acidic Ichor D3 wounds ignore Defense and can defeat a Hero',()=>{
  const e={id:1,type:'Void Spider',hp:1,home:'0,0',x:1,y:0};
- const S={x:0,y:0,hp:1,ended:false,enemies:[e],rooms:{'0,0':{seen:true}},profile:{exp:0},coins:0,eliteAbilities:{'Void Spider':[4]}};
- const ctx={S,pendingAttack:{phase:'damage',damageGroup:{enemyId:1,dice:[{hit:5,hitIndex:0,roll:6}]},resolved:[],selectedHits:[]},
+ const S={x:0,y:0,hp:1,ended:false,enemies:[e],rooms:{'0,0':{seen:true}},profile:{hero:'marshal',exp:0},coins:0,eliteAbilities:{'Void Spider':[4]}};
+ const ctx={S,CLASSES:{marshal:{damageDieSides:6}},pendingAttack:{phase:'damage',damageGroup:{enemyId:1,dice:[{hit:5,hitIndex:0,roll:6}]},resolved:[],selectedHits:[]},
  TYPES:{'Void Spider':{name:'Void Spiders',exp:20,xpPerWound:0}},
  selectedEnemyId:null,gritDiceSelection:new Set(),damageModifier:()=>0,
  enemyCritIgnoresDefense:()=>false,effectiveEnemyDefense:()=>0,awardEnemyWoundXP:()=>0,

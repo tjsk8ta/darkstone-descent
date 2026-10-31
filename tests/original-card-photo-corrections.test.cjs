@@ -17,7 +17,7 @@ test('2014 Night Terror original printed Elite chart names retain mechanical ide
   'hypnotic-gaze','walking-nightmare','brute','mind-drain','regeneration','hunter'
  ]);
 });
-test('revised Tentacle City and Swamp Elite number 4 retain distinct printed names',()=>{
+test('revised Tentacle City and Swamp Elite number 4 share the same printed name',()=>{
  assert.equal(records.get('revised','Tentacle','city').eliteChart[3].name,'Brutal Suckers');
- assert.equal(records.get('revised','Tentacle','swamp').eliteChart[3].name,'Bitter Success');
+ assert.equal(records.get('revised','Tentacle','swamp').eliteChart[3].name,'Brutal Suckers');
 });

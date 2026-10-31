@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "plan": "docs/FOCUS_LOCKED_SEVEN_GATE_IMPLEMENTATION_PLAN.md",
+  "baselineCommit": "353945c1b865290944122826d494ebff91868937",
+  "activePhase": "P1",
+  "activeTask": "P1-reconcile-baseline",
+  "completedPhases": [],
+  "evidence": [],
+  "blockers": [
+    {
+      "id": "chromium",
+      "status": "unverified",
+      "reason": "No local Chromium execution yet"
+    }
+  ],
+  "nextAction": "Run P1 tests and reconcile historical CI; then record P1 acceptance before advancing to P2.",
+  "lastVerifiedHead": "353945c1b865290944122826d494ebff91868937"
+}

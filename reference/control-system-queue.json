@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "plan": "docs/FOCUS_LOCKED_SEVEN_GATE_IMPLEMENTATION_PLAN.md",
+  "baselineCommit": "353945c1b865290944122826d494ebff91868937",
+  "activePhase": "P1",
+  "phases": [
+    {
+      "id": "P1",
+      "name": "Baseline and reconcile",
+      "status": "in-progress",
+      "dependsOn": [],
+      "acceptance": [
+        {
+          "id": "P1-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P1-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "P2",
+      "name": "Durable checkpoint recovery",
+      "status": "pending",
+      "dependsOn": [
+        "P1"
+      ],
+      "acceptance": [
+        {
+          "id": "P2-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P2-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "P3",
+      "name": "Executable acceptance contracts",
+      "status": "pending",
+      "dependsOn": [
+        "P2"
+      ],
+      "acceptance": [
+        {
+          "id": "P3-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P3-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "P4",
+      "name": "Unified local verification",
+      "status": "pending",
+      "dependsOn": [
+        "P3"
+      ],
+      "acceptance": [
+        {
+          "id": "P4-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P4-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "P5",
+      "name": "Adversarial checker tests",
+      "status": "pending",
+      "dependsOn": [
+        "P4"
+      ],
+      "acceptance": [
+        {
+          "id": "P5-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P5-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "P6",
+      "name": "Protected release process",
+      "status": "pending",
+      "dependsOn": [
+        "P5"
+      ],
+      "acceptance": [
+        {
+          "id": "P6-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P6-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    },
+    {
+      "id": "P7",
+      "name": "Recovery and completion audit",
+      "status": "pending",
+      "dependsOn": [
+        "P6"
+      ],
+      "acceptance": [
+        {
+          "id": "P7-implementation",
+          "status": "pending",
+          "evidence": []
+        },
+        {
+          "id": "P7-verification",
+          "status": "pending",
+          "evidence": []
+        }
+      ]
+    }
+  ],
+  "constraints": {
+    "manualActions": true,
+    "failClosed": true,
+    "noPhaseSkipping": true
+  }
+}

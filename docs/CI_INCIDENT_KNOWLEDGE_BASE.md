@@ -37,3 +37,16 @@ G. Final acceptance: latest HEAD unit tests green, Chromium E2E green, Pages gre
 | 48124c2 | 41064931926 (#182) | Chromium attack hit-test | failed, superseded; screenshot email |
 | 75e9739 | 41065222586 | all verification | passed |
 | 27ffccc7 | 41065333206 | all verification | passed; Pages 41065333246 passed |
+
+
+## 2026-10-31 — source-correction test drift, isolated VM dependencies and workflow trigger
+
+**Observed:** GitHub Actions run 41188843547 for commit cf6431a failed: 11 Node unit tests and one of 26 Playwright Chromium tests. Unit failures clustered into (a) tests isolating combat functions without supplying the newly introduced `heroToHitDie` or `CLASSES` dependencies; (b) stale assertions for a free *Marshal* reroll after source-corrected *Lawman* ownership; (c) stale expectations that Swamps Tentacles Elite #4 said *Bitter Success*, contradicted by direct visual inspection of publisher card images; (d) one stale integration string assertion. Chromium had 25 passes and one stale Tentacles name assertion. The last verification step correctly failed the workflow even though the job step was configured `continue-on-error`.
+
+**Root cause:** Integration changes were not accompanied by a complete search of all Node/Playwright tests for renamed helpers, class identities and printed-card expectations. Source extraction's visual-element description was treated as more reliable than the actual pictured card. Separately, the workflow retained an automatic `push` trigger despite the user's express instruction to disable automatic CI.
+
+**Corrections:** Updated all affected VM fixtures and test expectations to source-verified behaviour; added official randomized first-room and D8 dynamite bounce regressions; removed the `push` trigger from `.github/workflows/verify.yml` while preserving `workflow_dispatch`. This prevents automatic verification emails from future pushes; GitHub Pages' separate automatic deployment is unaffected.
+
+**Control:** Before changing combat helpers, grep the entire `tests/` tree for isolated `vm.runInNewContext` fixtures and provide new dependencies. Before renaming rules/card values, grep all `*.test.cjs` and `*.spec.cjs` for legacy assertions. A commit is not evidence of a passing test. The release checker requires independent current-source unit, desktop/mobile Chromium, save-recovery and Pages evidence. Current HEAD has not been run through Node/Playwright since the corrections; do not mark this incident closed.
+
+**Sources:** https://github.com/tjsk8ta/darkstone-descent/actions/runs/41188843547 ; publisher printed cards: https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBCA_Rulebook_WEB.pdf#page=22 and https://www.flyingfrog.net/shadowsofbrimstone/pdf/REV__SBSD_Rulebook_WEB.pdf#page=22 .

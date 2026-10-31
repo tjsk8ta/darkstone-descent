@@ -127,7 +127,7 @@
       "corrected dynamite D8 bounce directions to publisher reference diagram"
     ],
     "unverified": [
-      "44 remaining physical enemy faces",
+      "43 remaining physical enemy faces",
       "actual Growing Dread effects",
       "remaining Hero sheets and equipment effects",
       "current HEAD npm and browser tests",
@@ -138,6 +138,28 @@
       "sourceCommit": "cf6431a31c325fcac868a37bf4af7cb347f639bf",
       "result": "failed",
       "diagnosis": "11 Node test failures from old VM fixtures missing heroToHitDie/CLASSES and stale source-name assumptions; 1 of 26 Chromium tests failed due stale Bitter Success expectation. Test harnesses and expectations updated; current HEAD remains untested."
+    },
+    "isolateChecks": {
+      "date": "2026-10-31",
+      "status": "passed",
+      "count": 6,
+      "checks": [
+        "hero exact stats and D8",
+        "Tentacles official card Elite #4",
+        "Growing Dread LIFO and Epic gating",
+        "first map card random",
+        "Dynamite bounce directions",
+        "Epic Threat not fixed boss"
+      ],
+      "scope": "V8 isolated logic only, not Node/Playwright"
+    },
+    "pendingAcceptance": {
+      "physicalFacesVerified": 5,
+      "physicalFacesRequired": 48,
+      "physicalFacesRemaining": 43,
+      "headNodeTest": "not run",
+      "headPlaywright": "not run",
+      "headPages": "build only; browser not independently verified"
     }
   }
 }

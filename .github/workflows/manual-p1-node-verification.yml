@@ -1,0 +1,63 @@
+name: Manual P1 full-repository Node verification
+on:
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: 'Exact repository commit to verify (40-character SHA)'
+        required: true
+        type: string
+        default: 'ef6672f9cb20e96b31d216a15ff29f16a5ede46c'
+permissions:
+  contents: read
+jobs:
+  full-node-suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Validate pinned commit input
+        shell: bash
+        env:
+          TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          [[ "$TARGET_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'Invalid exact commit SHA'; exit 2; }
+      - name: Checkout exact repository commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_sha }}
+          persist-credentials: false
+      - name: Verify exact HEAD
+        shell: bash
+        env:
+          TARGET_SHA: ${{ inputs.target_sha }}
+        run: |
+          actual="$(git rev-parse HEAD)"
+          echo "Requested SHA: $TARGET_SHA"
+          echo "Checked-out SHA: $actual"
+          test "$actual" = "$TARGET_SHA"
+          git status --porcelain
+          test -z "$(git status --porcelain)"
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Execute full repository npm test and preserve exit code
+        shell: bash
+        run: |
+          node --version
+          npm --version
+          set +e
+          npm test 2>&1 | tee p1-npm-test.log
+          status=${PIPESTATUS[0]}
+          set -e
+          echo "npm test exit code: $status"
+          printf 'npm test exit code: %s\n' "$status" > p1-exit-code.txt
+          exit "$status"
+      - name: Upload test evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: p1-node-evidence-${{ inputs.target_sha }}
+          path: |
+            p1-npm-test.log
+            p1-exit-code.txt
+          if-no-files-found: warn

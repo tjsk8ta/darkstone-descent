@@ -37,3 +37,24 @@ test('enemy movement uses persisted size for moving enemy and blockers',()=>{
  assert.match(html,/const footprint=e\.baseSize\|\|t\.baseSize\|\|'medium'/);
  assert.match(html,/size:other\.baseSize\|\|TYPES\[other\.type\]\?\.baseSize\|\|'medium'/);
 });
+
+const placementMatch=html.match(/function canPlaceEnemyFootprint\(p,size\)\{[^\n]*\}/);
+assert.ok(placementMatch,'Shared footprint placement validator must exist');
+function canPlace(anchor,size,{hero={x:99,y:99},enemies=[],walkable=()=>true,seen=()=>true}={}){
+ const context={S:{...hero,enemies},enemyTactics:tactics,cellAt:walkable,roomAt:(x,y)=>({seen:seen(x,y)}),occupied:(x,y)=>enemies.find(e=>tactics.cells(e,e.baseSize||'medium').some(p=>p.x===x&&p.y===y))};
+ vm.runInNewContext(placementMatch[0]+';globalThis.check=canPlaceEnemyFootprint;',context);
+ return context.check(anchor,size);
+}
+test('extra-large ambush cannot overlap hero in any footprint cell',()=>{
+ assert.equal(canPlace({x:4,y:4},'extra-large',{hero:{x:5,y:5}}),false);
+ assert.equal(canPlace({x:4,y:4},'extra-large',{hero:{x:6,y:6}}),true);
+});
+test('extra-large ambush cannot overlap another enemy or unseen room',()=>{
+ assert.equal(canPlace({x:4,y:4},'extra-large',{enemies:[{x:5,y:4,baseSize:'medium'}]}),false);
+ assert.equal(canPlace({x:4,y:4},'extra-large',{seen:(x,y)=>!(x===5&&y===5)}),false);
+ assert.equal(canPlace({x:4,y:4},'extra-large',{walkable:(x,y)=>!(x===4&&y===5)}),false);
+});
+test('normal and drop-from-above spawns share full footprint validation',()=>{
+ assert.match(html,/const p=locs\.find\(p=>canPlaceEnemyFootprint\(p,size\)\)/);
+ assert.match(html,/\.filter\(p=>canPlaceEnemyFootprint\(p,e\.baseSize\|\|TYPES\[e\.type\]\?\.baseSize\|\|'medium'\)\&\&lineOfSight\(S,p\)\)/);
+});

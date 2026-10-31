@@ -686,7 +686,7 @@ function spawnSpaces(r){
  }
  return spaces;
 }
-function canPlaceEnemyFootprint(p,size,ignoreEnemyId=null){return enemyTactics.cells(p,size).every(c=>cellAt(c.x,c.y)&&roomAt(c.x,c.y)?.seen&&!(S.x===c.x&&S.y===c.y)&&!S.enemies.some(enemy=>enemy.id!==ignoreEnemyId&&enemyTactics.cells(enemy,enemy.baseSize||TYPES[enemy.type]?.baseSize||'medium').some(cell=>cell.x===c.x&&cell.y===c.y)))}
+function canPlaceEnemyFootprint(p,size,ignoreEnemyId=null){return enemyTactics.cells(p,size).every(c=>cellAt(c.x,c.y)&&roomAt(c.x,c.y)?.seen&&crossesConnectedDoor(p.x,p.y,c.x,c.y)&&!(S.x===c.x&&S.y===c.y)&&!S.enemies.some(enemy=>enemy.id!==ignoreEnemyId&&enemyTactics.cells(enemy,enemy.baseSize||TYPES[enemy.type]?.baseSize||'medium').some(cell=>cell.x===c.x&&cell.y===c.y)))}
 function spawnEnemy(type,r,options={}){
  const t=TYPES[type];
  if(!t){log('Unknown enemy type '+type+'; cannot spawn.','hit');return false}

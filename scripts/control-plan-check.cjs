@@ -15,11 +15,15 @@ function validate(q,c,workflow){
    if(!p.acceptance?.length||p.acceptance.some(a=>!['pending','passed','blocked','failed'].includes(a.status)||!Array.isArray(a.evidence)))bad('invalid acceptance '+p.id);
   });
   if(active!==1||q.phases.find(p=>p.id===q.activePhase)?.status!=='in-progress')bad('active phase invalid');
+  if(q.phases.some((p,i)=>p.status==='pending'&&q.phases.slice(i+1).some(x=>x.status!=='pending')))bad('pending phase before active work');
  }
  if(q?.activePhase!==c?.activePhase||!c?.activeTask||!c?.nextAction||!Array.isArray(c?.completedPhases)||!Array.isArray(c?.blockers))bad('checkpoint mismatch');
  if(c?.completedPhases?.some(id=>q.phases.find(p=>p.id===id)?.status!=='passed'))bad('unverified checkpoint completion');
+ if(q?.phases?.filter(p=>p.status==='passed').some(p=>!c?.completedPhases?.includes(p.id)))bad('checkpoint missing passed phase');
+ if(!Array.isArray(c?.evidence))bad('checkpoint evidence invalid');
+ if(!/^[0-9a-f]{40}$/.test(c?.lastVerifiedHead||''))bad('checkpoint HEAD invalid');
  if(q?.constraints?.manualActions!==true||q?.constraints?.failClosed!==true||q?.constraints?.noPhaseSkipping!==true)bad('controls disabled');
- if(!/^\s*workflow_dispatch\s*:/m.test(workflow)||/^\s*(push|pull_request|schedule|workflow_run)\s*:/m.test(workflow))bad('automatic Actions trigger');
+ if(!/^\s*workflow_dispatch\s*:/m.test(workflow)||/^\s*(push|pull_request|schedule|workflow_run|repository_dispatch|workflow_call)\s*:/m.test(workflow))bad('automatic Actions trigger');
  return {accepted:errors.length===0,errors,activePhase:q?.activePhase};
 }
 if(require.main===module){const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');const result=validate(JSON.parse(read('reference/control-system-queue.json')),JSON.parse(read('reference/control-system-checkpoint.json')),read('.github/workflows/verify.yml'));console.log(JSON.stringify(result,null,2));if(!result.accepted)process.exitCode=1}

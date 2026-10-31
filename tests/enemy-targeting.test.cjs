@@ -1,0 +1,5 @@
+'use strict';const test=require('node:test'),assert=require('node:assert/strict');const t=require('../rules/enemy-targeting.js');
+test('nearest enemies activate first',()=>{const h=[{id:'h',x:0,y:0}];assert.deepEqual(t.activationOrder([{id:'far',x:8,y:8},{id:'near',x:1,y:1}],h).map(e=>e.id),['near','far'])});
+test('melee retains adjacent target until it escapes or is KO',()=>{const h=[{id:'a',x:1,y:0},{id:'b',x:0,y:1}];const e={id:1,type:'tentacle',x:0,y:0,targetId:'b'};assert.equal(t.chooseTarget(e,h,{reach:()=>true}).id,'b');h[1].ko=true;assert.equal(t.chooseTarget(e,h,{reach:()=>true}).id,'a')});
+test('balance new targets among reachable heroes',()=>{const h=[{id:'a',x:1,y:0},{id:'b',x:0,y:1}];const e={id:2,type:'tentacle',x:0,y:0};assert.equal(t.chooseTarget(e,h,{reach:()=>true,existing:[{id:1,type:'tentacle',targetId:'a'}]}).id,'b')});
+test('ranged prioritises adjacent hero and refuses unreachable target',()=>{const h=[{id:'a',x:1,y:0},{id:'b',x:3,y:0}];const e={id:2,type:'ranged',x:0,y:0};assert.equal(t.chooseTarget(e,h,{ranged:true,reach:()=>true}).id,'a');assert.equal(t.chooseTarget(e,h,{reach:()=>false}),null)});

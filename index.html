@@ -57,6 +57,7 @@
 <script src="rules/travel-phase.js"></script>
 <script src="rules/enemy-placement.js"></script>
 <script src="rules/enemy-tactics.js"></script>
+<script src="rules/enemy-targeting.js"></script>
 <script src="rules/mission.js"></script>
 <script>
 (()=>{'use strict';
@@ -491,6 +492,7 @@ function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='sw
 const threatEngine=globalThis.DarkstoneThreatEngine;
 if(!threatEngine)throw Error('Threat engine did not load');
 const enemyTactics=globalThis.DarkstoneEnemyTactics;
+const enemyTargeting=globalThis.DarkstoneEnemyTargeting;
 if(!enemyTactics)throw Error('Enemy tactics module did not load');
 const enemyMovement=globalThis.DarkstoneEnemyMovement;
 if(!enemyMovement)throw Error('Enemy movement module did not load');
@@ -886,7 +888,7 @@ function enemyActivationOrder(enemies){
  return initiatives.flatMap(initiative=>{
   const group=enemies.filter(e=>effectiveEnemyInitiative(e)===initiative);
   const types=shuffleDeck([...new Set(group.map(e=>e.type))]);
-  return types.flatMap(type=>group.filter(e=>e.type===type).sort((a,b)=>man(a,S)-man(b,S)));
+  return types.flatMap(type=>enemyTargeting.activationOrder(group.filter(e=>e.type===type),[{id:'solo',x:S.x,y:S.y}]));
  });
 }
 function eligibleEnemyActivations(enemies,when,turn,heroInitiative){return enemies.filter(e=>when==='ambush'?e.ambushPending===true:e.spawnTurn!==turn&&(when==='before'?effectiveEnemyInitiative(e)>=heroInitiative:effectiveEnemyInitiative(e)<heroInitiative))}
@@ -896,6 +898,8 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
  if(!remaining.length){log('Enemy activation ('+when+'): no eligible enemies.','info');return}log('Enemy activation ('+when+'): '+remaining.length+' enemy model(s).','info');
  for(let e of remaining){if(S.ended)break;if(!S.enemies.some(x=>x.id===e.id)||S.enemyActed.includes(e.id))continue;
  if(when==='ambush'){e.ambushPending=false;log(TYPES[e.type].name+' #'+e.id+' resolves its immediate Ambush Attack.','hit')}else S.enemyActed.push(e.id);let t=TYPES[e.type],distance=man(S,e);
+ const heroTarget=enemyTargeting.chooseTarget({...e,targetId:e.targetHero},[{id:'solo',x:S.x,y:S.y}],{reach:(enemy,hero)=>{const ranged=(t.attackRange||1)>1;return ranged?Math.max(Math.abs(enemy.x-hero.x),Math.abs(enemy.y-hero.y))<=t.attackRange&&lineOfSight(enemy,hero):true},existing:S.enemies.map(x=>({...x,targetId:x.targetHero})),ranged:(t.attackRange||1)>1});
+ if(heroTarget)e.targetHero=heroTarget.id;
  if(e.type==='Corpse Pile'&&!S.corpsePileRuleWarning){
   S.corpsePileRuleWarning=true;
   log('RULE VERIFICATION PENDING: Corpse Pile Fast Spawner frequency and placement are unverified. No invented automatic Hungry Dead spawn applied.','hit');
@@ -916,7 +920,7 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
     for(const move of tactical.displaced){const other=S.enemies.find(other=>other.id===move.id);if(other){other.x=move.x;other.y=move.y;log('Large Enemy displaces '+TYPES[other.type].name+' #'+other.id+'.','info')}}
     e.x=tactical.destination.x;e.y=tactical.destination.y;
     if(tactical.adjacent)e.targetHero='solo';
-    else delete e.targetHero;
+    else if((t.attackRange||1)<=1)delete e.targetHero;
    }
   }
  }

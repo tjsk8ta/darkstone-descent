@@ -15,7 +15,7 @@ function chooseMove({enemy,hero,steps,walkable,occupants=[],canStep,allowDisplac
  while(queue.length){const state=queue.shift(),pos=state.p;
   const near=adjacent(pos,size,target,'medium');
   const dist=Math.max(...cells(pos,size).map(p=>Math.max(Math.abs(p.x-target.x),Math.abs(p.y-target.y))));
-  const score=(near?100000:0)+state.route.length*100-dist;
+  const score=(near?100000:0)-dist*100+state.route.length;
   if(!best||score>best.score)best={...state,score,near};
   if(state.route.length===steps)continue;
   for(const [dx,dy] of DIRS){

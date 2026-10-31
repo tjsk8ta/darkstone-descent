@@ -141,12 +141,14 @@ function applyFace(edition,name,base={},set='city',face='normal'){
   recordFace:face};
 }
 
+// Directly inspected publisher PDF card IMAGES: both revised cores say Brutal
+// Suckers. PDF extracted visual metadata incorrectly said Bitter Success.
 const revisedSwampTentacle={...revised.Tentacle,source:OFFICIAL_TENTACLE_SWAMP,
- confidence:'publisher 2020 Swamps normal-side rulebook example',
- eliteChart:revised.Tentacle.eliteChart.map((e,i)=>i===3?{...e,name:'Bitter Success'}:{...e})};
+ confidence:'publisher revised Swamps p22 image directly inspected; Elite #4 Brutal Suckers',
+ eliteChart:revised.Tentacle.eliteChart.map(e=>({...e}))};
 const revisedCombinedTentacle={...revised.Tentacle,
- confidence:'publisher City and Swamps examples; same +2 Damage mechanics, different printed Elite #4 names',
- eliteChart:revised.Tentacle.eliteChart.map((e,i)=>i===3?{...e,name:'Brutal Suckers / Bitter Success'}:{...e}),
+ confidence:'publisher City and Swamps p22 images both say Brutal Suckers',
+ eliteChart:revised.Tentacle.eliteChart.map(e=>({...e})),
  variantSources:[OFFICIAL_TENTACLE_CITY,OFFICIAL_TENTACLE_SWAMP]};
 function get(edition,name,set='city'){
  if(!Object.hasOwn(editions,edition))throw Error('Unknown edition '+edition);

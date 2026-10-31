@@ -377,7 +377,7 @@
       "statisticsVerified": true,
       "abilitiesVerified": true,
       "eliteChartVerified": true,
-      "notes": "Publisher City revised rulebook p22 card reads Elite #4 Brutal Suckers. Publisher Swamps revised rulebook indexed image reads Elite #4 Bitter Success. Treat as set-specific variant; do not collapse these into one global ability name.",
+      "notes": "Publisher p22 printed green Tentacles card visually inspected in both revised books: Elite #4 Brutal Suckers. PDF visual-element extracted text incorrectly says Bitter Success; image is authoritative. Brutal red face remains unverified.",
       "editionDifference": {
         "eliteAbility4": "Brutal Suckers",
         "effect": "Tentacle Combat Hits +2 Damage"
@@ -395,7 +395,8 @@
       "gameplayIntegrated": true,
       "implementation": "rules/enemy-records.js get(revised,Tentacle,city); index.html applyEnemyEdition",
       "evidenceKind": "publisher-rulebook-card-image",
-      "inspectedFace": true
+      "inspectedFace": true,
+      "verificationMethod": "direct-visual-publisher-pdf-page"
     },
     {
       "edition": "revised",
@@ -528,7 +529,7 @@
       "statisticsVerified": true,
       "abilitiesVerified": true,
       "eliteChartVerified": true,
-      "notes": "Publisher City revised rulebook p22 card reads Elite #4 Brutal Suckers. Publisher Swamps revised rulebook indexed image reads Elite #4 Bitter Success. Treat as set-specific variant; do not collapse these into one global ability name.",
+      "notes": "Publisher p22 printed green Tentacles card visually inspected in both revised books: Elite #4 Brutal Suckers. PDF visual-element extracted text incorrectly says Bitter Success; image is authoritative. Brutal red face remains unverified.",
       "editionDifference": {
         "eliteAbility4": "Bitter Success",
         "effect": "Tentacle Combat Hits +2 Damage"
@@ -546,7 +547,8 @@
       "gameplayIntegrated": true,
       "implementation": "rules/enemy-records.js get(revised,Tentacle,swamp); index.html applyEnemyEdition",
       "evidenceKind": "publisher-rulebook-card-image",
-      "inspectedFace": true
+      "inspectedFace": true,
+      "verificationMethod": "direct-visual-publisher-pdf-page"
     },
     {
       "edition": "revised",

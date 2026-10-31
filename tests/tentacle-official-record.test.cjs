@@ -10,10 +10,10 @@ test('official revised Tentacles stats and six Elite effects agree across both c
   assert.equal(r.complete,true);
   for(const [k,v] of Object.entries(expected))assert.equal(r.stats[k],v,set+' '+k);
   assert.deepEqual(r.eliteChart.map(x=>x.id),ids);
-  assert.equal(r.eliteChart[3].name,set==='swamp'?'Bitter Success':'Brutal Suckers');
+  assert.equal(r.eliteChart[3].name,'Brutal Suckers');
  }
 });
-test('the two revised Elite labels describe identical +2 Damage effect',()=>{
+test('both revised Elite #4 labels describe +2 Damage',()=>{
  const city=records.get('revised','Tentacle','city');
  const swamp=records.get('revised','Tentacle','swamp');
  assert.equal(city.eliteChart[3].effect,swamp.eliteChart[3].effect);
@@ -24,7 +24,7 @@ test('original and revised enemy sheets are not mutated by a previous edition lo
  const swamp=records.get('revised','Tentacle','swamp');
  const city=records.get('revised','Tentacle','city');
  assert.equal(original.eliteChart[3].name,'Brutal Suckers');
- assert.equal(swamp.eliteChart[3].name,'Bitter Success');
+ assert.equal(swamp.eliteChart[3].name,'Brutal Suckers');
  assert.equal(city.eliteChart[3].name,'Brutal Suckers');
 });
 

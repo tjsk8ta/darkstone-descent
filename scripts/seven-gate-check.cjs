@@ -8,7 +8,7 @@ const read=p=>JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
 const exists=p=>fs.existsSync(path.join(root,p));
 const results=[],fail=(gate,reason)=>{let g=results.find(x=>x.id===gate);g.pass=false;g.blockers.push(reason)};
 for(let i=1;i<=7;i++)results.push({id:i,pass:true,blockers:[]});
-const required=['reference/enemy-record-sheets.json','reference/enemy-sheet-audit.json','reference/completion-status.json','reference/execution-gates.json','rules/completion.json','rules/enemy-records.js','index.html','package.json'];
+const required=['reference/enemy-record-sheets.json','reference/enemy-sheet-audit.json','reference/completion-status.json','reference/execution-gates.json','rules/completion.json','rules/enemy-records.js','rules/hero-records.js','rules/objective-sequence.js','index.html','package.json'];
 for(const p of required)if(!exists(p))fail(1,'Required input missing: '+p);
 if(results[0].pass){
  const ledger=read(required[0]),audit=read(required[1]),status=read(required[2]),gates=read(required[3]),completion=read(required[4]);
@@ -34,7 +34,7 @@ if(results[0].pass){
  if(audit.acceptance?.allSheetsSourceVerified!==true)fail(2,'Independent sheet audit not accepted');
  if(completion.gates?.combat?.status!=='complete'||completion.gates?.exploration?.status!=='complete'||completion.gates?.threatDecks?.status!=='complete'||completion.gates?.characters?.status!=='complete')fail(3,'Rules engine / missions / hero / threats not fully implemented');
  const evidence=gates.testEvidence||{};
- const sourceFiles=['index.html','rules/enemy-records.js','rules/threat-engine.js','rules/enemy-movement.js','reference/enemy-record-sheets.json'];
+ const sourceFiles=['index.html','rules/enemy-records.js','rules/threat-engine.js','rules/enemy-movement.js','rules/hero-records.js','rules/objective-sequence.js','reference/enemy-record-sheets.json'];
  const digest=crypto.createHash('sha256');
  for(const f of sourceFiles){if(exists(f))digest.update(f).update(fs.readFileSync(path.join(root,f)));else fail(4,'Missing source for fingerprint: '+f)}
  const fingerprint=digest.digest('hex');

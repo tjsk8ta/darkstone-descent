@@ -109,5 +109,27 @@
         "occlusion": "Void Spider fully readable, others partly covered"
       }
     ]
+  },
+  "latestExecution": {
+    "date": "2026-10-31",
+    "verifiedSources": [
+      "2014 original Tentacles publisher card image",
+      "2020 City and Swamps Tentacles publisher card images",
+      "2020 revised Lawman and U.S. Marshal sample Hero sheets",
+      "Revised City Adventure Book p12 final Epic Threat"
+    ],
+    "implemented": [
+      "corrected PDF-extraction-induced Tentacles name mismatch",
+      "two publisher Hero sheets with verified weapon dice and Lawman reroll",
+      "Growing Dread LIFO manual physical-card resolution and 1-Grit cancel",
+      "official Epic Threat in final fight, unresolved cards persist"
+    ],
+    "unverified": [
+      "44 remaining physical enemy faces",
+      "actual Growing Dread effects",
+      "remaining Hero sheets and equipment effects",
+      "current HEAD npm and browser tests",
+      "GitHub Pages deployment"
+    ]
   }
 }

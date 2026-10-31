@@ -36,11 +36,11 @@ test('Tentacle publisher example has same verified core mechanics in both editio
   assert.equal(t.eliteChart.length,6);
  }
 });
-test('revised City and Swamps Tentacles have distinct printed Elite #4 names but identical mechanics',()=>{
+test('revised City and Swamps Tentacles have identical printed Elite #4 name and mechanics',()=>{
  const city=records.get('revised','Tentacle','city'),swamp=records.get('revised','Tentacle','swamp'),combined=records.get('revised','Tentacle','combined');
  assert.equal(city.eliteChart[3].name,'Brutal Suckers');
- assert.equal(swamp.eliteChart[3].name,'Bitter Success');
- assert.equal(combined.eliteChart[3].name,'Brutal Suckers / Bitter Success');
+ assert.equal(swamp.eliteChart[3].name,'Brutal Suckers');
+ assert.equal(combined.eliteChart[3].name,'Brutal Suckers');
  assert.equal(city.eliteChart[3].id,'tentacle-bonus-damage');
  assert.equal(swamp.eliteChart[3].id,'tentacle-bonus-damage');
  assert.equal(city.eliteChart[3].effect,swamp.eliteChart[3].effect);

@@ -28,3 +28,12 @@ test('ordinary enemies occupy one space only',()=>{
  assert.equal(check([enemy],{Tentacle:{baseSize:'medium'}},1,2).id,9);
  assert.equal(check([enemy],{Tentacle:{baseSize:'medium'}},2,2),undefined);
 });
+
+test('enemy spawning preserves edition-specific large and extra-large sizes',()=>{
+ assert.match(html,/const size=t\.baseSize\|\|'medium';const p=locs\.find/);
+ assert.match(html,/baseSize:size/);
+});
+test('enemy movement uses persisted size for moving enemy and blockers',()=>{
+ assert.match(html,/const footprint=e\.baseSize\|\|t\.baseSize\|\|'medium'/);
+ assert.match(html,/size:other\.baseSize\|\|TYPES\[other\.type\]\?\.baseSize\|\|'medium'/);
+});

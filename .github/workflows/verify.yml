@@ -1,7 +1,6 @@
 name: Verify Darkstone rules engine
 on:
-  push:
-    branches: [main]
+  # Manual verification only: never email automatic push-failure notifications.
   workflow_dispatch:
 concurrency:
   group: verify-${{ github.ref }}

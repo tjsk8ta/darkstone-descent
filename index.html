@@ -56,6 +56,7 @@
 <script src="rules/equipment-ui.js"></script>
 <script src="rules/travel-phase.js"></script>
 <script src="rules/enemy-placement.js"></script>
+<script src="rules/enemy-tactics.js"></script>
 <script src="rules/mission.js"></script>
 <script>
 (()=>{'use strict';
@@ -489,6 +490,8 @@ function originalThreatPool(tier,set){const sets=set==='city'?['city']:set==='sw
 // The physical Peril die is 3,3,4,4,5,6. Never substitute a D6.
 const threatEngine=globalThis.DarkstoneThreatEngine;
 if(!threatEngine)throw Error('Threat engine did not load');
+const enemyTactics=globalThis.DarkstoneEnemyTactics;
+if(!enemyTactics)throw Error('Enemy tactics module did not load');
 const enemyMovement=globalThis.DarkstoneEnemyMovement;
 if(!enemyMovement)throw Error('Enemy movement module did not load');
 function threatDeckKey(tier){return tier==='low'?'lowThreatDeck':tier+'ThreatDeck'}
@@ -693,7 +696,7 @@ function spawnEnemy(type,r,options={}){
  if(!t){log('Unknown enemy type '+type+'; cannot spawn.','hit');return false}
  const locs=options.ambush?DarkstoneEnemyPlacement.ambushSpaces(S,cellAt,roomAt,r):spawnSpaces(r);
  if(!locs.length){log('No connected space for '+type+'; placement deferred.','hit');return false}
- const p=locs[0],boost=S.mode==='hard'?1:0;
+ const size=t.baseSize==='extra-large'?'extra-large':'medium';const p=locs.find(p=>enemyTactics.cells(p,size).every(c=>cellAt(c.x,c.y)&&roomAt(c.x,c.y)?.seen&&!(S.x===c.x&&S.y===c.y)&&!occupied(c.x,c.y)));if(!p){log('No valid full footprint for '+type+'; placement deferred.','hit');return false}const boost=S.mode==='hard'?1:0;
  if(!t.recordComplete){
   S.unverifiedEnemyWarnings=S.unverifiedEnemyWarnings||{};
   if(!S.unverifiedEnemyWarnings[type]){
@@ -701,7 +704,7 @@ function spawnEnemy(type,r,options={}){
    log('RULE VERIFICATION PENDING: '+type+' normal-side record sheet is incomplete for '+S.coreEdition+'; remaining statistics/abilities are provisional.','hit');
   }
  }
- S.enemies.push({id:S.nextEnemy++,type,x:p.x,y:p.y,hp:enemyMaxHp(type)+boost,maxHp:enemyMaxHp(type)+boost,home:id(r.x,r.y),spawnTurn:S.turn});
+ S.enemies.push({id:S.nextEnemy++,type,x:p.x,y:p.y,hp:enemyMaxHp(type)+boost,maxHp:enemyMaxHp(type)+boost,home:id(r.x,r.y),spawnTurn:S.turn,baseSize:size});
  return true;
 }
 // Separate shuffled prototype rewards from official physical card identities.
@@ -779,7 +782,7 @@ function crossesConnectedDoor(fromX,fromY,toX,toY){
  const fx=fromX%W,fy=fromY%H,tx=toX%W,ty=toY%H;
  return portalLane(from,dir,fx,fy)&&portalLane(to,OPPOSITE_DOOR[dir],tx,ty)&&(dir==='N'||dir==='S'?fx===tx:fy===ty);
 }
-function occupied(x,y){return S.enemies.find(e=>e.x===x&&e.y===y)}
+function occupied(x,y){return S.enemies.find(e=>enemyTactics.cells(e,TYPES[e.type]?.baseSize==='extra-large'?'extra-large':'medium').some(p=>p.x===x&&p.y===y))}
 function path(from,to,allowUnknown=false,avoidEnemies=true){const start=id(from.x,from.y),dest=id(to.x,to.y),queue=[from],came={[start]:null};let dirs=[[1,0],[-1,0],[0,1],[0,-1],[1,1],[1,-1],[-1,1],[-1,-1]];while(queue.length){let p=queue.shift(),key=id(p.x,p.y);if(key===dest)break;for(let [dx,dy] of dirs){let x=p.x+dx,y=p.y+dy,k=id(x,y);if(k in came||!cellAt(x,y))continue;if(!crossesConnectedDoor(p.x,p.y,x,y))continue;if(dx&&dy&&(!cellAt(p.x+dx,p.y)||!cellAt(p.x,p.y+dy)||!crossesConnectedDoor(p.x,p.y,p.x+dx,p.y)||!crossesConnectedDoor(p.x,p.y,p.x,p.y+dy)))continue;if(!visibleAt(x,y)){let r=roomAt(x,y);if(!allowUnknown||!r||!Object.values(D).some(([a,b])=>S.rooms[id(r.x+a,r.y+b)]?.seen))continue}if(avoidEnemies&&occupied(x,y)&&k!==dest)continue;came[k]=key;queue.push({x,y})}}if(!(dest in came))return null;let result=[],curr=dest;while(curr!==start){let [x,y]=curr.split(',').map(Number);result.unshift({x,y});curr=came[curr]}return result}
 function doorwayRoom(){
  if(!S||!roomCurrent()?.explored)return null;
@@ -897,7 +900,26 @@ function enemyPhase(when='after'){if(!S||S.ended)return;
   S.corpsePileRuleWarning=true;
   log('RULE VERIFICATION PENDING: Corpse Pile Fast Spawner frequency and placement are unverified. No invented automatic Hungry Dead spawn applied.','hit');
  }
- if(when!=='ambush'&&distance>1&&t.steps>0){let route=path(e,{x:S.x,y:S.y},false,!eliteHas(e.type,'eruption')&&!t.flight);if(route){let steps=Math.min(t.steps,Math.max(0,route.length-1));const destination=enemyMovement.chooseDestination(route,steps,{x:S.x,y:S.y},p=>!!occupied(p.x,p.y));if(destination){e.x=destination.x;e.y=destination.y}}}
+ if(when!=='ambush'&&t.steps>0){
+  const ranged=Number.isInteger(t.attackRange)&&t.attackRange>1;
+  const inRange=distance<=(t.attackRange||1)&&lineOfSight(e,S);
+  if(!ranged||!inRange){
+   const footprint=t.baseSize==='extra-large'?'extra-large':t.baseSize==='large'?'large':'medium';
+   const tactical=enemyTactics.chooseMove({
+    enemy:{id:e.id,x:e.x,y:e.y,size:footprint},hero:{x:S.x,y:S.y},steps:t.steps,
+    walkable:(x,y)=>!!cellAt(x,y)&&!!roomAt(x,y)?.seen,
+    canStep:(a,b)=>crossesConnectedDoor(a.x,a.y,b.x,b.y),
+    occupants:S.enemies.filter(other=>other.id!==e.id).map(other=>({id:other.id,x:other.x,y:other.y,size:TYPES[other.type]?.baseSize||'medium'})),
+    allowDisplace:footprint!=='medium'
+   });
+   if(tactical?.destination){
+    for(const move of tactical.displaced){const other=S.enemies.find(other=>other.id===move.id);if(other){other.x=move.x;other.y=move.y;log('Large Enemy displaces '+TYPES[other.type].name+' #'+other.id+'.','info')}}
+    e.x=tactical.destination.x;e.y=tactical.destination.y;
+    if(tactical.adjacent)e.targetHero='solo';
+    else delete e.targetHero;
+   }
+  }
+ }
  distance=man(S,e);if(distance>1)log(t.name+' moves to ('+e.x+', '+e.y+'); '+distance+' squares from hero.','info');
  if(distance<=(t.attackRange||1)&&t.combat!==0&&lineOfSight(e,S)){let dice=(eliteHas(e.type,'extra-arms')?4:(t.combat||(e.type==='boss'?2:1)))+(eliteHas(e.type,'rapid-climbing')?2:0);let rs=roll(dice+(eliteHas(e.type,'lashing-strike')?1:0)),hits=rs.filter(x=>x>=(eliteHas(e.type,'hunter')?4:eliteHas(e.type,'vicious-bite')?3:t.hit)),physical=0,horror=0,defRolls=[],armorRolls=[],willRolls=[];
  if(t.clawsDoubleHits)hits=hits.flatMap(v=>[v,v]);
@@ -985,7 +1007,23 @@ function townModal(){
  $('stayHotel').onclick=()=>{if(saveFailure||t.lodging||!DarkstoneTownPhase.canSpend(p.coins,10))return;p.coins-=10;t.lodging='hotel';save();townModal()};$('stayCamp').onclick=()=>{if(saveFailure||t.lodging)return;t.lodging='camp';t.events.push('Camp Site Hazard Chart unavailable; no hazard applied.');save();townModal()};$('townNext').onclick=()=>{if(saveFailure)return;if(!DarkstoneTownPhase.canAdvance(t)){log('Choose Hotel or Camp Site before advancing the day.','info');return}t.day++;t.visited=false;t.location=null;t.lodging=null;t.events.push('Day '+t.day+': Town Event chart unavailable; no effect applied.');save();townModal()};
  $('townStart').onclick=()=>{if(saveFailure)return;let profile=structuredClone(p),extras=profile.extra||{};profile.extra={bandages:0,whiskey:0,bombs:0};profile.town=null;makeRun(profile,S.mode);for(const [token,amount] of [['bandages',extras.bandages||0],['whiskey',extras.whiskey||0],['dynamite',extras.bombs||0]])for(let i=0;i<amount;i++)if(!addSideBagToken(token))log('Side Bag full: legacy town supply not carried.','info');save();render()}
 }
-function equipmentModal(){if(!S||saveFailure)return;const p=S.profile;p.gear=p.gear||[];const rows=p.gear.map(item=>{const hands=Number.isInteger(item.hands)?item.hands:'unknown';const upgrades=(item.upgrades||[]).map(u=>u.id).join(', ')||'none';return '<div class="shopitem"><strong>'+escapeHtml(item.name)+'</strong><small>'+(item.starting?'Starting item · cannot trade':'Manually recorded Gear')+' · hands '+hands+' · '+(item.equipped?'equipped':'carried')+' · upgrades '+escapeHtml(upgrades)+'</small><button type="button" class="btn" data-item="'+escapeHtml(item.id)+'" '+(!Number.isInteger(item.hands)?'disabled':'')+'>'+(item.equipped?'Unequip':'Equip')+'</button>'+(Number.isInteger(item.hands)?'':'<button type="button" class="btn ghost" data-hands="'+escapeHtml(item.id)+'">Set hands from printed card</button>')+'</div>'}).join('');const start=p.starting;openModal('<div class="kicker">Hero equipment · saved campaign state</div><h2>'+escapeHtml(start?.className||CLASSES[p.hero].name)+'</h2><p>Starting Upgrade: <b>'+escapeHtml(start?.startingUpgrade||'Unrecorded legacy Hero')+'</b> (effect unverified). Personal Item: <b>'+escapeHtml(start?.personalItem?.name||'Unrecorded')+'</b>. Card effects and Hero statistics are NOT yet implemented.</p><div class="shoplist">'+(rows||'No Gear recorded.')+'</div><p class="modalnote">Enter item metadata only from your physical card. Two-hand maximum is enforced. This records equipment but does not activate unverified card abilities.</p><div class="modalbuttons"><button class="btn" id="addEquipment">Record Gear from card</button><button class="btn gold" id="equipmentClose">Return to expedition</button></div>','equipment');document.querySelectorAll('[data-item]').forEach(btn=>btn.onclick=()=>{if(saveFailure)return;if(!DarkstoneEquipmentUI.toggle(p.gear,btn.dataset.item)){log('Cannot equip: more than two hands would be used.','hit');return}save();equipmentModal()});document.querySelectorAll('[data-hands]').forEach(btn=>btn.onclick=()=>{if(saveFailure)return;const item=p.gear.find(x=>x.id===btn.dataset.hands);const input=prompt('How many hands does the printed card require? Enter 0, 1 or 2:');if(!['0','1','2'].includes(input))return;item.hands=Number(input);save();equipmentModal()});$('addEquipment').onclick=()=>{if(saveFailure)return;const name=prompt('Exact Gear card name:');if(!name||!name.trim())return;const hands=prompt('Hands required by printed card (0, 1, 2):');if(!['0','1','2'].includes(hands))return;const slots=prompt('Upgrade slots shown on card (0–3):');if(!['0','1','2','3'].includes(slots))return;const item=DarkstoneEquipmentUI.make({id:'gear-'+Date.now()+'-'+p.gear.length,name:name.trim(),hands:Number(hands),slots:Number(slots)});if(!DarkstoneEquipmentUI.add(p.gear,item))return;save();equipmentModal()};$('equipmentClose').onclick=()=>{closeModal();render()}}
+function equipmentModal(){if(!S||saveFailure)return;const p=S.profile;p.gear=p.gear||[];const rows=p.gear.map(item=>{const hands=Number.isInteger(item.hands)?item.hands:'unknown';const upgrades=(item.upgrades||[]).map(u=>u.id).join(', ')||'none';const used=DarkstoneHeroEquipment.occupied({...item,upgrades:item.upgrades||[]});return '<div class="shopitem"><strong>'+escapeHtml(item.name)+'</strong><small>'+(item.starting?'Starting item · cannot trade':'Manually recorded Gear')+' · hands '+hands+' · '+(item.equipped?'equipped':'carried')+' · upgrade slots '+used+'/'+(item.slots??'unknown')+' · upgrades '+escapeHtml(upgrades)+'</small><button type="button" class="btn" data-item="'+escapeHtml(item.id)+'" '+(!Number.isInteger(item.hands)?'disabled':'')+'>'+(item.equipped?'Unequip':'Equip')+'</button>'+(Number.isInteger(item.hands)?'':'<button type="button" class="btn ghost" data-hands="'+escapeHtml(item.id)+'">Set hands from printed card</button>')+'<button type="button" class="btn ghost" data-upgrade="'+escapeHtml(item.id)+'">Attach upgrade</button><button type="button" class="btn ghost" data-detach="'+escapeHtml(item.id)+'">Remove upgrade</button></div>'}).join('');const start=p.starting;openModal('<div class="kicker">Hero equipment · saved campaign state</div><h2>'+escapeHtml(start?.className||CLASSES[p.hero].name)+'</h2><p>Starting Upgrade: <b>'+escapeHtml(start?.startingUpgrade||'Unrecorded legacy Hero')+'</b> (effect unverified). Personal Item: <b>'+escapeHtml(start?.personalItem?.name||'Unrecorded')+'</b>. Card effects and Hero statistics are NOT yet implemented.</p><div class="shoplist">'+(rows||'No Gear recorded.')+'</div><p class="modalnote">Enter item and upgrade metadata only from your physical cards. Two-hand maximum and upgrade-slot capacity are enforced. This records equipment but does not activate unverified card abilities.</p><div class="modalbuttons"><button class="btn" id="addEquipment">Record Gear from card</button><button class="btn gold" id="equipmentClose">Return to expedition</button></div>','equipment');document.querySelectorAll('[data-item]').forEach(btn=>btn.onclick=()=>{if(saveFailure)return;if(!DarkstoneEquipmentUI.toggle(p.gear,btn.dataset.item)){log('Cannot equip: more than two hands would be used.','hit');return}save();equipmentModal()});document.querySelectorAll('[data-hands]').forEach(btn=>btn.onclick=()=>{if(saveFailure)return;const item=p.gear.find(x=>x.id===btn.dataset.hands);const input=prompt('How many hands does the printed card require? Enter 0, 1 or 2:');if(!['0','1','2'].includes(input))return;item.hands=Number(input);save();equipmentModal()});document.querySelectorAll('[data-upgrade]').forEach(btn=>btn.onclick=()=>{
+ if(saveFailure)return;const item=p.gear.find(x=>x.id===btn.dataset.upgrade);if(!item)return;
+ const slots=prompt('Number of upgrade slots on the printed item (0–3):',item.slots??'');if(!['0','1','2','3'].includes(slots))return;
+ const id=prompt('Exact printed upgrade name:');if(!id||!id.trim())return;
+ const requirement=prompt('Upgrade slots required by this card (1–3):');if(!['1','2','3'].includes(requirement))return;
+ const forged=confirm('Is this a permanently forged upgrade? OK = forged; Cancel = removable.');
+ const original=item.slots;item.slots=Number(slots);item.upgrades=item.upgrades||[];
+ if(!DarkstoneHeroEquipment.attach(item,{id:id.trim(),requirement:Number(requirement),forged})){item.slots=original;log('Upgrade cannot fit or is already attached.','hit');return}
+ save();equipmentModal();
+ });
+ document.querySelectorAll('[data-detach]').forEach(btn=>btn.onclick=()=>{
+ if(saveFailure)return;const item=p.gear.find(x=>x.id===btn.dataset.detach);if(!item?.upgrades?.length)return;
+ const id=prompt('Exact attached upgrade name to remove (forged upgrades cannot be removed):');if(!id)return;
+ if(!DarkstoneHeroEquipment.detach(item,id)){log('Upgrade not found or permanently forged.','hit');return}
+ save();equipmentModal();
+ });
+ $('addEquipment').onclick=()=>{if(saveFailure)return;const name=prompt('Exact Gear card name:');if(!name||!name.trim())return;const hands=prompt('Hands required by printed card (0, 1, 2):');if(!['0','1','2'].includes(hands))return;const slots=prompt('Upgrade slots shown on card (0–3):');if(!['0','1','2','3'].includes(slots))return;const item=DarkstoneEquipmentUI.make({id:'gear-'+Date.now()+'-'+p.gear.length,name:name.trim(),hands:Number(hands),slots:Number(slots)});if(!DarkstoneEquipmentUI.add(p.gear,item))return;save();equipmentModal()};$('equipmentClose').onclick=()=>{closeModal();render()}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function helpModal(){openModal(`<div class="kicker">Field guide · Revised Edition mechanical subset</div><h2>Rules reference</h2>
  <p>Selected mechanics are implemented from the official Revised Edition Rulebook (2020) and FAQ 2.01 (2025). This remains an <b>unofficial prototype, not a complete implementation</b>: classes, character values, enemy sheets, map tiles, encounter, loot and town systems, scenario and depth-event outcomes are original substitutes.</p>

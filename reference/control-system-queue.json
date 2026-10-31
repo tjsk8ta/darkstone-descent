@@ -24,7 +24,8 @@
           "id": "P1-verification",
           "status": "blocked",
           "evidence": [
-            "Five isolated V8 validator checks passed; full Node suite not executed"
+            "Five isolated V8 validator checks passed; full Node suite not executed",
+            "Node 22 reconstructed P1 test harness: 10 passed / 0 failed; exact checkout and full npm test still blocked"
           ]
         }
       ]

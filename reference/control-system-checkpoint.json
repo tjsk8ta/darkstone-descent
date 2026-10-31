@@ -12,15 +12,24 @@
       "checks": 5,
       "scope": "P1 validator only; not Node or Chromium",
       "sourceCommit": "cf415e89fd5a1f614929fe65984424269a458d62"
+    },
+    {
+      "kind": "node-reconstructed-harness",
+      "status": "passed",
+      "tests": 10,
+      "failed": 0,
+      "command": "node --test tests/control-plan-check.test.cjs",
+      "scope": "Exact P1 test and validator source reconstructed in container with equivalent (not byte-identical) queue/checkpoint/workflow fixtures; NOT full repository npm test",
+      "sourceCommit": "2cd5b775423737a5672c7a48883e51316f603a7d"
     }
   ],
   "blockers": [
     {
-      "id": "p1-node",
+      "id": "full-checkout",
       "status": "blocked",
-      "reason": "GitHub connector exposes repository files but no workflow dispatch; container cannot reach github.com to checkout; full Node suite unexecuted."
+      "reason": "Container git ls-remote fails DNS for github.com; connector does not transfer repository to local container. Full repository npm test and Chromium unexecuted."
     }
   ],
-  "nextAction": "Run node --test tests/control-plan-check.test.cjs on a full checkout; record exact exit status and evidence, then accept P1 and begin P2. Current isolated V8 tests are not a substitute for Node suite.",
-  "lastVerifiedHead": "cf415e89fd5a1f614929fe65984424269a458d62"
+  "nextAction": "Obtain full exact repository checkout or executable CI dispatch, run npm test and P1 verification on actual fixtures, then accept P1 and start P2. Preserve manual Actions.",
+  "lastVerifiedHead": "2cd5b775423737a5672c7a48883e51316f603a7d"
 }

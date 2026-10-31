@@ -30,3 +30,8 @@ This ledger records only code actually changed in commit following ed7b0fd5; it 
 - Newly created Heroes now start with exactly one free Side Bag token; four invented extra supplies are no longer added. Existing saves retain their inventory. Bandido's Wild Card recovers Grit on a movement roll of 1 or 2.
 - Tests: tests/revised-hero-setup.test.cjs, updated tests/hero-inventory-placement.test.cjs and tests/sidebag-integration.test.cjs.
 - Remaining release blockers: authentic Hero sheets, card effects, class abilities, enemy records and full movement, town/travel charts, official Epic Threat/Growing Dread and map geometry. Completion status remains false.
+
+## Revised campaign Travel rolls — 2026-10-31
+- Source: Revised City of the Ancients Adventure Book p.28, https://www.connexxion24.com/downloads/anleitungen/shadows-of-brimstone-city-of-the-ancients-revised-core-set-abenteuerbuch-auf-englisch-2.pdf . Each Hero rolls D6 to prepare to travel; 1–2 adds one Travel Hazard. Each hazard is rolled on the 3D6 chart (p.56). For the current one-Hero game, rules/travel-phase.js rolls once and, if required, exactly 3D6; the result is persisted.
+- The Frontier Town UI **does not grant access** until a triggered Hazard has been explicitly resolved using the printed chart. Unknown chart outcomes are never fabricated. The player must acknowledge actual resolution. The chart effects are NOT automated, and the interface must not claim they are.
+- Tests: tests/travel-phase.test.cjs. Further required: full p.56 hazard outcomes, special mission modifiers, camp hazards, daily Town Event and Location Event charts, verified store inventories and prices.

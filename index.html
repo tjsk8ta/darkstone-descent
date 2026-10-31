@@ -54,6 +54,7 @@
 <script src="rules/hero-equipment.js"></script>
 <script src="rules/hero-starting.js"></script>
 <script src="rules/equipment-ui.js"></script>
+<script src="rules/travel-phase.js"></script>
 <script src="rules/enemy-placement.js"></script>
 <script src="rules/mission.js"></script>
 <script>
@@ -970,7 +971,7 @@ function townModal(){
  if(saveFailure)return;
  let p=S.profile;p.town=p.town||{day:1,visited:false,travelDone:false,events:[]};
  let t=p.town;
- if(!t.travelDone){t.events.push('Travel Chart unavailable: no unverified hazard or resource loss applied.');t.travelDone=true;save()}
+ if(!t.travelDone){if(!t.travelRoll){t.travelRoll=DarkstoneTravelPhase.roll(die);t.events.push('Travel D6 ['+t.travelRoll.travelDie+']'+(t.travelRoll.pending?' → Hazard 3D6 ['+t.travelRoll.hazardDice.join(', ')+'] = '+t.travelRoll.hazardTotal:' → no Travel Hazard')+'.');if(!t.travelRoll.pending)t.travelDone=true;save()}if(!t.travelDone){openModal('<div class="kicker">Official Travel Hazard · Adventure Book p.56</div><h2>Travel to Frontier Town</h2><p>Travel die: <b>'+t.travelRoll.travelDie+'</b> (1–2 triggers a Hazard). Hazard dice: <b>'+t.travelRoll.hazardDice.join(' + ')+' = '+t.travelRoll.hazardTotal+'</b>.</p><p>Consult the <a href="https://www.connexxion24.com/downloads/anleitungen/shadows-of-brimstone-city-of-the-ancients-revised-core-set-abenteuerbuch-auf-englisch-2.pdf" target="_blank" rel="noopener">revised City Adventure Book p.56</a>. Resolve the printed result before continuing. The game does not invent an unknown effect.</p><div class="modalbuttons"><button class="btn gold" id="resolveTravelHazard">I resolved the printed Travel Hazard</button></div>','travel');$('resolveTravelHazard').onclick=()=>{if(saveFailure)return;DarkstoneTravelPhase.acknowledge(t);t.events.push('Travel Hazard '+t.travelRoll.hazardTotal+' manually resolved using printed chart.');save();townModal()};return}}
  let locations=[
  ['General Store','bandages','Bandages · supplies',12],['Doc’s Office','health','Treatment and medical supplies',20],
  ['Blacksmith','armour','Reinforced duster (prototype)',55+30*p.upgrades.armour],

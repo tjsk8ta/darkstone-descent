@@ -12,13 +12,20 @@
       "acceptance": [
         {
           "id": "P1-implementation",
-          "status": "pending",
-          "evidence": []
+          "status": "passed",
+          "evidence": [
+            "docs/CONTROL_SYSTEM_P1_BASELINE.md",
+            "reference/control-system-queue.json",
+            "reference/control-system-checkpoint.json",
+            "scripts/control-plan-check.cjs"
+          ]
         },
         {
           "id": "P1-verification",
-          "status": "pending",
-          "evidence": []
+          "status": "blocked",
+          "evidence": [
+            "Five isolated V8 validator checks passed; full Node suite not executed"
+          ]
         }
       ]
     },

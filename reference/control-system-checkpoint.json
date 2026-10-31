@@ -3,16 +3,24 @@
   "plan": "docs/FOCUS_LOCKED_SEVEN_GATE_IMPLEMENTATION_PLAN.md",
   "baselineCommit": "353945c1b865290944122826d494ebff91868937",
   "activePhase": "P1",
-  "activeTask": "P1-reconcile-baseline",
+  "activeTask": "P1-execute-full-node-tests",
   "completedPhases": [],
-  "evidence": [],
-  "blockers": [
+  "evidence": [
     {
-      "id": "chromium",
-      "status": "unverified",
-      "reason": "No local Chromium execution yet"
+      "kind": "isolated-v8",
+      "status": "passed",
+      "checks": 5,
+      "scope": "P1 validator only; not Node or Chromium",
+      "sourceCommit": "cf415e89fd5a1f614929fe65984424269a458d62"
     }
   ],
-  "nextAction": "Run P1 tests and reconcile historical CI; then record P1 acceptance before advancing to P2.",
-  "lastVerifiedHead": "353945c1b865290944122826d494ebff91868937"
+  "blockers": [
+    {
+      "id": "p1-node",
+      "status": "blocked",
+      "reason": "GitHub connector exposes repository files but no workflow dispatch; container cannot reach github.com to checkout; full Node suite unexecuted."
+    }
+  ],
+  "nextAction": "Run node --test tests/control-plan-check.test.cjs on a full checkout; record exact exit status and evidence, then accept P1 and begin P2. Current isolated V8 tests are not a substitute for Node suite.",
+  "lastVerifiedHead": "cf415e89fd5a1f614929fe65984424269a458d62"
 }

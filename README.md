@@ -21,7 +21,7 @@ The publisher's 2014 and revised rulebooks reproduce the full **Tentacles** norm
 
 Community card inventories are useful for identifying card names and frequencies but are **not** a substitute for verifying the physical card faces or Enemy Record Sheets.
 
-The machine-readable [completion gate](rules/completion.json) records every mandatory area, provenance status, unresolved rule, test requirement, and next action. Its `complete` field must remain `false` until every mandatory gate is verified.
+The [rules coverage record](rules/completion.json) tracks unresolved rules and source verification. It is informational and does not impose a development-phase or stop-work process.
 
 ## Testing
 

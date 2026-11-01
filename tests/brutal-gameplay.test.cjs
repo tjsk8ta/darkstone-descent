@@ -75,7 +75,9 @@ test('Acidic Ichor D3 wounds ignore Defense and can defeat a Hero',()=>{
 
 test('official Ambush is adjacent placement and +2 first-turn Initiative, not a free attack',()=>{
  assert.match(html,/ambushInitiativeUntilTurn=S\.turn\+1/);
- assert.match(html,/cellAt\(p\.x,p\.y\)&&visibleAt\(p\.x,p\.y\)&&!occupied\(p\.x,p\.y\)/);
+ assert.match(html,/DarkstoneEnemyPlacement\.ambushSpaces\(S,cellAt,roomAt,r\)/);
+ assert.match(html,/const p=locs\.find\(p=>canPlaceEnemyFootprint\(p,size\)\)/);
+ assert.match(html,/function canPlaceEnemyFootprint\(p,size,ignoreEnemyId=null\)/);
  assert.match(html,/same\.ambushInitiativeUntilTurn=S\.turn\+1/);
  assert.doesNotMatch(html,/Drop From Above: resolving immediate Elite Ambush Attacks/);
  const ctx={TYPES:{'Void Spider':{initiative:7}},S:{turn:5},eliteHas:()=>false};

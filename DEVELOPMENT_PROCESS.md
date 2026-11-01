@@ -1,52 +1,23 @@
-# Development requirements and change-control process
+# Darkstone Descent — development guidance
 
-## Mandatory troubleshooting and alternative-route check (2026-11-01)
-Before declaring a tool or verification route blocked, consult [docs/TROUBLESHOOTING_DECISION_RECORD.md](docs/TROUBLESHOOTING_DECISION_RECORD.md). Identify the actual failure, separate tool restrictions from objective impossibility, examine multiple routes (including GitHub branch-push Actions), and document why each fails or succeeds. Do not treat assistant-authored continuation text as user-originated requirements. Avoid repeating a previously disproved blocker. Confirm latest exact-SHA Node, Chromium and deployment evidence before claiming completion.
+## Priority
+Improve the playable game. Fix actual gameplay defects, implement source-verified Shadows of Brimstone mechanics, and test complete player journeys. Do not resume the abandoned P1–P7 development-control programme or its seven-gate release/stop framework. Old planning and incident records are not authoritative.
 
-## General principle
-Read and preserve relevant user instructions, prior decisions, and their rationale. Never knowingly reintroduce a rejected interaction. If requirements conflict, clarify before changing behavior. Do not equate passing syntax validation with functional testing.
+## Working method
+1. Establish the current user objective and reproduce the observed failure before selecting a tool or solution.
+2. Inspect relevant source, game state, rules provenance and existing tests. Distinguish confirmed facts from hypotheses.
+3. Investigate plausible root causes and alternative routes; a failed method does not establish that the objective is impossible.
+4. Make the smallest coherent fix across UI, rules, state, journal and persistence as applicable.
+5. Verify using actual Node tests and Chromium journeys, including mobile/door/combat/save flows when affected. Do not equate green CI with complete rules fidelity.
+6. Preserve existing verified mechanics and regression tests; record unresolved source gaps without inventing official rules.
+7. Commit coherent, tested changes and report outcomes, evidence and remaining limitations concisely.
 
-## Authoritative combat UX decision (2026-10-27)
-**There is no target selection before rolling To Hit.** Press Attack when at least one enemy is within weapon range and line of sight. Roll all To Hit dice, allow permitted rerolls, and **then allocate individual successful hit dice among eligible enemies**. This is the only enemy target-selection stage. Hits may be split across multiple enemies. Critical-hit identity must be preserved. Roll damage for each assigned hit; apply Defense separately per noncritical hit; support allowed damage rerolls. Never automatically force all hits to an initial enemy. Movement arrows are replaced by contextual combat controls until resolution ends. No enemies in range/line of sight means no To Hit roll and no action spent.
+## Game-specific requirements to preserve
+- Attack rolls precede target allocation. Assign individual successful hits (including criticals) across eligible enemies, with Defense applied separately to noncritical hits.
+- Unexplored doorways reveal tiles at the correct rules-defined interaction; never charge movement for blocked moves.
+- Enemies must spawn and activate correctly, with reachable exploration, reliable journal outcomes and safe save/reload.
+- Maintain original/revised edition distinctions and trace enemy records, cards and abilities to inspected sources.
+- Preserve automatic main-branch Node and Chromium verification and separate GitHub Pages deployment.
 
-## Known implementation defects / outstanding work
-- **Pre-roll target selection is no longer in the active Attack flow.** The live `attack()` handler rolls immediately when enemies are eligible; `resolvePendingAttack()` moves to successful-hit allocation and `beginDamageGroup()` accepts selected hit dice. Preserve this authoritative flow. Its existing browser regressions are committed but have **not** been independently run in Chromium in this session.
-- Damage grouping, simultaneous wounds, mid-attack enemy deaths and save/reload during pending attacks still require exhaustive actual-browser verification; do not mark accepted merely because source code or isolated tests exist.
-- **Map tap movement** now calls `moveTowards()` (while dynamite aiming retains the targeting interaction). A simulated DOM run of the real game script verified a one-square move and one movement point consumed; actual mobile Chromium remains unverified.
-- **Local-save readback** is guarded and has a previous-valid checkpoint. Six save-guard test cases were executed against the real module in a JavaScript isolate; browser storage/recovery needs real Chromium verification. If a save write fails, gameplay displays a blocking Save Integrity Lock with an explicit retry.
-- Mutation chart and some Growing Dread/Darkness effects are incomplete/prototype; do not claim complete rule fidelity.
-- Mobile sticky map and genuine touch gesture behavior have not been browser-tested.
-
-## Required change workflow
-1. Read this file and inspect the current relevant source and state transitions.
-2. Write a short behavior specification: initial state, user actions, legal outcomes, edge cases, and previously rejected alternatives.
-3. Identify all related code paths (UI controls, event handlers, validation, rendering, persistence).
-4. Implement the smallest coherent change without sacrificing existing rules.
-5. Run syntax validation **and functional tests** for the changed flow. Test both happy paths and regressions; browser-test touch/mobile layout for UI changes when tools allow.
-6. Confirm that previously rejected behavior is absent. If functional/browser tests cannot run, disclose that limitation and do not claim verification.
-7. Commit with a descriptive message and report exactly what changed, what was tested, and what remains unresolved.
-
-## Combat regression scenarios
-- Zero eligible enemies: Attack disabled; no roll; action retained.
-- One eligible enemy: Attack starts immediately with no prior selection; successful hits assigned only after rerolls.
-- Two or more eligible enemies: To Hit roll occurs before any target selection; individual successful hits can be split among enemies.
-- Natural 6: critical identity preserved; Defense ignored for that hit only.
-- Multiple hits on same enemy: separate damage dice and separate Defense per hit.
-- Grit rerolls: permitted To Hit and damage dice reroll with correct cost and once-per-die limits.
-- Enemy dies while attack has unresolved hits: remaining hits can still be assigned to other eligible enemies.
-- Attack completion: contextual controls disappear and movement arrows return.
-- Dynamite: select and confirm a map tile; no pre-throw action expenditure on cancellation.
-- Save/reload during pending combat: no duplicate rolls, lost allocations, or action reset.
-
-## Definition of done
-No claim of 'fixed' unless the implemented workflow matches the requirements, relevant regression scenarios pass, and any untested platform behavior is clearly disclosed.
-
-
-## Exploration and Town fidelity status (2026-10-27)
-- Exploration now draws a map tile on demand and uses a shuffled *prototype* token pool. The room names, shapes, token distribution and encounter outcomes are NOT authenticated transcriptions of the published game components. Do not describe this as a faithful Map Card / Exploration Token implementation.
-- Current scenario objective uses two clues; validate against the exact published mission before making further claims of fidelity.
-- Town Stay uses named core locations but provisional prices, purchases and travel consequences. Do not represent these as published tables. The published Adventure Book and relevant expansion source material must be checked before implementing official results.
-- Do not invent missing rule entries or extrapolate tables from memory. Record missing source data and leave effects explicitly provisional until verified.
-- The map currently uses a finite 5×5 coordinate grid, which can cause dead ends; acceptance testing must cover reachability, exhaustion, and a fallback for an unreachable objective.
-- JS syntax checks and isolated randomized map-draw tests are not a substitute for browser/mobile and full expedition tests.
-- The attack UI should preserve no pre-roll targeting, individual hit selection, per-hit Defense, rerolls, and contextual movement-control replacement.
+## Sources of truth
+The playable source and executable behavioral tests are primary for implementation state. The official rulebooks and inspected game components are primary for game rules. `rules/completion.json`, enemy-sheet audit and source-linked implementation ledger identify incomplete content; they are **not** instructions to halt development. Historic incident notes, abandoned checklists and unverified plans must not override current evidence or user requirements.

@@ -20,7 +20,14 @@ function chooseMove({enemy,hero,steps,walkable,occupants=[],canStep,allowDisplac
   for(const [dx,dy] of DIRS){
    const next={x:pos.x+dx,y:pos.y+dy};
    if(!valid(pos,next)||overlap(next,size,target,'medium'))continue;
-   if(dx&&dy&&(!valid(pos,{x:pos.x+dx,y:pos.y})||!valid(pos,{x:pos.x,y:pos.y+dy})))continue;
+   if(dx&&dy){
+    // Diagonal travel cannot pass through the corner of an occupied square.
+    // Evaluate blockers at this step, including enemies displaced on earlier steps.
+    const sideA={x:pos.x+dx,y:pos.y},sideB={x:pos.x,y:pos.y+dy};
+    const blocked=side=>!valid(pos,side)||overlap(side,size,target,'medium')||
+      state.others.some(o=>overlap(side,size,o,o.size));
+    if(blocked(sideA)||blocked(sideB))continue;
+   }
    const conflicts=state.others.filter(o=>overlap(next,size,o,o.size));
    if(conflicts.length&&(!allowDisplace||size==='medium'||size==='small'||conflicts.some(o=>o.size!=='medium'&&o.size!=='small')))continue;
    const moved=state.others.map(o=>({...o}));let legal=true;

@@ -1,0 +1,32 @@
+name: Isolated exact-HEAD repair verification
+on:
+  push:
+    branches:
+      - repair/exact-head-verification-20261101
+permissions:
+  contents: read
+concurrency:
+  group: isolated-repair-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  full-suite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+      - run: npm ci || npm install
+      - name: Node full suite
+        run: npm test
+      - run: npx playwright install --with-deps chromium
+      - name: Chromium full suite
+        run: npm run test:e2e -- --reporter=line,html
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: isolated-repair-results
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

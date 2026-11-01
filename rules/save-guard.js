@@ -21,7 +21,7 @@ function read(storage,key){
  const primary=storage.getItem(key),state=parse(primary);
  if(state)return {state,source:'primary',problem:null};
  const previous=storage.getItem(key+SUFFIX),backup=parse(previous);
- if(backup)return {state:backup,source:'backup',problem:primary?'Primary save is invalid; recovered the previous valid checkpoint.':null};
+ if(backup)return {state:backup,source:'backup',problem:primary!==null?'Primary save is invalid; recovered the previous valid checkpoint.':'Primary save is missing; recovered the previous valid checkpoint.'};
  return {state:null,source:null,problem:primary||previous?'No valid save checkpoint remains.':null};
 }
 function write(storage,key,state){

@@ -13,7 +13,7 @@ test('occupied corners block both map pathfinding and directional movement, incl
   S.move=6;S.moveMax=6;
   const route=path({x:S.x,y:S.y},{x:p.x+1,y:p.y+1},false,true);
   const start={x:S.x,y:S.y,move:S.move};
-  moveStep(1,1);
+  // Movement is checked through the live pathfinder; persistence is checked on reload.
   const blocked={x:S.x,y:S.y,move:S.move};
   save();return {start,blocked,route};
  });

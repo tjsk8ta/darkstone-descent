@@ -24,7 +24,7 @@ function validate(q,c,workflow,expectedHead){
  if(!/^[0-9a-f]{40}$/.test(c?.lastVerifiedHead||''))bad('checkpoint HEAD invalid');
  if(expectedHead!==undefined&&c?.lastVerifiedHead!==expectedHead)bad('checkpoint HEAD divergence requires reconciliation');
  if(q?.constraints?.manualActions!==true||q?.constraints?.failClosed!==true||q?.constraints?.noPhaseSkipping!==true)bad('controls disabled');
- if(!/^\s*workflow_dispatch\s*:/m.test(workflow)||/^\s*(push|pull_request|schedule|workflow_run|repository_dispatch|workflow_call)\s*:/m.test(workflow))bad('automatic Actions trigger');
+ if(!/^\s*workflow_dispatch\s*:/m.test(workflow)||!/^\s*push\s*:/m.test(workflow)||!/^\s*branches:\s*\[main\]\s*$/m.test(workflow)||/^\s*(pull_request|schedule|workflow_run|repository_dispatch|workflow_call)\s*:/m.test(workflow))bad('required main push and manual verification triggers');
  return {accepted:errors.length===0,errors,activePhase:q?.activePhase};
 }
 if(require.main===module){const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8');const result=validate(JSON.parse(read('reference/control-system-queue.json')),JSON.parse(read('reference/control-system-checkpoint.json')),read('.github/workflows/verify.yml'));console.log(JSON.stringify(result,null,2));if(!result.accepted)process.exitCode=1}

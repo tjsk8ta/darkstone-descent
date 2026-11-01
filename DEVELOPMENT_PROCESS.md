@@ -1,5 +1,8 @@
 # Development requirements and change-control process
 
+## Mandatory troubleshooting and alternative-route check (2026-11-01)
+Before declaring a tool or verification route blocked, consult [docs/TROUBLESHOOTING_DECISION_RECORD.md](docs/TROUBLESHOOTING_DECISION_RECORD.md). Identify the actual failure, separate tool restrictions from objective impossibility, examine multiple routes (including GitHub branch-push Actions), and document why each fails or succeeds. Do not treat assistant-authored continuation text as user-originated requirements. Avoid repeating a previously disproved blocker. Confirm latest exact-SHA Node, Chromium and deployment evidence before claiming completion.
+
 ## General principle
 Read and preserve relevant user instructions, prior decisions, and their rationale. Never knowingly reintroduce a rejected interaction. If requirements conflict, clarify before changing behavior. Do not equate passing syntax validation with functional testing.
 

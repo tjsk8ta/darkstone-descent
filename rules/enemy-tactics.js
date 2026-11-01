@@ -6,6 +6,9 @@ function overlap(a,as,b,bs){return cells(a,as).some(p=>cells(b,bs).some(q=>p.x==
 function adjacent(a,as,b,bs){return cells(a,as).some(p=>cells(b,bs).some(q=>Math.max(Math.abs(p.x-q.x),Math.abs(p.y-q.y))===1))}
 function chooseMove({enemy,hero,steps,walkable,occupants=[],canStep,allowDisplace=false}){
  if(!enemy||!hero||!Number.isInteger(steps)||steps<0||typeof walkable!=='function')throw Error('Invalid move');
+ if(!Number.isInteger(enemy.x)||!Number.isInteger(enemy.y)||!Number.isInteger(hero.x)||!Number.isInteger(hero.y)||
+  !Array.isArray(occupants)||occupants.some(o=>!o||!Number.isInteger(o.x)||!Number.isInteger(o.y)))
+  throw Error('Invalid movement coordinates');
  const size=enemy.size||'medium',start={x:enemy.x,y:enemy.y},target={x:hero.x,y:hero.y};
  const initial=occupants.filter(o=>o.id!==enemy.id).map(o=>({...o,size:o.size||'medium'}));
  const keyOf=(p,others)=>p.x+','+p.y+'|'+others.map(o=>o.id+':'+o.x+','+o.y).join('|');

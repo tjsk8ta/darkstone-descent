@@ -72,3 +72,15 @@ test('missing primary with existing backup requires explicit recovery',()=>{
  guard.recover(s,KEY);
  assert.equal(guard.read(s,KEY).source,'primary');
 });
+
+test('missing primary with valid backup is disclosed, never silently resumed',()=>{
+ const s=storage();guard.write(s,KEY,state(1));guard.write(s,KEY,state(2));
+ s.raw.delete(KEY);
+ const result=guard.read(s,KEY);
+ assert.equal(result.source,'backup');
+ assert.equal(result.state.turn,1);
+ assert.match(result.problem,/Primary save is missing/);
+ const restored=guard.recover(s,KEY);
+ assert.equal(restored.turn,1);
+ assert.equal(guard.read(s,KEY).source,'primary');
+});
